@@ -1,0 +1,42 @@
+{
+  "name": "dashboard",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@types/jest": "24.0.1",
+    "@types/node": "11.9.0",
+    "@types/react": "16.8.2",
+    "@types/react-dom": "16.8.0",
+    "@types/react-router-dom": "^4.3.1",
+    "classnames": "^2.2.6",
+    "moment": "^2.24.0",
+    "patternfly-react": "^2.29.11",
+    "prop-types": "^15.7.1",
+    "react": "^16.8.1",
+    "react-archer": "^1.0.2",
+    "react-dnd": "^7.0.2",
+    "react-dnd-html5-backend": "^7.0.2",
+    "react-dom": "^16.8.1",
+    "react-router-dom": "^4.3.1",
+    "react-scripts": "2.1.5",
+    "recompose": "^0.30.0",
+    "rxjs": "^6.4.0",
+    "storm-react-diagrams": "^5.2.1",
+    "typescript": "3.3.3"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  },
+  "eslintConfig": {
+    "extends": "react-app"
+  },
+  "browserslist": [
+    ">0.2%",
+    "not dead",
+    "not ie <= 11",
+    "not op_mini all"
+  ]
+}
