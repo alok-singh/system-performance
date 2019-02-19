@@ -20,6 +20,9 @@
 .vscode/
 
 npm-debug.log
+npm-error.log
+npm.lock
 yarn-debug.log
 yarn-error.log
 yarn.lock
+
