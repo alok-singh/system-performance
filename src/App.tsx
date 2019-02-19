@@ -9,7 +9,7 @@ class App extends Component {
     return (
       <div>
         <Switch>
-          <Route exact path="/vsm/edit/:id" component={VSMEdit} />
+          <Route exact path="/vsm/edit/:appName" component={VSMEdit} />
         </Switch>
       </div>
     );
