@@ -2,7 +2,6 @@ import React, { Component, ReactNode } from 'react'
 import VSMCard, { VSMCardProps, ArrowDirection } from './VSMCard'
 import GridBlock, { GridBlockBehavior } from './GridBlock';
 import { Position, observe } from '../../../behavior/vsm/MoveManager';
-import { arrowStart, arrowEnd, getArrowStart, getArrowEnd, clearArrowState } from '../../../store/ArrowState';
 import { ArcherContainer } from 'react-archer'
 
 export type CardData = { data: VSMCardProps[] }
@@ -10,6 +9,8 @@ export type CardData = { data: VSMCardProps[] }
 const gridColumns = 6
 const gridRows = 3
 const minHeight = '120px'
+var arrowStart: Position | null = null
+var arrowEnd: Position | null = null
 
 export class Grid extends Component<{}, CardData> {
 
@@ -49,17 +50,20 @@ export class Grid extends Component<{}, CardData> {
     }
 
     onMouseDown = (x: number, y: number) => {
-        arrowStart({x:x, y:y})
+        arrowStart = {x:x, y:y}
     }
 
     onMouseUp = (x: number, y: number) => {
-        arrowEnd({x:x, y:y})
-        const start = getArrowStart()
-        const end = getArrowEnd()
-        if( !!start && !!end) {
-            this.createArrow(start, end)
+        arrowEnd = {x:x, y:y}
+        if( !!arrowStart && !!arrowEnd) {
+            this.createArrow(arrowStart, arrowEnd)
         }
-        clearArrowState()
+        this.clearArrowState()
+    }
+    
+    clearArrowState = () => {
+        arrowStart = null
+        arrowEnd = null
     }
 
     createArrow = (initial: Position, final: Position) => {
