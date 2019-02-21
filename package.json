@@ -1,0 +1,64 @@
+{
+  "name": "system-performance",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "buildJS": "NODE_ENV=prod ./node_modules/webpack/bin/webpack.js --config ./webpack.script.config.js --progress --colors",
+    "buildCSS": "NODE_ENV=prod ./node_modules/webpack/bin/webpack.js --config ./webpack.style.config.js --progress --colors",
+    "watchJS": "NODE_ENV=dev && ./node_modules/webpack/bin/webpack.js --config ./webpack.script.config.js --progress --colors --watch",
+    "watchCSS": "NODE_ENV=dev && ./node_modules/webpack/bin/webpack.js --config ./webpack.style.config.js --progress --colors --watch",
+    "start": "npm run build && node index.js",
+    "dev": "node --inspect index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alok-singh/system-performance.git"
+  },
+  "author": "Alok Singh",
+  "license": "ISC",
+  "dependencies": {
+    "less": "^3.0.4",
+    "css-loader": "^0.28.11",
+    "less-loader": "^4.1.0",
+    "style-loader": "^0.21.0",
+    "babel-register": "^6.26.0",
+    "ejs": "^2.5.5",
+    "express": "^4.16.3",
+    "fetch": "^1.1.0",
+    "react": "^16.4.1",
+    "react-dom": "^16.4.1",
+    "request": "^2.85.0"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-core": "^6.26.3",
+    "babel-loader": "^7.1.4",
+    "babel-plugin-transform-react-jsx": "^6.24.1",
+    "babel-preset-es2015": "^6.24.1",
+    "babel-preset-react": "^6.24.1",
+    "body-parser": "^1.18.3",
+    "copy-webpack-plugin": "^4.5.2",
+    "css-loader": "^1.0.0",
+    "less-loader": "^4.1.0",
+    "mini-css-extract-plugin": "^0.5.0",
+    "style-loader": "^0.23.0",
+    "uglifyjs-webpack-plugin": "^2.0.1",
+    "webpack": "^4.9.1",
+    "webpack-cli": "^3.1.1"
+  },
+  "babel": {
+    "plugins": [
+      [
+        "transform-react-jsx"
+      ]
+    ],
+    "presets": [
+      "es2015"
+    ]
+  },
+  "bugs": {
+    "url": "https://github.com/alok-singh/system-performance/issues"
+  },
+  "homepage": "https://github.com/alok-singh/system-performance#readme"
+}
