@@ -7,11 +7,12 @@ const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 module.exports = { 
     devtool: isProd ? undefined : 'cheap-module-eval-source-map',
     entry: {
-        login: './src/js/login.js'
+        login: './src/js/login.js',
+        flowChart: './src/js/flowChart.js'
     },
     output: {
         path: __dirname + '/build',
-        filename: 'js/bundle.[name].js'
+        filename: 'bundle.[name].js'
     },
     module: {   
         rules: [{
@@ -26,14 +27,7 @@ module.exports = {
         },{
             test: /\.less$/, 
             use: ['style-loader', 'css-loader', 'less-loader']
-        },{
-           test: /\.less$/,
-           use: [
-               MiniCssExtractPlugin.loader,
-               "css-loader", 
-               {loader: "less-loader"}
-           ]
-       }]
+        }]
     },
     mode: 'production',
     node: {
@@ -47,12 +41,5 @@ module.exports = {
         minimizer: [new UglifyJsPlugin({
             test: /\.js(\?.*)?$/i
         })]
-    },
-    plugins: [
-       new MiniCssExtractPlugin({
-           // Options similar to the same options in webpackOptions.output
-           // both options are optional
-           filename: "./css/bundle.[name].css"
-       })
-    ]
+    }
 };

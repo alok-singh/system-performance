@@ -6,6 +6,7 @@ import path from 'path';
 import fs from 'fs';
 import bodyParser from 'body-parser';
 import {loginController} from './controllers/loginController';
+import {flowChartController} from './controllers/flowChartController';
 import {gatewayPostController, gatewayGetController, gatewayDeleteController} from './controllers/apiController';
 
 
@@ -19,6 +20,10 @@ app.use(bodyParser.json());
 
 app.get('/login', (req, res) => {
 	requestGateway(req, res, loginController);
+});
+
+app.get('/flow-chart', (req, res) => {
+	requestGateway(req, res, flowChartController);
 });
 
 app.get('/build/*', (req, res) => {

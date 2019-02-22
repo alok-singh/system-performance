@@ -4,10 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "buildJS": "NODE_ENV=prod ./node_modules/webpack/bin/webpack.js --config ./webpack.script.config.js --progress --colors",
-    "buildCSS": "NODE_ENV=prod ./node_modules/webpack/bin/webpack.js --config ./webpack.style.config.js --progress --colors",
-    "watchJS": "NODE_ENV=dev && ./node_modules/webpack/bin/webpack.js --config ./webpack.script.config.js --progress --colors --watch",
-    "watchCSS": "NODE_ENV=dev && ./node_modules/webpack/bin/webpack.js --config ./webpack.style.config.js --progress --colors --watch",
+    "build": "NODE_ENV=prod ./node_modules/webpack/bin/webpack.js --config ./webpack.config.js --progress --colors",
+    "watch": "NODE_ENV=dev && ./node_modules/webpack/bin/webpack.js --config ./webpack.config.js --progress --colors --watch",
     "start": "npm run build && node index.js",
     "dev": "node --inspect index.js"
   },
@@ -18,17 +16,18 @@
   "author": "Alok Singh",
   "license": "ISC",
   "dependencies": {
-    "less": "^3.0.4",
-    "css-loader": "^0.28.11",
-    "less-loader": "^4.1.0",
-    "style-loader": "^0.21.0",
     "babel-register": "^6.26.0",
+    "coursera-ui": "0.0.0-semantically-released-test",
+    "css-loader": "^0.28.11",
     "ejs": "^2.5.5",
     "express": "^4.16.3",
     "fetch": "^1.1.0",
+    "less": "^3.0.4",
+    "less-loader": "^4.1.0",
     "react": "^16.4.1",
     "react-dom": "^16.4.1",
-    "request": "^2.85.0"
+    "request": "^2.85.0",
+    "style-loader": "^0.21.0"
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",
