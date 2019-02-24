@@ -5,13 +5,17 @@ import Defs from './defs';
 import BackDrop from './backdrop';
 import Popup from './popup';
 
+import {EnvironmentList as environmentList, EnvironmentType} from '../config/buildConfigurations';
+
 import '../../css/flowchart.css';
 
 import {
     Button, 
     CardTitle, 
     CardBody,
-    Card
+    Card,
+    CardDropdownButton,
+    MenuItem
 } from 'patternfly-react';
 
 interface NodeAttr {
@@ -21,6 +25,10 @@ interface NodeAttr {
     id: string;
     activeIn: boolean;
     activeOut: boolean;
+    condition: string;
+    triggerType: string;
+    buildType: string;
+    environmentList: Array<EnvironmentType>; 
 }
 
 interface EdgeAttr {
@@ -103,8 +111,12 @@ export default class FlowChart extends Component <AppProps, AppState> {
             y: nodeList[index].y - yDiff,
             id: nodeList[index].id,
             title: nodeList[index].title,
+            condition: nodeList[index].condition,
+            triggerType: nodeList[index].triggerType,
+            buildType: nodeList[index].buildType,
             activeIn: nodeList[index].activeIn,
-            activeOut: nodeList[index].activeOut
+            activeOut: nodeList[index].activeOut,
+            environmentList: nodeList[index].environmentList
         };
 
         this.setState({nodeList});
@@ -177,7 +189,11 @@ export default class FlowChart extends Component <AppProps, AppState> {
             id: nodeList[index].id,
             title: value,
             activeIn: nodeList[index].activeIn,
-            activeOut: nodeList[index].activeOut
+            activeOut: nodeList[index].activeOut,
+            environmentList: nodeList[index].environmentList,
+            condition: nodeList[index].condition,
+            triggerType: nodeList[index].triggerType,
+            buildType: nodeList[index].buildType
         });
         
         this.setState({
@@ -193,7 +209,11 @@ export default class FlowChart extends Component <AppProps, AppState> {
             title: 'Add text here',
             id: (new Date()).getTime().toString(36),
             activeIn: false,
-            activeOut: false
+            activeOut: false,
+            condition: '',
+            triggerType: '',
+            buildType: '',
+            environmentList: JSON.parse(JSON.stringify(environmentList))
         });
         
         this.setState({
@@ -214,6 +234,8 @@ export default class FlowChart extends Component <AppProps, AppState> {
     onClickSVG() {
         this.setState({
             isPopupVisible: false
+        }, () => {
+            document.removeEventListener('mousemove', this.handleMouseMove);
         });
     }
 
@@ -253,6 +275,27 @@ export default class FlowChart extends Component <AppProps, AppState> {
         event.stopPropagation();
     }
 
+    onChangeConfiguration(event: any, listIndex: number, envID: number, index: number) {
+        let {nodeList} = this.state;
+        nodeList[index].environmentList = nodeList[index].environmentList.map(environment => {
+            environment.isActive = false;
+            return environment;
+        })
+        nodeList[index].environmentList[listIndex].isActive = true;
+        
+        this.setState({
+            nodeList
+        });
+    }
+
+    onChangeInput(value: string, index: number, key: string) {
+        let {nodeList} = this.state;
+        nodeList[index][key] = value;
+        this.setState({
+            nodeList
+        });
+    }
+
     renderNodeList() {
         return this.state.nodeList.map((node, index) => {
             return <Node 
@@ -263,11 +306,17 @@ export default class FlowChart extends Component <AppProps, AppState> {
                 title={node.title}
                 activeIn={node.activeIn}
                 activeOut={node.activeOut}
+                conditionText="Something"
+                triggerText="Something"
+                buildTypeText="Something"
+                environmentList={node.environmentList}
+                onChangeInput={({target}, key) => {this.onChangeInput(target.value, index, key)}}
                 handleMouseDown={(event) => this.handleMouseDown(event, index)}
                 handleMouseUp={(event) => this.handleMouseUp(event, index)}
                 handleClickCircle={(event, isInput) => this.handleClickCircle(event, index, node.id, isInput)}
                 handleTextChange={(event) => this.handleTextChange(event, index)}
                 handleClickOptions={(event) => this.handleClickOptions(event, node)}
+                onChangeConfiguration={(event, listIndex, envID) => this.onChangeConfiguration(event, listIndex, envID, index)}
             />
         })
     }

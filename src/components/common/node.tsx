@@ -2,6 +2,22 @@ import * as React from 'react';
 import {nodeSizes} from '../config/sizes';
 import {nodeColors} from '../config/colors';
 
+import {
+    Button, 
+    CardTitle, 
+    CardBody,
+    Card,
+    DropdownButton,
+    MenuItem,
+    CardLink,
+    Form,
+    FormGroup,
+    ControlLabel,
+    FormControl,
+    CardHeading,
+    Icon
+} from 'patternfly-react';
+
 interface NodeProps {
     x: number;
     y: number;
@@ -9,11 +25,17 @@ interface NodeProps {
     title: string;
     activeIn: boolean;
     activeOut: boolean;
+    environmentList: Array<any>;
+    conditionText: string;
+    triggerText: string;
+    buildTypeText: string;
     handleMouseUp(event: any): void;
     handleMouseDown(event: any): void;
     handleTextChange(event: any): void;
     handleClickCircle(event:any, isInput:boolean): void;
     handleClickOptions(event: any): void;
+    onChangeInput(event: any, key: string): void;
+    onChangeConfiguration(event: any, listIndex: number, envID: number): void;
 }
 
 export default class Node extends React.Component <NodeProps>{
@@ -44,23 +66,56 @@ export default class Node extends React.Component <NodeProps>{
         />
     }
 
+    renderCardContent() {
+        let environmentTitle = this.props.environmentList.filter(env => env.isActive)[0].title;
+        return <Card>
+            <CardHeading>
+                <CardTitle>
+                    <Icon name="shield" />
+                    <span className="text-container" suppressContentEditableWarning={true} contentEditable={true} onChange={this.props.handleTextChange}>
+                       {this.props.title} 
+                    </span>
+                    <DropdownButton bsStyle="default" title={environmentTitle} id="dropdown-example">
+                        {this.props.environmentList.map((envionment, index) => {
+                            return <MenuItem key={`env-${index}`} eventKey={index} active={envionment.isActive} onClick={() => this.props.onChangeConfiguration(event, index, envionment.id)}>
+                                {envionment.title}
+                            </MenuItem>
+                        })}
+                    </DropdownButton>
+                </CardTitle>
+            </CardHeading>
+            <CardBody>
+                <Form>
+                    <FormGroup controlId="text" disabled={false}>
+                        <ControlLabel>Condition</ControlLabel>
+                        <FormControl type="text" disabled={false} value={this.props.conditionText} onInput={(event) => this.props.onChangeInput(event, 'condition')}/>
+                     </FormGroup>
+                     <FormGroup controlId="text" disabled={false}>
+                        <ControlLabel>Trigger Type</ControlLabel>
+                        <FormControl type="text" disabled={false} value={this.props.triggerText} onInput={(event) => this.props.onChangeInput(event, 'triggerType')}/>
+                    </FormGroup>
+                    <FormGroup controlId="text" disabled={false}>
+                        <ControlLabel>Build Type</ControlLabel>
+                        <FormControl type="text" disabled={false} value={this.props.buildTypeText} onInput={(event) => this.props.onChangeInput(event, 'buildType')}/>
+                    </FormGroup>
+                </Form>
+                <CardLink href="#" >
+                    Git diff
+                </CardLink>
+            </CardBody>
+        </Card>
+    }
+
     renderTextArea() {
         return <foreignObject 
-            onMouseDown={this.props.handleMouseDown} 
-            onMouseUp={this.props.handleMouseUp} 
+            style={{borderRadius: '5px'}}
             x={this.props.x} 
             y={this.props.y} 
             width={nodeSizes.nodeWidth} 
-            height={nodeSizes.nodeHeight}>
-                <div 
-                    className="text-container" 
-                    style={{height: `${nodeSizes.nodeHeight}px`, width: `${nodeSizes.nodeWidth}px`}} 
-                    suppressContentEditableWarning={true} 
-                    contentEditable={true}
-                    onChange={this.props.handleTextChange}
-                >
-                    <div>{this.props.title}</div>
-                </div>
+            height={nodeSizes.nodeHeight}
+            onMouseDown={this.props.handleMouseDown} 
+            onMouseUp={this.props.handleMouseUp}>
+                {this.renderCardContent()}
         </foreignObject>
     }
 

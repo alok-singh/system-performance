@@ -1,34 +1,64 @@
-.text-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 10px 5px;
-    box-sizing: border-box;
-    word-break: break-word;
-    font-size: 16px;
-    font-weight: bold;
-    text-align: center;
-}
-
-.text-container:focus {
-    outline: none;
-}
-
-circle {
-    cursor: pointer;
-}
-
-circle:hover {
-    fill: green;
-}
-
-circle.active {
-    fill: #2196F3;
-}
-
 svg {
     width: 2000px;
     height: 1000px;
+}
+
+.svg-wrapper .text-container {
+    margin-left: 8px;
+    width: 130px;
+    display: inline-block;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    vertical-align: top;
+}
+
+.svg-wrapper .card-pf-title {
+    text-align: left;
+    padding: 20px 10px;
+    line-height: 25px;
+    margin: 0;
+    background: linear-gradient(#3a3a3a, #000);
+    color: #fff;
+}
+
+.svg-wrapper .card-pf-heading {
+    margin-bottom: 0px;
+}
+
+.svg-wrapper .card-pf-title .dropdown {
+    float: right;
+}
+
+.svg-wrapper .card-pf-title ul.dropdown-menu {
+    min-width: 0px !important;
+    width: 70px;
+}
+
+.svg-wrapper .card-pf-title ul.dropdown-menu li {
+    min-width: 0px !important;
+}
+
+.svg-wrapper .card-pf-title ul.dropdown-menu li a {
+    word-wrap: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;    
+}
+
+.svg-wrapper .text-container:focus {
+    outline: none;
+}
+
+.svg-wrapper circle {
+    cursor: pointer;
+}
+
+.svg-wrapper circle:hover {
+    fill: green;
+}
+
+.svg-wrapper circle.active {
+    fill: #2196F3;
 }
 
 .popup-option {
@@ -43,4 +73,58 @@ svg {
 
 .edge-group {
     cursor: pointer;
+}
+
+.svg-wrapper .card-pf {
+    padding: 0px;
+    width: 100%;
+    margin: 0px;
+    text-align: center;
+    border: 0;
+    border-radius: 5px;
+}
+
+.svg-wrapper .card-pf-body {
+    margin-top: 0px;
+    padding: 0px;
+    padding-top: 19px;
+    background: #f5f5f5;
+}
+
+.svg-wrapper .card-pf-body .dropdown {
+    width: 150px;
+}
+
+.svg-wrapper .card-pf-body .dropdown button {
+    width: 100%;
+}
+
+.svg-wrapper .card-pf-body .form-group {
+    display: flex;
+    justify-content: flex-end;
+    padding: 3px 10px;
+    margin-bottom: 3px;
+}
+
+.svg-wrapper .card-pf-body form {
+    margin-bottom: 10px;
+}
+
+.svg-wrapper .card-pf-body .form-group label {
+    margin-right: 5px;
+    margin-bottom: 0px;
+    line-height: 26px;
+}
+
+.svg-wrapper .btn-group > .dropdown-menu, .dropdown > .dropdown-menu {
+    max-height: 130px;
+    overflow: scroll;
+}
+
+.svg-wrapper .card-pf-body .form-group input {
+    width: 150px;
+}
+
+.svg-wrapper .card-pf-time-frame-filter {
+    margin-bottom: 10px;
 }
