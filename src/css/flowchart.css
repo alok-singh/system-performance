@@ -1,0 +1,45 @@
+.text-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 10px 5px;
+    box-sizing: border-box;
+    word-break: break-word;
+    font-size: 16px;
+    font-weight: bold;
+    text-align: center;
+}
+
+.text-container:focus {
+    outline: none;
+}
+
+circle {
+    cursor: pointer;
+}
+
+circle:hover {
+    fill: green;
+}
+
+circle.active {
+    fill: #2196F3;
+}
+
+svg {
+    width: 2000px;
+    height: 1000px;
+}
+
+.popup-option {
+    position: fixed;
+    background: #fff;
+    padding: 15px;
+    box-shadow: 1px 2px 3px rgba(0,0,0,0.2);
+    border: 1px solid #eaeaea;
+}
+
+.svg-wrapper {
+    height: calc(100vh - 205px);
+    overflow: scroll;
+}

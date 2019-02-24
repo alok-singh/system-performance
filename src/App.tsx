@@ -1,19 +1,22 @@
 import React, { Component } from 'react';
-import { Route, Switch, Redirect } from 'react-router-dom'
+import { Route, Switch } from 'react-router-dom'
 
-import { VSMEdit } from './pages/VSMEdit';
-import { KubernetesDashboard } from './monitoring/pages/KubernetesDashboard';
+import FlowChart from './components/flowChart/main';
+
+import 'patternfly/dist/css/patternfly.css';
+import 'patternfly/dist/css/patternfly-additions.css';
+import 'patternfly/dist/css/rcue.css';
+import 'patternfly/dist/css/rcue-additions.css';
+import 'patternfly-react/dist/css/patternfly-react.css';
+import './App.css';
+
 
 class App extends Component {
-
   render() {
     return (
-      <div>
         <Switch>
-          <Route exact path="/vsm/edit/:appName" component={VSMEdit} />
-          <Route exact path="/graph" component={KubernetesDashboard} />
+            <Route exact path="/flow-chart" component={FlowChart} />
         </Switch>
-      </div>
     );
   }
 }
