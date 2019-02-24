@@ -36,8 +36,7 @@ interface AppState {
     popupLeft: number;
     edgeInProgress: boolean;
     edgeList: Array<EdgeAttr>;
-    startNodeID: string | undefined;
-    endNodeID: string | undefined;
+    startNode: NodeAttr | undefined;
 }
 
 interface NodePosition {
@@ -61,8 +60,7 @@ export default class FlowChart extends Component <AppProps, AppState> {
             popupTop: 0,
             popupLeft: 0,
             edgeInProgress: false,
-            startNodeID: undefined,
-            endNodeID: undefined
+            startNode: undefined
         };
         this.handleMouseMove = this.handleMouseMove.bind(this);
     }
@@ -135,34 +133,35 @@ export default class FlowChart extends Component <AppProps, AppState> {
     }
 
     handleClickCircle(event: any, index: number, id: string, isInput: boolean) {
-        let {edgeInProgress, nodeList, edgeList, startNodeID} = this.state;
-        if(edgeInProgress && isInput && startNodeID != id) {
-            edgeList = this.addUniqueEdge(startNodeID, id, edgeList);
-            nodeList[index].activeIn = true;
-            this.setState({
-                edgeList,
-                edgeInProgress: false,
-                startNodeID: undefined,
-                endNodeID: undefined,
-                nodeList
-            }, () => {
-                setTimeout(() => {
-                    nodeList = nodeList.map(node => {
-                        node.activeIn = false;
-                        node.activeOut = false;
-                        return node;
-                    });
-                    this.setState({
-                        nodeList
-                    })
-                }, 1500) 
-            });
+        let {edgeInProgress, nodeList, edgeList, startNode} = this.state;
+        if(edgeInProgress && isInput && startNode && startNode.id != id) {
+            if(startNode.x < nodeList[index].x){
+                edgeList = this.addUniqueEdge(startNode.id, id, edgeList);
+                nodeList[index].activeIn = true;
+                this.setState({
+                    edgeList,
+                    edgeInProgress: false,
+                    startNode: undefined,
+                    nodeList
+                }, () => {
+                    setTimeout(() => {
+                        nodeList = nodeList.map(node => {
+                            node.activeIn = false;
+                            node.activeOut = false;
+                            return node;
+                        });
+                        this.setState({
+                            nodeList
+                        })
+                    }, 500) 
+                });
+            }
         }
         else if(!isInput){
             nodeList[index].activeOut = true;
             this.setState({
                 edgeInProgress: true,
-                startNodeID: id,
+                startNode: nodeList[index],
                 nodeList
             });
         }
@@ -202,7 +201,8 @@ export default class FlowChart extends Component <AppProps, AppState> {
         });
     }
 
-    handleClickOptions(event: any) {
+    handleClickOptions(event: any, node: NodeAttr) {
+        this.onClickPopup = (event: any) => this.onDeleteNode(node);
         this.setState({
             isPopupVisible: true,
             popupTop: event.clientY,
@@ -227,6 +227,22 @@ export default class FlowChart extends Component <AppProps, AppState> {
         });
     }
 
+    onDeleteNode(node: NodeAttr) {
+        let {nodeList, edgeList} = this.state;
+        let atWhich = nodeList.indexOf(node);
+        nodeList = nodeList.slice(0, atWhich).concat(nodeList.slice(atWhich + 1));
+        edgeList = edgeList.filter(edge => {
+            if(edge.fromID != node.id && edge.toID != node.id){
+                return true;
+            }
+        });
+        this.setState({
+            nodeList,
+            edgeList,
+            isPopupVisible: false
+        });
+    }
+
     onClickEdge(event: any, edge: EdgeAttr) {
         this.onClickPopup = (event: any) => this.onDeleteEdge(edge);
         this.setState({
@@ -238,20 +254,20 @@ export default class FlowChart extends Component <AppProps, AppState> {
     }
 
     renderNodeList() {
-        return this.state.nodeList.map((position, index) => {
+        return this.state.nodeList.map((node, index) => {
             return <Node 
                 key={`node-${index}`} 
-                x={position.x} 
-                y={position.y}
-                id={position.id}
-                title={position.title}
-                activeIn={position.activeIn}
-                activeOut={position.activeOut}
+                x={node.x} 
+                y={node.y}
+                id={node.id}
+                title={node.title}
+                activeIn={node.activeIn}
+                activeOut={node.activeOut}
                 handleMouseDown={(event) => this.handleMouseDown(event, index)}
                 handleMouseUp={(event) => this.handleMouseUp(event, index)}
-                handleClickCircle={(event, isInput) => this.handleClickCircle(event, index, position.id, isInput)}
+                handleClickCircle={(event, isInput) => this.handleClickCircle(event, index, node.id, isInput)}
                 handleTextChange={(event) => this.handleTextChange(event, index)}
-                handleClickOptions={(event) => this.handleClickOptions(event)}
+                handleClickOptions={(event) => this.handleClickOptions(event, node)}
             />
         })
     }
@@ -271,13 +287,31 @@ export default class FlowChart extends Component <AppProps, AppState> {
             </CardTitle>
             <CardBody>
                 <Button bsStyle="primary" onClick={() => this.onClickAddNode()}>Add Node</Button>
+                <Button bsStyle="danger" style={{marginLeft: '10px'}} onClick={() => this.setState({
+                    nodeList: [],
+                    edgeList: [],
+                    activeIndex: 0,
+                    isPopupVisible: false,
+                    edgeInProgress: false,
+                    startNode: undefined
+                })}>Clear All</Button>
             </CardBody>
         </Card>
     }
 
     renderOptionsPopup() {
         return <Popup isPopupVisible={this.state.isPopupVisible} top={this.state.popupTop} left={this.state.popupLeft}>
-            <div onClick={this.onClickPopup}>Delete</div>
+            <Card>
+                <CardTitle>
+                    Select the Action
+                </CardTitle>
+                <CardBody>
+                    <Button bsStyle="danger" onClick={this.onClickPopup}>Delete</Button>
+                    <Button style={{marginLeft: '10px'}} bsStyle="primary" onClick={() => this.setState({
+                        isPopupVisible: false
+                    })}>Close</Button>
+                </CardBody>
+            </Card>
         </Popup>
     }
 

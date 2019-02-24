@@ -121,7 +121,7 @@ export default class Edge extends React.Component <EdgeProps>{
     }
     
     render() {
-        return <g onClick={this.props.onClickEdge}>
+        return <g onClick={this.props.onClickEdge} className="edge-group">
             <path d={this.getPathEquation()} fill="transparent" stroke={nodeColors.strokeColor} strokeWidth={nodeSizes.strokeWidth} />
             <path d={this.getArrowEquation()} fill={nodeColors.strokeColor} />
             {/*this.getArrowEquation()*/}
