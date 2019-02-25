@@ -306,9 +306,9 @@ export default class FlowChart extends Component <AppProps, AppState> {
                 title={node.title}
                 activeIn={node.activeIn}
                 activeOut={node.activeOut}
-                conditionText="Something"
-                triggerText="Something"
-                buildTypeText="Something"
+                condition={node.condition}
+                triggerType={node.triggerType}
+                buildType={node.buildType}
                 environmentList={node.environmentList}
                 onChangeInput={({target}, key) => {this.onChangeInput(target.value, index, key)}}
                 handleMouseDown={(event) => this.handleMouseDown(event, index)}

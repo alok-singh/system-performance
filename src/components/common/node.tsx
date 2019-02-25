@@ -26,9 +26,9 @@ interface NodeProps {
     activeIn: boolean;
     activeOut: boolean;
     environmentList: Array<any>;
-    conditionText: string;
-    triggerText: string;
-    buildTypeText: string;
+    condition: string;
+    triggerType: string;
+    buildType: string;
     handleMouseUp(event: any): void;
     handleMouseDown(event: any): void;
     handleTextChange(event: any): void;
@@ -88,15 +88,15 @@ export default class Node extends React.Component <NodeProps>{
                 <Form>
                     <FormGroup controlId="text" disabled={false}>
                         <ControlLabel>Condition</ControlLabel>
-                        <FormControl type="text" disabled={false} value={this.props.conditionText} onInput={(event) => this.props.onChangeInput(event, 'condition')}/>
+                        <FormControl type="text" disabled={false} value={this.props.condition} onInput={(event) => this.props.onChangeInput(event, 'condition')}/>
                      </FormGroup>
                      <FormGroup controlId="text" disabled={false}>
                         <ControlLabel>Trigger Type</ControlLabel>
-                        <FormControl type="text" disabled={false} value={this.props.triggerText} onInput={(event) => this.props.onChangeInput(event, 'triggerType')}/>
+                        <FormControl type="text" disabled={false} value={this.props.triggerType} onInput={(event) => this.props.onChangeInput(event, 'triggerType')}/>
                     </FormGroup>
                     <FormGroup controlId="text" disabled={false}>
                         <ControlLabel>Build Type</ControlLabel>
-                        <FormControl type="text" disabled={false} value={this.props.buildTypeText} onInput={(event) => this.props.onChangeInput(event, 'buildType')}/>
+                        <FormControl type="text" disabled={false} value={this.props.buildType} onInput={(event) => this.props.onChangeInput(event, 'buildType')}/>
                     </FormGroup>
                 </Form>
                 <CardLink href="#" >
