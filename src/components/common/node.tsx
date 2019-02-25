@@ -88,15 +88,15 @@ export default class Node extends React.Component <NodeProps>{
                 <Form>
                     <FormGroup controlId="text" disabled={false}>
                         <ControlLabel>Condition</ControlLabel>
-                        <FormControl type="text" disabled={false} value={this.props.condition} onInput={(event) => this.props.onChangeInput(event, 'condition')}/>
+                        <FormControl type="text" disabled={false} value={this.props.condition} onChange={(event) => this.props.onChangeInput(event, 'condition')}/>
                      </FormGroup>
                      <FormGroup controlId="text" disabled={false}>
                         <ControlLabel>Trigger Type</ControlLabel>
-                        <FormControl type="text" disabled={false} value={this.props.triggerType} onInput={(event) => this.props.onChangeInput(event, 'triggerType')}/>
+                        <FormControl type="text" disabled={false} value={this.props.triggerType} onChange={(event) => this.props.onChangeInput(event, 'triggerType')}/>
                     </FormGroup>
                     <FormGroup controlId="text" disabled={false}>
                         <ControlLabel>Build Type</ControlLabel>
-                        <FormControl type="text" disabled={false} value={this.props.buildType} onInput={(event) => this.props.onChangeInput(event, 'buildType')}/>
+                        <FormControl type="text" disabled={false} value={this.props.buildType} onChange={(event) => this.props.onChangeInput(event, 'buildType')}/>
                     </FormGroup>
                 </Form>
                 <CardLink href="#" >
