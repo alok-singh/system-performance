@@ -18,6 +18,7 @@ import {
     MenuItem
 } from 'patternfly-react';
 import { notDeepEqual } from 'assert';
+import { node } from 'prop-types';
 
 interface NodeAttr {
     x: number;
@@ -94,19 +95,22 @@ export default class FlowChart extends Component <AppProps, AppState> {
             this.coord.y = event.pageY;
 
             let {nodes} = this.state;
-            let selectedNodes = nodes.filter(node => node.id == id)
 
-            if (selectedNodes.length > 0) {
-                let selectedNode = selectedNodes[0]
-                selectedNode = {
-                    ...selectedNode,
-                    x: selectedNode.x - xDiff,
-                    y: selectedNode.y - yDiff
+            console.log("size: "+nodes.length)
+            console.log("nodes f: "+nodes[0].x + " "+ nodes[0].y)
+            nodes = nodes.map( node => {
+                if (node.id == id) {
+                    node = {
+                        ...node,
+                        x: node.x - xDiff,
+                        y: node.y - yDiff
+
+                    }
                 }
-                this.setState({nodes: nodes});
-            } else {
-                // this.handleMouseUp(event, id)
-            }
+                return node
+            })
+            console.log("nodes a: "+nodes[0].x + " "+ nodes[0].y)
+            this.setState({nodes: nodes});
         }
     };
 
