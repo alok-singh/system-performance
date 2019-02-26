@@ -30,12 +30,12 @@ interface NodeAttr {
     condition: string;
     triggerType: string;
     buildType: string;
-    environments: Array<EnvironmentType>; 
+    environments: EnvironmentType[]; 
     downstreams: string[]
 }
 
 interface AppState {
-    nodes: Array<NodeAttr>;
+    nodes: NodeAttr[];
     isPopupVisible: boolean;
     popupTop: number;
     popupLeft: number;
@@ -63,27 +63,24 @@ export default class FlowChart extends Component <{}, AppState> {
     }
 
     coord: NodePosition | null = null
-    mouseMoveEvent: ((event: any) => void)[] = []
+    
+    mouseMoveEventHandler (event: any) {
+        console.log('nothing to do');
+    }
 
     onClickPopup(event: any) {
         console.log('nothing to do');
     }
 
     handleMouseDown(event: any, id: string) {
-        this.state.nodes
+        this.mouseMoveEventHandler = (event: any) => {this.handleMouseMove(event, id)};
         this.coord = { x: event.pageX, y: event.pageY }
-        this.mouseMoveEvent.push((event: any) => this.handleMouseMove(event, id))
-        document.addEventListener('mousemove', this.mouseMoveEvent[this.mouseMoveEvent.length-1])
+        document.addEventListener('mousemove', this.mouseMoveEventHandler);
     };
 
     handleMouseUp(event: any, id: string) {
-        if(this.mouseMoveEvent.length > 0) {
-            this.mouseMoveEvent.forEach( event => {
-                document.removeEventListener('mousemove', event);
-            })
-            this.mouseMoveEvent = []
-            this.coord = null;
-        } 
+        document.removeEventListener('mousemove', this.mouseMoveEventHandler);
+        this.coord = null;
     };
 
     handleMouseMove = (event: any, id: string) => {
@@ -100,7 +97,6 @@ export default class FlowChart extends Component <{}, AppState> {
                         ...node,
                         x: node.x - xDiff,
                         y: node.y - yDiff
-
                     }
                 }
                 return node
@@ -169,7 +165,7 @@ export default class FlowChart extends Component <{}, AppState> {
             x: 200,
             y: 200,
             title: 'Add text here',
-            id: (new Date()).getTime().toString(36),
+            id: `N${(new Date()).getTime().toString(36)}`,
             activeIn: false,
             activeOut: false,
             condition: '',
@@ -198,9 +194,7 @@ export default class FlowChart extends Component <{}, AppState> {
         this.setState({
             isPopupVisible: false
         }, () => {
-            if(this.mouseMoveEvent.length > 0) {
-                this.mouseMoveEvent.forEach( (event ) => document.removeEventListener('mousemove', event))
-            }
+            document.removeEventListener('mousemove', this.mouseMoveEventHandler);
         });
     }
 
@@ -287,11 +281,17 @@ export default class FlowChart extends Component <{}, AppState> {
     renderEdgeList() {
         return this.state.nodes.map((node, index) => {
             let startNode = node
-            return node.downstreams.map(id => this.state.nodes.filter( node => node.id == id))
-                        .filter( node => node ).map( endNodes => {
-                            let endNode = endNodes[0]
-                            return <Edge key={`edge-${startNode.id}-${endNode.id}`} startNode={startNode} endNode={endNode} onClickEdge={(event: any) => this.onClickEdge(event, startNode.id, endNode.id)}/>
-                        })
+            return node.downstreams.map(id => {
+                return this.state.nodes.filter(node => {
+                    return node.id == id
+                })
+            }).map(([endNode]) => {
+                return <Edge 
+                    key={`edge-${startNode.id}-${endNode.id}`} 
+                    startNode={startNode} endNode={endNode} 
+                    onClickEdge={(event: any) => this.onClickEdge(event, startNode.id, endNode.id)}
+                />
+            });
         })
     }
 
@@ -308,6 +308,7 @@ export default class FlowChart extends Component <{}, AppState> {
                     edgeInProgress: false,
                     startNode: null
                 })}>Clear All</Button>
+                <Button style={{marginLeft: '10px'}} bsStyle="success">Save</Button>
             </CardBody>
         </Card>
     }
