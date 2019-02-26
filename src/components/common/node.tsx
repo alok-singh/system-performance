@@ -25,7 +25,7 @@ interface NodeProps {
     title: string;
     activeIn: boolean;
     activeOut: boolean;
-    environmentList: Array<any>;
+    environments: Array<any>;
     condition: string;
     triggerType: string;
     buildType: string;
@@ -67,7 +67,7 @@ export default class Node extends React.Component <NodeProps>{
     }
 
     renderCardContent() {
-        let environmentTitle = this.props.environmentList.filter(env => env.isActive)[0].title;
+        let environmentTitle = this.props.environments.filter(env => env.isActive)[0].title;
         return <Card>
             <CardHeading>
                 <CardTitle>
@@ -76,7 +76,7 @@ export default class Node extends React.Component <NodeProps>{
                        {this.props.title} 
                     </span>
                     <DropdownButton bsStyle="default" title={environmentTitle} id="dropdown-example">
-                        {this.props.environmentList.map((envionment, index) => {
+                        {this.props.environments.map((envionment, index) => {
                             return <MenuItem key={`env-${index}`} eventKey={index} active={envionment.isActive} onClick={() => this.props.onChangeConfiguration(event, index, envionment.id)}>
                                 {envionment.title}
                             </MenuItem>
