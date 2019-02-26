@@ -48,11 +48,7 @@ interface NodePosition {
     y: number;
 }
 
-interface AppProps {
-
-}
-
-export default class FlowChart extends Component <AppProps, AppState> {
+export default class FlowChart extends Component <{}, AppState> {
 
     constructor(props: any) {
         super(props);
@@ -123,8 +119,8 @@ export default class FlowChart extends Component <AppProps, AppState> {
                     if( !node.downstreams.includes(id)) {
                         node.downstreams.push(id)
                     }
+                    node.activeIn = true
                 })
-                nodes[index].activeIn = true;
                 this.setState({
                     edgeInProgress: false,
                     startNode: null,
@@ -203,9 +199,7 @@ export default class FlowChart extends Component <AppProps, AppState> {
             isPopupVisible: false
         }, () => {
             if(this.mouseMoveEvent.length > 0) {
-                this.mouseMoveEvent.forEach( (event ) => {
-                    document.removeEventListener('mousemove', event);
-                })
+                this.mouseMoveEvent.forEach( (event ) => document.removeEventListener('mousemove', event))
             }
         });
     }
