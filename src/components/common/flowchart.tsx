@@ -67,22 +67,25 @@ export default class FlowChart extends Component <AppProps, AppState> {
     }
 
     coord: NodePosition | null = null
-    mouseMoveEvent: ((event: any) => void) | null = null
+    mouseMoveEvent: ((event: any) => void)[] = []
 
     onClickPopup(event: any) {
         console.log('nothing to do');
     }
 
     handleMouseDown(event: any, id: string) {
+        this.state.nodes
         this.coord = { x: event.pageX, y: event.pageY }
-        this.mouseMoveEvent = (event: any) => this.handleMouseMove(event, id)
-        document.addEventListener('mousemove', this.mouseMoveEvent)
+        this.mouseMoveEvent.push((event: any) => this.handleMouseMove(event, id))
+        document.addEventListener('mousemove', this.mouseMoveEvent[this.mouseMoveEvent.length-1])
     };
 
     handleMouseUp(event: any, id: string) {
-        if(this.mouseMoveEvent) {
-            document.removeEventListener('mousemove', this.mouseMoveEvent);
-            this.mouseMoveEvent = null
+        if(this.mouseMoveEvent.length > 0) {
+            this.mouseMoveEvent.forEach( event => {
+                document.removeEventListener('mousemove', event);
+            })
+            this.mouseMoveEvent = []
             this.coord = null;
         } 
     };
@@ -93,11 +96,8 @@ export default class FlowChart extends Component <AppProps, AppState> {
             let yDiff = this.coord.y - event.pageY;
             this.coord.x = event.pageX;
             this.coord.y = event.pageY;
-
             let {nodes} = this.state;
 
-            console.log("size: "+nodes.length)
-            console.log("nodes f: "+nodes[0].x + " "+ nodes[0].y)
             nodes = nodes.map( node => {
                 if (node.id == id) {
                     node = {
@@ -109,7 +109,6 @@ export default class FlowChart extends Component <AppProps, AppState> {
                 }
                 return node
             })
-            console.log("nodes a: "+nodes[0].x + " "+ nodes[0].y)
             this.setState({nodes: nodes});
         }
     };
@@ -117,15 +116,14 @@ export default class FlowChart extends Component <AppProps, AppState> {
     handleClickCircle(event: any, index: number, id: string, isInput: boolean) {
         let {edgeInProgress, nodes, startNode} = this.state;
         if(edgeInProgress && isInput && startNode && startNode.id != id) {
-            if(startNode.x < nodes[index].x){
-                let startNodes = nodes.filter( node => startNode && node.id == startNode.id )
-                if( startNodes.length > 0 ) {
-                    startNodes.forEach( node => {
-                        if( !node.downstreams.includes(id)) {
-                            node.downstreams.push(id)
-                        }
-                    })
-                }
+            let startNodes = nodes.filter( node => startNode && node.id == startNode.id )
+            let endNodes = nodes.filter( node => node.id == id )
+            if( startNodes.length > 0 && endNodes.length > 0 && startNodes[0].x < endNodes[0].x) {
+                startNodes.forEach( node => {
+                    if( !node.downstreams.includes(id)) {
+                        node.downstreams.push(id)
+                    }
+                })
                 nodes[index].activeIn = true;
                 this.setState({
                     edgeInProgress: false,
@@ -204,8 +202,10 @@ export default class FlowChart extends Component <AppProps, AppState> {
         this.setState({
             isPopupVisible: false
         }, () => {
-            if(this.mouseMoveEvent) {
-                document.removeEventListener('mousemove', this.mouseMoveEvent);
+            if(this.mouseMoveEvent.length > 0) {
+                this.mouseMoveEvent.forEach( (event ) => {
+                    document.removeEventListener('mousemove', event);
+                })
             }
         });
     }
