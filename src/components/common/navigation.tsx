@@ -20,7 +20,7 @@ export default class Navigation extends Component <any, any> {
     render() {
         return (
             <div style={{transform: 'translateZ(0px)', height: '100vh', paddingTop: '60px'}} >
-                <div className="layout-pf layout-pf-fixed faux-layout">
+                <div className="layout-pf layout-pf-fixed faux-layout" style={{minHeight: '0px'}}>
                     <MasterHead brandName="DevTron" onClickLogo={() => {this.onClickLogo(event)}} />
                     <VerticalNavCustom items={this.props.item} sideBarCollapsed={this.state.sideBarCollapsed} />
                     <div className={`container-fluid container-cards-pf container-pf-nav-pf-vertical nav-pf-persistent-secondary nav-pf-vertical-with-badges ${this.state.sideBarCollapsed ? 'collapsed-nav' : ''}`}>
@@ -33,27 +33,3 @@ export default class Navigation extends Component <any, any> {
         );
     }
 }
-
-
-/*import React, { Component } from 'react'
-import {VerticalNav} from 'patternfly-react'
-
-export default class Navigation extends Component <any> {
-
-    render() {
-        return (
-            <div style={{transform: 'translateZ(0px)', height: '100vh', paddingTop: '60px'}} >
-                <div className="layout-pf layout-pf-fixed faux-layout">
-                    <VerticalNav items={this.props.item} showBadges >
-                        <VerticalNav.Masthead title="DevTron" />
-                    </VerticalNav>
-                    <div className="container-fluid container-cards-pf container-pf-nav-pf-vertical nav-pf-persistent-secondary nav-pf-vertical-with-badges">
-                        <div className="row row-cards-pf">
-                            {this.props.children}
-                        </div>
-                    </div>
-                 </div>
-            </div>
-        );
-    }
-}*/

@@ -64,10 +64,11 @@ svg {
 .popup-option {
     position: fixed;
     background: #fff;
+    z-index: 9999;
 }
 
 .svg-wrapper {
-    height: calc(100vh - 205px);
+    height: calc(100vh - 256px);
     overflow: scroll;
 }
 

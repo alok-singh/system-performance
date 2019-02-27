@@ -1,4 +1,5 @@
 import React, {Component} from 'react';
+import {generateNode} from '../helpers/stepGenerator';
 
 import {
 	Card,
@@ -33,14 +34,10 @@ export default class CreateDockerPage extends Component <{}, CreateDockerState>{
 	constructor(props) {
 		super(props);
 		this.state = {
-			steps: [
-				{
-					id: '123',
-					command: 'rm -rf ./dist'
-				}
-			]
+			steps: [generateNode()]
 		}
 		this.handleClickAddStep = this.handleClickAddStep.bind(this);
+		this.handleClickClearAll = this.handleClickClearAll.bind(this);
 	}
 
 	handleStepsRemove(index) {
@@ -51,16 +48,12 @@ export default class CreateDockerPage extends Component <{}, CreateDockerState>{
 
 	handleStepsInsert(index) {
 		let {steps} = this.state;
-		
-	}
 
+	}
 
 	handleClickAddStep() {
 		let {steps} = this.state;
-		steps.push({
-			id: `S${(new Date()).getTime().toString(36)}`,
-			command: ''
-		});
+		steps.push(generateNode());
 		this.setState({steps});
 	}
 
@@ -69,6 +62,14 @@ export default class CreateDockerPage extends Component <{}, CreateDockerState>{
 		steps[index][key] = value;
 		this.setState({
 			steps
+		});
+	}
+
+	handleClickClearAll() {
+		this.setState({
+			steps: [
+				generateNode()
+			]
 		});
 	}
 
@@ -81,35 +82,34 @@ export default class CreateDockerPage extends Component <{}, CreateDockerState>{
    	            This is some basic text about how to create docker file and it also describes how the file is generated ant how it is used
    	        </CardBody>
    	        <CardFooter>
-   	        	<Button bsStyle="danger">Clear All</Button>
+   	        	<Button bsStyle="danger" onClick={this.handleClickClearAll}>Clear All</Button>
    	        	<Button style={{marginLeft: '10px'}} bsStyle="success">Save</Button>
    	        </CardFooter>
    	    </Card>
    	}
 
    	renderCardList() {
-   		return <Card>
+   		return <div style={{height: 'calc(100vh - 256px)', overflowY: 'scroll'}}>
    			{this.state.steps.map((step, index) => {
    				let showAddButton = (index == (this.state.steps.length - 1));
-		   		return <CardBody key={`step-${step.id}`}>
+		   		return <CardBody key={`step-${step.id}`} style={{margin: '0px'}}>
 		            <Grid>
-		            	<Col sm={1}>
+		            	<Col sm={2} style={{textAlign: 'right'}}>
 		            		Step {index + 1}
 		            	</Col>
-		            	<Col sm={11}>
+		            	<Col sm={10}>
 			            	<Form inline>
 			   	            <FormGroup controlId="command" disabled={false}>
 			   	            	<FormControl type="text" placeholder="command" disabled={false} style={{width: '400px'}} value={step.command} onChange={({target}) => {this.handleInputChange(target.value, 'command', index)}} />
-			   	            	{index ? <Button bsStyle="danger" onClick={() => this.handleStepsRemove(index)} style={{marginLeft: '10px'}}>Remove</Button> : null}
-			   	            	{index ? <Button bsStyle="primary" onClick={() => this.handleStepsInsert(index)} style={{marginLeft: '10px'}}>Add Above</Button> : null}
-			   	            	{showAddButton ? <Button bsStyle="primary" style={{marginLeft: '10px'}} onClick={this.handleClickAddStep}>Add More</Button> : null}
+			   	            	{index ? <Button bsStyle="danger" onClick={() => this.handleStepsRemove(index)} style={{marginLeft: '10px'}}>-</Button> : null}
+			   	            	{showAddButton ? <Button bsStyle="primary" style={{marginLeft: '10px'}} onClick={this.handleClickAddStep}>+</Button> : null}
 			   	            </FormGroup>
 			   	            </Form>
 		   	        	</Col>
 		   	        </Grid>
 		        </CardBody>
 		    })}
-		</Card>
+		</div>
    	}
 
     render() {

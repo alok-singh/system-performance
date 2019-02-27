@@ -1,4 +1,5 @@
 import React, {Component} from 'react';
+
 import Node from './node';
 import Edge from './edge';
 import Defs from './defs';
@@ -15,10 +16,9 @@ import {
     CardBody,
     Card,
     CardDropdownButton,
-    MenuItem
+    MenuItem,
+    CardFooter
 } from 'patternfly-react';
-import { notDeepEqual } from 'assert';
-import { node } from 'prop-types';
 
 interface NodeAttr {
     x: number;
@@ -161,19 +161,7 @@ export default class FlowChart extends Component <{}, AppState> {
 
     onClickAddNode() {
         let {nodes} = this.state;
-        nodes.push({
-            x: 200,
-            y: 200,
-            title: 'Add text here',
-            id: `N${(new Date()).getTime().toString(36)}`,
-            activeIn: false,
-            activeOut: false,
-            condition: '',
-            triggerType: '',
-            buildType: '',
-            environments: JSON.parse(JSON.stringify(environments)),
-            downstreams: []
-        });
+        nodes.push();
         
         this.setState({
             nodes: nodes
@@ -298,9 +286,12 @@ export default class FlowChart extends Component <{}, AppState> {
     renderAddButton() {
         return <Card>
             <CardTitle>
-                Controls
+                Create Flow Chart
             </CardTitle>
             <CardBody>
+                This is some basic text about how to create a flowchart and it also describes how the flow chart is running at the maching.
+            </CardBody>
+            <CardFooter>
                 <Button bsStyle="primary" onClick={() => this.onClickAddNode()}>Add Node</Button>
                 <Button bsStyle="danger" style={{marginLeft: '10px'}} onClick={() => this.setState({
                     nodes: [],
@@ -309,7 +300,7 @@ export default class FlowChart extends Component <{}, AppState> {
                     startNode: null
                 })}>Clear All</Button>
                 <Button style={{marginLeft: '10px'}} bsStyle="success">Save</Button>
-            </CardBody>
+            </CardFooter>
         </Card>
     }
 
