@@ -6,7 +6,8 @@ import Defs from './defs';
 import BackDrop from './backdrop';
 import Popup from './popup';
 
-import {EnvironmentList as environments, EnvironmentType} from '../config/buildConfigurations';
+import {EnvironmentType} from '../config/buildConfigurations';
+import {generateNode} from '../helpers/nodeGenerator';
 
 import '../../css/flowchart.css';
 
@@ -161,7 +162,7 @@ export default class FlowChart extends Component <{}, AppState> {
 
     onClickAddNode() {
         let {nodes} = this.state;
-        nodes.push();
+        nodes.push(generateNode());
         
         this.setState({
             nodes: nodes
