@@ -15,6 +15,11 @@ export const navigationItemList: Array<navigationItem>  = [{
     initialActive: false,
     iconClass: "fa fa-file-text",
     href: "/create-docker"
+}, {
+    title: "Graphs",
+    initialActive: false,
+    iconClass: "fa fa-file-text",
+    href: "/graphs"
 }]
 
 export const navigationListProvider = (url: string): Array<navigationItem> => {
