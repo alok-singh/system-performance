@@ -10,9 +10,9 @@ interface SizeStore {
 }
 
 export const nodeSizes: SizeStore = {
-	nodeHeight: 218,
-	nodeWidth: 250,
-	strokeWidth: 1,
+	nodeHeight: 105,
+	nodeWidth: 200,
+	strokeWidth: 3,
 	borderRadius: 5,
 	circleRadius: 5,
 	distanceA: 10,	

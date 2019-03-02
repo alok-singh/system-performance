@@ -40,92 +40,55 @@ interface NodeProps {
 
 export default class Node extends React.Component <NodeProps>{
 
-    renderRectangle() {
-        return <rect 
-            x={this.props.x} 
-            y={this.props.y} 
-            width={nodeSizes.nodeWidth} 
-            height={nodeSizes.nodeHeight} 
-            rx={nodeSizes.borderRadius} 
-            ry={nodeSizes.borderRadius} 
-            fill="#fff"
-            stroke="rgba(0,0,0,0.38)"
-            strokeWidth={nodeSizes.strokeWidth}
-        />
-    }
-
-    renderCircle(offsetX: number, offsetY: number, onClickHandler: (event:any) => void, isActive: boolean, fillColor: string = nodeColors.strokeColor) {
-        return <circle 
-            r={nodeSizes.circleRadius} 
-            cx={this.props.x + offsetX} 
-            cy={this.props.y + offsetY} 
-            onClick={onClickHandler}
-            fill={fillColor} 
-            stroke="rgba(0,0,0,0.38)"
-            className={isActive ? "active" : ""}
-        />
-    }
-
     renderCardContent() {
         let environmentTitle = this.props.environments.filter(env => env.isActive)[0].title;
-        return <Card>
-            <CardHeading>
-                <CardTitle>
-                    <Icon name="shield" />
-                    <span className="text-container" suppressContentEditableWarning={true} contentEditable={true} onChange={this.props.handleTextChange}>
-                       {this.props.title} 
-                    </span>
-                    <DropdownButton bsStyle="default" title={environmentTitle} id="dropdown-example">
-                        {this.props.environments.map((envionment, index) => {
-                            return <MenuItem key={`env-${index}`} eventKey={index} active={envionment.isActive} onClick={() => this.props.onChangeConfiguration(event, index, envionment.id)}>
-                                {envionment.title}
-                            </MenuItem>
-                        })}
-                    </DropdownButton>
-                </CardTitle>
-            </CardHeading>
-            <CardBody>
-                <Form>
-                    <FormGroup controlId="text" disabled={false}>
-                        <ControlLabel>Condition</ControlLabel>
-                        <FormControl type="text" disabled={false} value={this.props.condition} onChange={(event) => this.props.onChangeInput(event, 'condition')}/>
-                     </FormGroup>
-                     <FormGroup controlId="text" disabled={false}>
-                        <ControlLabel>Trigger Type</ControlLabel>
-                        <FormControl type="text" disabled={false} value={this.props.triggerType} onChange={(event) => this.props.onChangeInput(event, 'triggerType')}/>
-                    </FormGroup>
-                    <FormGroup controlId="text" disabled={false}>
-                        <ControlLabel>Build Type</ControlLabel>
-                        <FormControl type="text" disabled={false} value={this.props.buildType} onChange={(event) => this.props.onChangeInput(event, 'buildType')}/>
-                    </FormGroup>
-                </Form>
-                <CardLink href="#" >
-                    Git diff
-                </CardLink>
+        return <Card style={{position: 'relative', height: '100%', padding: '0px', margin: '0px'}}>
+            <CardTitle style={{padding: '5px 10px', margin: '0px', borderBottom: '1px solid #d1d1d1'}}>
+                <input placeholder="Add title" value={this.props.title} onChange={this.props.handleTextChange} style={{border: 'none', fontSize: '14px'}} />
+            </CardTitle>
+            <CardBody style={{padding: '10px', margin: '0px'}} >
+                <DropdownButton bsStyle="default" title={environmentTitle} id="dropdown-example">
+                    {this.props.environments.map((envionment, index) => {
+                        return <MenuItem key={`env-${index}`} eventKey={index} active={envionment.isActive} onClick={() => this.props.onChangeConfiguration(event, index, envionment.id)}>
+                            {envionment.title}
+                        </MenuItem>
+                    })}
+                </DropdownButton>
+                <div 
+                    className={this.props.activeIn ? "active junction" : "junction"}
+                    onClick={(event) => this.props.handleClickCircle(event, true)}
+                    style={{left: '0px'}}
+                />
+                <div 
+                    className={this.props.activeOut ? "active junction" : "junction"}
+                    onClick={(event) => this.props.handleClickCircle(event, false)}
+                    style={{right: '0px', transform: 'translate(50%, -50%)'}}
+                />
+                <div 
+                    className="option-button fa fa-trash"
+                    onClick={this.props.handleClickOptions}
+                />
             </CardBody>
         </Card>
     }
 
     renderTextArea() {
-        return <foreignObject 
-            style={{borderRadius: '5px'}}
+        return <foreignObject
             x={this.props.x} 
             y={this.props.y} 
             width={nodeSizes.nodeWidth} 
             height={nodeSizes.nodeHeight}
             onMouseDown={this.props.handleMouseDown} 
-            onMouseUp={this.props.handleMouseUp}>
-                {this.renderCardContent()}
+            onMouseUp={this.props.handleMouseUp}
+            style={{overflow: 'visible', position: 'relative'}}
+        >
+            {this.renderCardContent()}
         </foreignObject>
     }
 
     render() {
         return <g>
-            {this.renderRectangle()}
             {this.renderTextArea()}
-            {this.renderCircle(0, nodeSizes.nodeHeight/2, (event) => this.props.handleClickCircle(event, true), this.props.activeIn)}
-            {this.renderCircle(nodeSizes.nodeWidth, nodeSizes.nodeHeight/2, (event) => this.props.handleClickCircle(event, false), this.props.activeOut)}
-            {this.renderCircle(nodeSizes.nodeWidth - 10, 10, this.props.handleClickOptions, false, nodeColors.orange)}
         </g>
     }
 }

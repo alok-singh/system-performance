@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 
 import Node from './node';
-import Edge from './edge';
+import Edge from './rectangularEdge';
 import Defs from './defs';
 import BackDrop from './backdrop';
 import Popup from './popup';
@@ -42,6 +42,12 @@ interface AppState {
     popupLeft: number;
     edgeInProgress: boolean;
     startNode: NodeAttr | null;
+    topEdge: EdgeType;
+}
+
+interface EdgeType {
+    startNode: NodeAttr;
+    endNode: NodeAttr;
 }
 
 interface NodePosition {
@@ -59,37 +65,43 @@ export default class FlowChart extends Component <{}, AppState> {
             popupTop: 0,
             popupLeft: 0,
             edgeInProgress: false,
-            startNode: null
+            startNode: null,
+            topEdge: null
         };
+        this.onClickSVG = this.onClickSVG.bind(this);
     }
 
     coord: NodePosition | null = null
     
-    mouseMoveEventHandler (event: any) {
-        console.log('nothing to do');
-    }
+    mouseMoveEvent: ((event: any) => void)[] = []
 
     onClickPopup(event: any) {
         console.log('nothing to do');
     }
 
     handleMouseDown(event: any, id: string) {
-        this.mouseMoveEventHandler = (event: any) => {this.handleMouseMove(event, id)};
         this.coord = { x: event.pageX, y: event.pageY }
-        document.addEventListener('mousemove', this.mouseMoveEventHandler);
+        this.mouseMoveEvent.push((event: any) => this.handleMouseMove(event, id))
+        document.addEventListener('mousemove', this.mouseMoveEvent[this.mouseMoveEvent.length-1])
     };
 
     handleMouseUp(event: any, id: string) {
-        document.removeEventListener('mousemove', this.mouseMoveEventHandler);
-        this.coord = null;
-    };
+        if(this.mouseMoveEvent.length > 0) {
+            this.mouseMoveEvent.forEach( event => {
+                document.removeEventListener('mousemove', event);
+            })
+            this.mouseMoveEvent = []
+            this.coord = null;
+        } 
+    }
 
-    handleMouseMove = (event: any, id: string) => {
+    handleMouseMove (event: any, id: string) {
         if (this.coord) {
             let xDiff = this.coord.x - event.pageX;
             let yDiff = this.coord.y - event.pageY;
             this.coord.x = event.pageX;
             this.coord.y = event.pageY;
+            
             let {nodes} = this.state;
 
             nodes = nodes.map( node => {
@@ -102,22 +114,19 @@ export default class FlowChart extends Component <{}, AppState> {
                 }
                 return node
             })
-            this.setState({nodes: nodes});
+            this.setState({nodes: nodes, topEdge: null});
         }
     };
 
     handleClickCircle(event: any, index: number, id: string, isInput: boolean) {
         let {edgeInProgress, nodes, startNode} = this.state;
         if(edgeInProgress && isInput && startNode && startNode.id != id) {
-            let startNodes = nodes.filter( node => startNode && node.id == startNode.id )
-            let endNodes = nodes.filter( node => node.id == id )
-            if( startNodes.length > 0 && endNodes.length > 0 && startNodes[0].x < endNodes[0].x) {
-                startNodes.forEach( node => {
-                    if( !node.downstreams.includes(id)) {
-                        node.downstreams.push(id)
-                    }
-                    node.activeIn = true
-                })
+            let endNode = nodes.find(node => node.id == id);
+            if(startNode.x < endNode.x) {
+                if(!startNode.downstreams.includes(id)) {
+                    startNode.downstreams.push(id)
+                }
+                endNode.activeIn = true;
                 this.setState({
                     edgeInProgress: false,
                     startNode: null,
@@ -149,15 +158,9 @@ export default class FlowChart extends Component <{}, AppState> {
     handleTextChange(event:any, id:string) {
         let value = event.target.value;
         let {nodes} = this.state;
-        let node = nodes.filter(node => node.id == id)
-        
-        if(node.length > 0) {
-            nodes.push({
-                ...node[0],
-                title: value,
-            })
-            this.setState({ nodes: nodes })
-        }
+        let node = nodes.find(node => node.id == id)
+        node.title = value;
+        this.setState({ nodes: nodes })
     }
 
     onClickAddNode() {
@@ -183,9 +186,12 @@ export default class FlowChart extends Component <{}, AppState> {
         this.setState({
             isPopupVisible: false
         }, () => {
-            document.removeEventListener('mousemove', this.mouseMoveEventHandler);
+            if(this.mouseMoveEvent.length > 0) {
+                this.mouseMoveEvent.forEach((event) => document.removeEventListener('mousemove', event))
+            }
         });
     }
+
 
     onDeleteEdge(startNodeId: string, endNodeId: string) {
         let nodes = this.state.nodes
@@ -242,6 +248,41 @@ export default class FlowChart extends Component <{}, AppState> {
         });
     }
 
+    onMouseOverEdge(startNode, endNode) {
+        this.setState({
+            topEdge: {
+                startNode,
+                endNode
+            }
+        })
+    }
+
+    getEdgeList(): EdgeType[] {
+        let edges = this.state.nodes.reduce((edgeList, node) => {
+            node.downstreams.forEach(nodeID => {
+                let endNode = this.state.nodes.find(val => val.id == nodeID);
+                edgeList.push({
+                    startNode: node,
+                    endNode: endNode
+                });
+            });
+            return edgeList;
+        }, []);
+
+        if(this.state.topEdge){
+            let {topEdge} = this.state;
+            let atWhich = edges.findIndex(edge => {
+                if(edge.startNode.id == topEdge.startNode.id && edge.endNode.id == topEdge.endNode.id){
+                    return true;
+                }
+            });
+            edges = edges.slice(0, atWhich).concat(edges.slice(atWhich + 1));
+            edges.push(topEdge);
+        }
+
+        return edges;
+    }
+
     renderNodeList() {
         return this.state.nodes.map((node, index) => {
             return <Node 
@@ -268,19 +309,17 @@ export default class FlowChart extends Component <{}, AppState> {
     }
 
     renderEdgeList() {
-        return this.state.nodes.map((node, index) => {
-            let startNode = node
-            return node.downstreams.map(id => {
-                return this.state.nodes.filter(node => {
-                    return node.id == id
-                })
-            }).map(([endNode]) => {
-                return <Edge 
-                    key={`edge-${startNode.id}-${endNode.id}`} 
-                    startNode={startNode} endNode={endNode} 
-                    onClickEdge={(event: any) => this.onClickEdge(event, startNode.id, endNode.id)}
-                />
-            });
+        return this.getEdgeList().map(edgeNode => {
+            let startNode: any = edgeNode.startNode;
+            let endNode: any = edgeNode.endNode;
+            return <Edge
+                key={`edge-${startNode.id}-${endNode.id}`} 
+                startNode={startNode} 
+                endNode={endNode} 
+                onClickEdge={(event: any) => this.onClickEdge(event, startNode.id, endNode.id)}
+                deleteEdge={() => this.onDeleteEdge(startNode.id, endNode.id)}
+                onMouseOverEdge={(startNode, endNode) => this.onMouseOverEdge(startNode, endNode)}
+            />
         })
     }
 
