@@ -155,7 +155,7 @@ export default class FlowChart extends Component <{}, AppState> {
         }
     }
 
-    handleTextChange(event:any, id:string) {
+    handleTitleChange(event:any, id:string) {
         let value = event.target.value;
         let {nodes} = this.state;
         let node = nodes.find(node => node.id == id)
@@ -200,7 +200,8 @@ export default class FlowChart extends Component <{}, AppState> {
         })
         this.setState({
             nodes: nodes,
-            isPopupVisible: false
+            isPopupVisible: false,
+            topEdge: null
         });
     }
 
@@ -211,7 +212,8 @@ export default class FlowChart extends Component <{}, AppState> {
         })
         this.setState({
             nodes: nodes,
-            isPopupVisible: false
+            isPopupVisible: false,
+            topEdge: null
         })
     }
 
@@ -240,7 +242,7 @@ export default class FlowChart extends Component <{}, AppState> {
 
     onChangeInput(value: string, id: string, key: string) {
         let {nodes} = this.state;
-        nodes.filter(node => node.id == id). forEach( node => {
+        nodes.filter(node => node.id == id).forEach( node => {
             node[key] = value
         })
         this.setState({
@@ -301,7 +303,7 @@ export default class FlowChart extends Component <{}, AppState> {
                 handleMouseDown={(event) => this.handleMouseDown(event, node.id)}
                 handleMouseUp={(event) => this.handleMouseUp(event, node.id)}
                 handleClickCircle={(event, isInput) => this.handleClickCircle(event, index, node.id, isInput)}
-                handleTextChange={(event) => this.handleTextChange(event, node.id)}
+                handleTitleChange={(event) => this.handleTitleChange(event, node.id)}
                 handleClickOptions={(event) => this.handleClickOptions(event, node)}
                 onChangeConfiguration={(event, listIndex, envID) => this.onChangeConfiguration(event, listIndex, envID, index)}
             />

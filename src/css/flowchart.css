@@ -1,6 +1,7 @@
 svg {
     width: 2000px;
     height: 1000px;
+    user-select: none;
 }
 
 .svg-wrapper {
@@ -10,6 +11,7 @@ svg {
 
 .svg-wrapper .card-pf {
     border: 1px solid #eaeaea;
+    border-top: 3px solid #0065a1;
 }
 
 .svg-wrapper .card-pf .junction {
@@ -51,4 +53,12 @@ svg {
     font-size: 18px;
     position: absolute;
     cursor: pointer;
+}
+
+.flow-chart .svg-wrapper .card-pf-body .dropdown {
+    width: 82px;
+}
+
+.flow-chart .svg-wrapper .card-pf-body .dropdown button {
+    width: 100%
 }
