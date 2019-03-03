@@ -339,7 +339,8 @@ export default class FlowChart extends Component <{}, AppState> {
                     nodes: [],
                     isPopupVisible: false,
                     edgeInProgress: false,
-                    startNode: null
+                    startNode: null,
+                    topEdge: null
                 })}>Clear All</Button>
                 <Button style={{marginLeft: '10px'}} bsStyle="success">Save</Button>
             </CardFooter>
