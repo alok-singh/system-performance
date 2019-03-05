@@ -18,8 +18,13 @@ export const navigationItemList: Array<navigationItem>  = [{
 }, {
     title: "Graphs",
     initialActive: false,
-    iconClass: "fa fa-file-text",
+    iconClass: "fa fa-area-chart",
     href: "/graphs"
+}, {
+    title: "Git Repositories",
+    initialActive: false,
+    iconClass: "fa fa-github-square",
+    href: "/git-repositories"
 }]
 
 export const navigationListProvider = (url: string): Array<navigationItem> => {

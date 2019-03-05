@@ -4,6 +4,7 @@ import { Route, Switch } from 'react-router-dom'
 import FlowChart from './components/flowChart/main';
 import CreateDocker from './components/createDocker/main';
 import Graphs from './components/graphs/main';
+import GitRepositories from './components/gitRepos/main';
 
 import Navigation from './components/common/navigation';
 import { navigationListProvider } from './components/config/navigationConfig';
@@ -24,6 +25,7 @@ class App extends Component {
 	            	<Route exact path="/flow-chart" component={FlowChart} />
 	            	<Route exact path="/create-docker" component={CreateDocker} />
 	            	<Route exact path="/graphs" component={Graphs} />
+	            	<Route exact path="/git-repositories" component={GitRepositories} />
 	            </Navigation>
 	        </Switch>
 	    );
