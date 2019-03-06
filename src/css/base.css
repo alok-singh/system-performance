@@ -1,0 +1,99 @@
+.u-hide {
+    display: none !important;
+}
+.font-black {
+    color: #363636;
+}
+.w-80, .ci-config-form {
+    width: 80%;
+}
+.small-text {
+    font-size: 9px;
+}
+.float-right {
+    float: right;
+}
+.flex-justify {
+    justify-content: space-between;
+}
+.transparent {
+    background: transparent;
+    border: none;
+}
+button:focus {
+    outline: none;
+}
+
+.m-0 {
+    margin: 0px;
+}
+.m-5 {
+    margin: 5px;
+}
+.m-tb-20 {
+    margin-top: 20px;
+    margin-bottom: 20px; 
+}
+.p-lr-0 {
+    padding-left: 0px;
+    padding-right: 0px;
+}
+.text-center {
+    text-align: center;
+}
+.deployment-status-bar {
+    width: 40%;
+    border: solid 1px black;
+    height: 16px;
+    margin: 7px auto;
+}
+.w-100 {
+    width: 100%;
+}
+.flexbox {
+    display: flex;
+}
+.p-25 {
+    padding-top: 25px;
+    padding-bottom: 25px;
+}
+.mt-25 {
+    margin-top: 25px;
+    margin-bottom: 25px;
+}
+.margin-auto {
+    margin: auto;
+}
+textarea.form-control {
+    height: 290px !important;
+}
+.mt-45 {
+    margin-top: 45px !important;
+}
+.bg-gray {
+    background-color: rgba(0, 0, 0, 0.02);
+}
+.source-config-form {
+    width: 70%;
+    margin: auto;
+}
+.m-lr-0 {
+    margin-left: 0px;
+    margin-right: 0px; 
+}
+.align-right {
+    display: block;
+    margin-left: auto; 
+}
+hr {
+    margin: 5px auto !important; 
+}
+.bold {
+    font-weight: 600;
+}
+.args {
+    max-height: 400px;
+}
+.deployment-template {
+    width: 70%;
+}

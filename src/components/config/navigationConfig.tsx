@@ -25,6 +25,46 @@ export const navigationItemList: Array<navigationItem>  = [{
     initialActive: false,
     iconClass: "fa fa-github-square",
     href: "/git-repositories"
+}, {
+    title: "App List",
+    initialActive: false,
+    iconClass: "fa fa-github-square",
+    href: "/list/apps"
+}, {
+    title: "Docker Registries",
+    initialActive: false,
+    iconClass: "fa fa-github-square",
+    href: "/list/docker-registries"
+}, {
+    title: "Docker Registration",
+    initialActive: false,
+    iconClass: "fa fa-github-square",
+    href: "/form/docker-register"
+}, {
+    title: "CI Configurations",
+    initialActive: false,
+    iconClass: "fa fa-github-square",
+    href: "/form/ci-config"
+}, {
+    title: "Source Configurations",
+    initialActive: false,
+    iconClass: "fa fa-github-square",
+    href: "/form/source-config"
+}, {
+    title: "Deployment Template",
+    initialActive: false,
+    iconClass: "fa fa-github-square",
+    href: "/form/deployment-template"
+}, {
+    title: "Git Repository Configuration",
+    initialActive: false,
+    iconClass: "fa fa-github-square",
+    href: "/form/git-repo-config"
+}, {
+    title: "Git Repository List",
+    initialActive: false,
+    iconClass: "fa fa-github-square",
+    href: "/list/git-repos"
 }]
 
 export const navigationListProvider = (url: string): Array<navigationItem> => {
