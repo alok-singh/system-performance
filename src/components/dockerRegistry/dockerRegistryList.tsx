@@ -4,7 +4,7 @@ import { withRouter, Link } from 'react-router-dom';
 
 import * as resolve from 'table-resolver';
 
-import {Host, Routes } from '../config/constants';
+import {Host, Routes } from '../../config/constants';
 import DockerRegistryConfig from '../common/dockerRegistryConfigForm';
 
 import { 
@@ -13,10 +13,7 @@ import {
     Grid, 
     Row, 
     Col, 
-    Button 
-} from 'patternfly-react'
-
-import {
+    Button,
     customHeaderFormattersDefinition,
     tableCellFormatter,
     Table
@@ -178,8 +175,6 @@ export class DockerRegistryList extends Component<{}, DockerRegistryListState> {
         this.getDockerRegistryList();
     }
 
-
-
     getDockerRegistryList = () => {
         const URL = `${Host}${Routes.DOCKER_REGISTRY_CONFIG}`;
 
@@ -207,10 +202,7 @@ export class DockerRegistryList extends Component<{}, DockerRegistryListState> {
                 }, 2000);
             }
         )
-
-
     }
-
 
     //Clears error messages and response code
     closeNotification = () => {
@@ -226,9 +218,20 @@ export class DockerRegistryList extends Component<{}, DockerRegistryListState> {
         let successCodes = new Set([200, 201, 202, 203, 204, 205, 206, 207, 208, 226]);
 
         if (successCodes.has(code)) {
-            return (
-                <ToastNotification type="success">
-                    <span>Docker Registry Found</span>
+            return <ToastNotification type="success">
+                <span>Docker Registry Found</span>
+                <div className="pull-right toast-pf-action">
+                    <Button bsClass="transparent"
+                        onClick={this.closeNotification}>
+                        <span className="fa fa-close"></span>
+                    </Button>
+                </div>
+            </ToastNotification>
+        }
+        else {
+            errors.map((element) => {
+                return <ToastNotification type="error">
+                    <span>Error!!!{element.userMessage}</span>
                     <div className="pull-right toast-pf-action">
                         <Button bsClass="transparent"
                             onClick={this.closeNotification}>
@@ -236,24 +239,7 @@ export class DockerRegistryList extends Component<{}, DockerRegistryListState> {
                         </Button>
                     </div>
                 </ToastNotification>
-            )
-        }
-        else {
-            errors.map((element) => {
-                return (
-                    <ToastNotification type="error">
-                        <span>Error!!!{element.userMessage}</span>
-                        <div className="pull-right toast-pf-action">
-                            <Button bsClass="transparent"
-                                onClick={this.closeNotification}>
-                                <span className="fa fa-close"></span>
-                            </Button>
-                        </div>
-                    </ToastNotification>
-                )
-            }
-
-            );
+            });
         }
     }
 

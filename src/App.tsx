@@ -4,7 +4,6 @@ import { Route, Switch } from 'react-router-dom'
 import FlowChart from './components/flowChart/main';
 import CreateDocker from './components/createDocker/main';
 import Graphs from './components/graphs/main';
-import GitRepositories from './components/gitRepos/main';
 import AppList from './components/appList/main';
 import DockerRegistryList from './components/dockerRegistry/main';
 import DockerRegistryConfigEdit from './components/dockerRegistryEdit/main';
@@ -16,7 +15,7 @@ import GitRepoList from './components/gitRepoList/main';
 
 
 import Navigation from './components/common/navigation';
-import { navigationListProvider } from './components/config/navigationConfig';
+import { navigationListProvider } from './config/navigationConfig';
 
 
 import 'patternfly/dist/css/patternfly.css';
@@ -35,7 +34,6 @@ class App extends Component {
 	            	<Route exact path="/flow-chart" component={FlowChart} />
 	            	<Route exact path="/create-docker" component={CreateDocker} />
 	            	<Route exact path="/graphs" component={Graphs} />
-	            	<Route exact path="/git-repositories" component={GitRepositories} />
 	            	<Route exact path="/list/apps" component={AppList} />
 					<Route exact path="/list/docker-registries" component={DockerRegistryList} />
 	            	<Route exact path="/form/docker-register" component={DockerRegistryConfigEdit} />

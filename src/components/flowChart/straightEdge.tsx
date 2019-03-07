@@ -1,6 +1,6 @@
 import * as React from 'react';
-import {nodeSizes} from '../config/sizes';
-import {nodeColors} from '../config/colors';
+import {nodeSizes} from '../../config/sizes';
+import {nodeColors} from '../../config/colors';
 
 
 interface EdgeProps {

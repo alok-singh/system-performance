@@ -23,7 +23,7 @@ import {
     Popover, OverlayTrigger  
 } from 'patternfly-react'
 
-import {Host, Routes } from '../config/constants';
+import {Host, Routes } from '../../config/constants';
 
 export interface App {
     appName: string;

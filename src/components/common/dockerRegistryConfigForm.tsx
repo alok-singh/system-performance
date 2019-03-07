@@ -15,7 +15,7 @@ import {
 import {
     Host, 
     Routes 
-} from '../config/constants';
+} from '../../config/constants';
 
 export interface DockerRegistryConfig {
     id: string | null;

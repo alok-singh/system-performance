@@ -1,4 +1,4 @@
-import {EnvironmentList as environments} from '../config/buildConfigurations';
+import {EnvironmentList as environments} from '../../config/buildConfigurations';
 
 export const generateNode = () => {
     return {

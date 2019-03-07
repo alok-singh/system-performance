@@ -12,7 +12,7 @@ import {
 } from 'patternfly-react'
 
 import ArgsFieldSet from './argsFieldSet';
-import {Host, Routes } from '../config/constants';
+import {Host, Routes } from '../../config/constants';
 
 // import {Form} from 'react-bootstrap';
 
