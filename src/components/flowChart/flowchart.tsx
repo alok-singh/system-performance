@@ -43,6 +43,7 @@ interface AppState {
     edgeInProgress: boolean;
     startNode: NodeAttr | null;
     topEdge: EdgeType;
+    topNodeId: string | null;
 }
 
 interface EdgeType {
@@ -66,7 +67,8 @@ export default class FlowChart extends Component <{}, AppState> {
             popupLeft: 0,
             edgeInProgress: false,
             startNode: null,
-            topEdge: null
+            topEdge: null,
+            topNodeId: null
         };
         this.onClickSVG = this.onClickSVG.bind(this);
     }
@@ -118,7 +120,7 @@ export default class FlowChart extends Component <{}, AppState> {
         }
     };
 
-    handleClickCircle(event: any, index: number, id: string, isInput: boolean) {
+    handleClickCircle(event: any, id: string, isInput: boolean) {
         let {edgeInProgress, nodes, startNode} = this.state;
         if(edgeInProgress && isInput && startNode && startNode.id != id) {
             let endNode = nodes.find(node => node.id == id);
@@ -146,10 +148,11 @@ export default class FlowChart extends Component <{}, AppState> {
             }
         }
         else if(!isInput){
-            nodes[index].activeOut = true;
+            startNode = nodes.find(node => node.id == id);
+            startNode.activeOut = true;
             this.setState({
                 edgeInProgress: true,
-                startNode: nodes[index],
+                startNode: startNode,
                 nodes: nodes
             });
         }
@@ -169,6 +172,12 @@ export default class FlowChart extends Component <{}, AppState> {
         
         this.setState({
             nodes: nodes
+        });
+    }
+
+    handleMouseEnterNode(nodeId: string) {
+        this.setState({
+            topNodeId: nodeId
         });
     }
 
@@ -227,16 +236,19 @@ export default class FlowChart extends Component <{}, AppState> {
         event.stopPropagation();
     }
 
-    onChangeConfiguration(event: any, listIndex: number, envID: number, index: number) {
-        let {nodes: nodeList} = this.state;
-        nodeList[index].environments = nodeList[index].environments.map(environment => {
-            environment.isActive = false;
-            return environment;
-        })
-        nodeList[index].environments[listIndex].isActive = true;
-        
+    onChangeConfiguration(event: any, listIndex: number, envID: number, id: string) {
+        let nodes = this.state.nodes.map(node => {
+            if(node.id == id){
+                node.environments = node.environments.map(environment => {
+                    environment.isActive = false;
+                    return environment;
+                });
+                node.environments[listIndex].isActive = true;
+            }
+            return node;
+        });
         this.setState({
-            nodes: nodeList
+            nodes
         });
     }
 
@@ -285,8 +297,25 @@ export default class FlowChart extends Component <{}, AppState> {
         return edges;
     }
 
+    getNodeList(nodes: NodeAttr[]): NodeAttr[] {
+        let {topNodeId} = this.state;
+        let topNode = nodes.find(node => node.id == topNodeId);
+        let retNodes = nodes.filter(node => {
+            if(node.id !== topNodeId){
+                return node;
+            }
+        });
+        
+        if(topNode){
+            retNodes.push(topNode);
+        }
+        
+        return retNodes;
+    }
+
     renderNodeList() {
-        return this.state.nodes.map((node, index) => {
+        let {nodes} = this.state;
+        return this.getNodeList(this.state.nodes).map(node => {
             return <Node 
                 key={`node-${node.id}`} 
                 x={node.x} 
@@ -299,13 +328,14 @@ export default class FlowChart extends Component <{}, AppState> {
                 triggerType={node.triggerType}
                 buildType={node.buildType}
                 environments={node.environments}
+                handleMouseEnter={(event) => {this.handleMouseEnterNode(node.id)}}
                 onChangeInput={({target}, key) => {this.onChangeInput(target.value, node.id, key)}}
                 handleMouseDown={(event) => this.handleMouseDown(event, node.id)}
                 handleMouseUp={(event) => this.handleMouseUp(event, node.id)}
-                handleClickCircle={(event, isInput) => this.handleClickCircle(event, index, node.id, isInput)}
+                handleClickCircle={(event, isInput) => this.handleClickCircle(event, node.id, isInput)}
                 handleTitleChange={(event) => this.handleTitleChange(event, node.id)}
                 handleClickOptions={(event) => this.handleClickOptions(event, node)}
-                onChangeConfiguration={(event, listIndex, envID) => this.onChangeConfiguration(event, listIndex, envID, index)}
+                onChangeConfiguration={(event, listIndex, envID) => this.onChangeConfiguration(event, listIndex, envID, node.id)}
             />
         })
     }

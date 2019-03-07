@@ -34,6 +34,7 @@ interface NodeProps {
     handleTitleChange(event: any): void;
     handleClickCircle(event:any, isInput:boolean): void;
     handleClickOptions(event: any): void;
+    handleMouseEnter(event: any): void;
     onChangeInput(event: any, key: string): void;
     onChangeConfiguration(event: any, listIndex: number, envID: number): void;
 }
@@ -89,6 +90,7 @@ export default class Node extends React.Component <NodeProps>{
             onMouseDown={this.props.handleMouseDown} 
             onMouseUp={this.props.handleMouseUp}
             style={{overflow: 'visible', position: 'relative'}}
+            onMouseEnter={this.props.handleMouseEnter}
         >
             {this.renderCardContent()}
         </foreignObject>
