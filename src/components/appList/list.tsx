@@ -2,6 +2,7 @@ import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import * as resolve from 'table-resolver';
+import { Link } from 'react-router-dom';
 
 import {
     customHeaderFormattersDefinition,
@@ -105,20 +106,20 @@ export default class AppList extends Component<{}, AppListData> {
                     appName: "App 1",
                     appId: 12,
                     timesDeployed: 3,
-    
+
                     lastDeployed: {
                         time: new Date(2019, 1, 21),
                         sourceRef: "Source ref",
                         deployedBy: "abc",
                         dockerTag: "docker-tag",
                     },
-    
+
                     currentInstanceCount: 2,
                     instanceConfig: {
                         ram: 25,
                         cpu: 4,
                     },
-    
+
                     inprogressDeploymentDetail: {
                         time: new Date(),
                         sourceRef: "source-ref",
@@ -126,29 +127,29 @@ export default class AppList extends Component<{}, AppListData> {
                         dockerTag: "docker-tag",
                         rolloutStatus: "rollout status",
                     },
-    
+
                     deploymentStatus: "yellow",
                     appEndpoint: ["endpoint1", "endpoint2"]
                 },
-    
+
                 {
                     appName: "App 2",
                     appId: 10,
                     timesDeployed: 12,
-    
+
                     lastDeployed: {
                         time: new Date(2019, 2, 11),
                         sourceRef: "Source ref",
                         deployedBy: "abc",
                         dockerTag: "docker-tag",
                     },
-    
+
                     currentInstanceCount: 16,
                     instanceConfig: {
                         ram: 25,
                         cpu: 2,
                     },
-    
+
                     inprogressDeploymentDetail: {
                         time: new Date(),
                         sourceRef: "source-ref",
@@ -156,30 +157,30 @@ export default class AppList extends Component<{}, AppListData> {
                         dockerTag: "docker-tag",
                         rolloutStatus: "rollout status",
                     },
-    
+
                     deploymentStatus: "red",
                     appEndpoint: ["endpoint1", "endpoint2"]
-    
+
                 },
-    
+
                 {
                     appName: "App 3",
                     appId: 11,
                     timesDeployed: 21,
-    
+
                     lastDeployed: {
                         time: new Date(2019, 2, 20),
                         sourceRef: "Source ref",
                         deployedBy: "abc",
                         dockerTag: "docker-tag",
                     },
-    
+
                     currentInstanceCount: 6,
                     instanceConfig: {
                         ram: 25,
                         cpu: 3,
                     },
-    
+
                     inprogressDeploymentDetail: {
                         time: new Date(),
                         sourceRef: "source-ref",
@@ -187,10 +188,10 @@ export default class AppList extends Component<{}, AppListData> {
                         dockerTag: "docker-tag",
                         rolloutStatus: "rollout status",
                     },
-    
+
                     deploymentStatus: "blue",
                     appEndpoint: ["endpoint1", "endpoint2"]
-    
+
                 }
             ],
 
@@ -212,7 +213,7 @@ export default class AppList extends Component<{}, AppListData> {
                             index: 0,
                             rowSpan: 1,
                             colSpan: 1,
-                            
+
                         },
                         customFormatters: [selectionHeaderCellFormatter]
                     },
@@ -249,9 +250,10 @@ export default class AppList extends Component<{}, AppListData> {
                             index: 1,
                         },
                         formatters: [
-                            (appName)=> {
-                                return(
-                                    <p className="m-5">{appName}</p>
+                            (appName, obj) => {
+                                const LINK = `/details/app/${obj.rowData.appId}`;
+                                return (
+                                    <Link to={LINK}>{appName}</Link>
                                 )
                             },
                             tableCellFormatter
@@ -423,7 +425,7 @@ export default class AppList extends Component<{}, AppListData> {
                 perPage: 5,
                 perPageOptions: [5, 10, 15]
             },
-            
+
             // server side pagination values
             itemCount: 0
         };
@@ -458,7 +460,7 @@ export default class AppList extends Component<{}, AppListData> {
         //   });
         // });
 
-        const URL = `${Host}${Routes.GET_APP_LIST}`;
+        const URL = `${Host}${Routes.APP_LIST}`;
 
         let requestBody = {
 

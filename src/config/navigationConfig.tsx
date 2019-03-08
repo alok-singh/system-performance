@@ -21,11 +21,6 @@ export const navigationItemList: Array<navigationItem>  = [{
     iconClass: "fa fa-area-chart",
     href: "/graphs"
 }, {
-    title: "Git Repositories",
-    initialActive: false,
-    iconClass: "fa fa-github-square",
-    href: "/git-repositories"
-}, {
     title: "App List",
     initialActive: false,
     iconClass: "fa fa-github-square",

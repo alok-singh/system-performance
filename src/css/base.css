@@ -1,11 +1,110 @@
 .u-hide {
     display: none !important;
 }
+
+.w-80 {
+    width: 80%
+}
+.w-100 {
+    width: 100%;
+}
+
+.margin-auto {
+    margin: auto;
+}
+.m-0 {
+    margin: 0px;
+}
+.m-5 {
+    margin: 5px;
+}
+.mt-45 {
+    margin-top: 45px !important;
+}
+.mt-25 {
+    margin-top: 25px;
+    margin-bottom: 25px;
+}
+.m-tb-20 {
+    margin-top: 20px;
+    margin-bottom: 20px; 
+}
+.m-lr-0 {
+    margin-left: 0px;
+    margin-right: 0px; 
+}
+.p-lr-0 {
+    padding-left: 0px;
+    padding-right: 0px;
+}
+.p-25 {
+    padding-top: 25px;
+    padding-bottom: 25px;
+}
+
+textarea.form-control {
+    height: 290px !important;
+}
+
+.flexbox {
+    display: flex;
+}
+.text-center {
+    text-align: center;
+}
+.deployment-status-bar {
+    width: 40%;
+    border: solid 1px black;
+    height: 16px;
+    margin: 7px auto;
+}
+.list {
+    padding: 0px;
+    padding-left: 10px;
+    list-style: none; 
+    height: 158px;
+}
+.list li {
+    padding: 2px 10px 3px;
+    line-height: 1.66666667;
+    vertical-align: top;
+    border-bottom: 1px solid #d1d1d1
+}
+.list li:last-child {
+    border: none;
+}
+.card {
+    margin-bottom: 30px;
+    background-color: rgba(0, 0, 0, 0.01);
+}
+.bg-gray {
+    background-color: rgba(0, 0, 0, 0.02);
+}
+.source-config-form {
+    width: 70%;
+    margin: auto;
+}
+.ci-config-form {
+    width: 80%;
+}
+.align-right {
+    display: block;
+    margin-left: auto; 
+}
+hr {
+    margin: 5px auto !important; 
+}
+.bold {
+    font-weight: 600;
+}
+.args {
+    max-height: 400px;
+}
+.deployment-template {
+    width: 70%;
+}
 .font-black {
     color: #363636;
-}
-.w-80, .ci-config-form {
-    width: 80%;
 }
 .small-text {
     font-size: 9px;
@@ -23,77 +122,56 @@
 button:focus {
     outline: none;
 }
-
-.m-0 {
-    margin: 0px;
-}
-.m-5 {
-    margin: 5px;
-}
-.m-tb-20 {
-    margin-top: 20px;
-    margin-bottom: 20px; 
-}
-.p-lr-0 {
-    padding-left: 0px;
-    padding-right: 0px;
-}
-.text-center {
-    text-align: center;
-}
-.deployment-status-bar {
-    width: 40%;
-    border: solid 1px black;
-    height: 16px;
-    margin: 7px auto;
-}
-.w-100 {
+.table-button {
     width: 100%;
-}
-.flexbox {
-    display: flex;
-}
-.p-25 {
-    padding-top: 25px;
-    padding-bottom: 25px;
-}
-.mt-25 {
-    margin-top: 25px;
-    margin-bottom: 25px;
-}
-.margin-auto {
-    margin: auto;
-}
-textarea.form-control {
-    height: 290px !important;
-}
-.mt-45 {
-    margin-top: 45px !important;
-}
-.bg-gray {
-    background-color: rgba(0, 0, 0, 0.02);
-}
-.source-config-form {
-    width: 70%;
-    margin: auto;
-}
-.m-lr-0 {
-    margin-left: 0px;
-    margin-right: 0px; 
-}
-.align-right {
+    height: 100%;
     display: block;
-    margin-left: auto; 
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
 }
-hr {
-    margin: 5px auto !important; 
+.h3 {
+    padding: 10px;
+    margin: 0px;
+    margin-bottom: 5px;
 }
-.bold {
-    font-weight: 600;
+.scrollable-pf-table tbody {
+    display:block;
+    height: 136px;
+    overflow:auto;
 }
-.args {
-    max-height: 400px;
+.scrollable-pf-table td {
+    vertical-align: middle !important;
+    text-align: center;
+    padding: 0px !important;
 }
-.deployment-template {
-    width: 70%;
+.scrollable-pf-table thead, 
+.scrollable-pf-table tbody tr {
+    display:table;
+    width:100%;
+    table-layout:fixed;
+}
+.modaless-overlay-pf-custom {
+    top: 0px;
+    left: 270px !important;
+
+}
+
+.modaless-overlay-pf-custom .modal-dialog {
+    width: calc(100% - 40px);
+}
+.modaless-overlay-pf-custom .modal-content {
+    height: 600px !important;
+    overflow: hidden;
+}
+.fixed-height-logs-container {
+    height: 430px;
+    overflow: scroll;
+}
+.button-scroll-bottom {
+    position: absolute;
+    width: 50px;
+    right: 35px;
+    bottom: 15px;
+    background-color: rgba(0, 0, 0, 0.01);
 }

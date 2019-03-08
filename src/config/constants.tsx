@@ -10,16 +10,16 @@ export const Routes = {
     GET_SAVED_DEPLOYMENT_TEMPLATE: "",
     GET_DOCKER_REPOSITORY: "/config/git-repo-config",
     GET_ACCOUNT: "/config/docker-registry-config",
-    GET_APP_LIST: "",
-
 
     SAVE_CI: "/pipeline-config/ci/save",
     SAVE_SOURCE_CONFIG: "/pipeline-config/app/create",
     SAVE_DEPLOYMENT_TEMPLATE: "",
 
+    APP_LIST: "",
     DOCKER_REGISTRY_CONFIG: "/config/docker-registry-config",
-    GIT_REPO_CONFIG:"/config/git-repo-config",
-    
+    GIT_REPO_CONFIG: "/config/git-repo-config",
+    INSTANCE_LIST: "/logs/instances",
+    LOGS: "/logs",
 }
 export const FormType = {
     SAVE: "SAVE",

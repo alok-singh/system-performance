@@ -40,31 +40,31 @@ export const dummyData = [{
 }]
 
 export const getGitRepositoryList = () => {
-    // const URL = `${Host}${Routes.GIT_REPO_CONFIG}`;
-    // return fetch(URL, {
-    //     method: 'GET',
-    //     headers: { 'Content-type': 'application/json' },
-    // })
-    // .then(response => response.json())
-    // .then(response => {
-        
-    //         putting dummdata for now
-    //         if you have modal you never have to change keys of
-    //         json in your component 
-    //         keep all the apis outside of component so that 
-    //         you never have to change your component
-        
-    //     return gitRepositoryParse(dummyData);
-    // })
-    return new Promise((resolve, reject) => {
-        resolve({
-            code: 200,
-            errors: undefined,
-            result: {
-                GitRepos: gitRepositoryParse(dummyData)
-            }
-        })
+    const URL = `${Host}${Routes.GIT_REPO_CONFIG}`;
+    return fetch(URL, {
+        method: 'GET',
+        headers: { 'Content-type': 'application/json' },
     })
+    .then(response => response.json())
+    .then(response => {
+        /*
+            putting dummdata for now
+            if you have modal you never have to change keys of
+            json in your component 
+            keep all the apis outside of component so that 
+            you never have to change your component
+        */
+        return response;
+    })
+    // return new Promise((resolve, reject) => {
+    //     resolve({
+    //         code: 200,
+    //         errors: undefined,
+    //         result: {
+    //             GitRepos: gitRepositoryParse(dummyData)
+    //         }
+    //     })
+    // })
 }
 
 export const gitRepositoryParse = (repositories) => {
