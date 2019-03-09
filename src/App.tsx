@@ -13,6 +13,7 @@ import DeploymentConfigEdit from './components/deploymentConfigEdit/main';
 import GitRepositoryConfigEdit from './components/gitRepositoryConfigEdit/main';
 import GitRepoList from './components/gitRepoList/main';
 import AppDetails from './components/appDetails/main';
+import EnvironmentRegister from './components/environmentRegister/main';
 
 import Navigation from './components/common/navigation';
 import { navigationListProvider } from './config/navigationConfig';
@@ -45,6 +46,7 @@ class App extends Component {
 	            	<Route exact path="/form/git-repo-config/:repoId" component={GitRepositoryConfigEdit} />
 	            	<Route exact path="/list/git-repos" component={GitRepoList} />
 	            	<Route exact path="/details/app/:appId" component={AppDetails} />
+	            	<Route exact path="/environment-register" component={EnvironmentRegister} />
 	            </Navigation>
 	        </Switch>
 	    );

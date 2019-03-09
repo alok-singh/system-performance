@@ -6,16 +6,40 @@ interface navigationItem {
 }
 
 export const navigationItemList: Array<navigationItem>  = [{
+    // title: "Git Repository Configuration",
+    title: "Step 1",
+    initialActive: false,
+    iconClass: "fa fa-github-square",
+    href: "/form/git-repo-config"
+}, {
+    // title: "Docker Registration",
+    title: "Step 2",
+    initialActive: false,
+    iconClass: "fa fa-github-square",
+    href: "/form/docker-register"
+}, {
+    // title: "Environment Config",
+    title: "Step 3",
+    initialActive: false,
+    iconClass: "fa fa-area-chart",
+    href: "/environment-register"
+}, {
+    // title: "Source Configurations",
+    title: "Step 4",
+    initialActive: false,
+    iconClass: "fa fa-github-square",
+    href: "/form/source-config"
+}, {
     title: "Flow Chart",
     initialActive: true,
     iconClass: "fa fa-dashboard",
     href: "/flow-chart"
-}, {
+},/*{
     title: "Create Docker",
     initialActive: false,
     iconClass: "fa fa-file-text",
     href: "/create-docker"
-}, {
+},*/ {
     title: "Graphs",
     initialActive: false,
     iconClass: "fa fa-area-chart",
@@ -31,30 +55,15 @@ export const navigationItemList: Array<navigationItem>  = [{
     iconClass: "fa fa-github-square",
     href: "/list/docker-registries"
 }, {
-    title: "Docker Registration",
-    initialActive: false,
-    iconClass: "fa fa-github-square",
-    href: "/form/docker-register"
-}, {
     title: "CI Configurations",
     initialActive: false,
     iconClass: "fa fa-github-square",
     href: "/form/ci-config"
 }, {
-    title: "Source Configurations",
-    initialActive: false,
-    iconClass: "fa fa-github-square",
-    href: "/form/source-config"
-}, {
     title: "Deployment Template",
     initialActive: false,
     iconClass: "fa fa-github-square",
     href: "/form/deployment-template"
-}, {
-    title: "Git Repository Configuration",
-    initialActive: false,
-    iconClass: "fa fa-github-square",
-    href: "/form/git-repo-config"
 }, {
     title: "Git Repository List",
     initialActive: false,
