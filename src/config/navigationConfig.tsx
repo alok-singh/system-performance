@@ -67,13 +67,8 @@ const homeNavList: Array<navigationItem> = [
     }, {
         title: "App List",
         initialActive: false,
-        iconClass: "fa fa-github-square",
+        iconClass: "fa fa-modx",
         href: "/list/apps"
-    }, {
-        title: "Docker Registration",
-        initialActive: false,
-        iconClass: "fa fa-github-square",
-        href: "/form-global/docker-register"
     }, {
         title: "Environment Config",
         initialActive: false,
@@ -87,13 +82,13 @@ const homeNavList: Array<navigationItem> = [
     }, {
         title: "Docker Registries",
         initialActive: false,
-        iconClass: "fa fa-github-square",
+        iconClass: "fa fa-book",
         href: "/list/docker-registries"
     }, {
         title: "Graphs",
         initialActive: false,
         iconClass: "fa fa-area-chart",
-        href: "/list/graphs"
+        href: "/details/graphs"
     }
 ];
 
