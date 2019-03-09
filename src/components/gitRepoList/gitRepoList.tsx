@@ -1,40 +1,24 @@
 import React, { Component, Fragment } from 'react';
-import {Link} from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import classNames from 'classnames';
 import * as resolve from 'table-resolver';
-import {getGitRepositoryList} from '../../modals/gitRepositoriesModal';
-import {gitRepositoryColumns} from './gitRepositoryColumn';
+import { getGitRepositoryList } from '../../modals/gitRepositoriesModal';
+import { gitRepositoryColumns } from './gitRepositoryColumn';
+import { GitRepositoryListState } from '../../modals/gitRepositoriesModal';
 
-import { 
-    ToastNotificationList, 
-    ToastNotification, 
-    Grid, 
-    Row, 
-    Col, 
+import {
+    ToastNotificationList,
+    ToastNotification,
+    Grid,
+    Row,
+    Col,
     Button,
     customHeaderFormattersDefinition,
     tableCellFormatter,
     Table
 } from 'patternfly-react'
 
-import GitRepositoryConfig from '../common/gitRepositoryConfigForm';
-
-
-export interface GitRepositoryListState {
-    //Response code and errors
-    code: number;
-    errors: Array<{
-        code: number;
-        internalMessage: string,
-        moreInfo: string,
-        userMessage: string,
-    }>,
-
-    //Data
-    rows: Array<GitRepositoryConfig>;
-}
-
-export default class GitRepositoryList extends Component<{}, GitRepositoryListState> {    
+export default class GitRepositoryList extends Component<{}, GitRepositoryListState> {
 
     constructor(props) {
         super(props);
@@ -47,13 +31,13 @@ export default class GitRepositoryList extends Component<{}, GitRepositoryListSt
 
     customHeaderFormatters: any;
 
-    onRow(row, {rowIndex}) {
+    onRow(row, { rowIndex }) {
         return {
             className: classNames({ selected: row.selected }),
             role: 'row'
         };
     }
-    
+
     componentDidMount = () => {
         getGitRepositoryList().then((response: any) => {
             let state = {
@@ -93,7 +77,7 @@ export default class GitRepositoryList extends Component<{}, GitRepositoryListSt
 
     renderNotification = () => {
         let { code, errors } = { ...this.state };
-        
+
         let successCodes = new Set([200, 201, 202, 203, 204, 205, 206, 207, 208, 226]);
 
         if (successCodes.has(code)) {
@@ -129,7 +113,7 @@ export default class GitRepositoryList extends Component<{}, GitRepositoryListSt
     }
 
     render() {
-        let {rows} = this.state;
+        let { rows } = this.state;
         let columns = gitRepositoryColumns;
         let tableComponents = {
             header: {
@@ -149,7 +133,7 @@ export default class GitRepositoryList extends Component<{}, GitRepositoryListSt
                 </Row>
 
                 <Table.PfProvider striped bordered hover dataTable columns={columns} components={tableComponents} >
-                    <Table.Header headerRows={resolve.headerRows({columns})} />
+                    <Table.Header headerRows={resolve.headerRows({ columns })} />
                     <Table.Body rows={rows} rowKey="id" onRow={this.onRow} />
                 </Table.PfProvider>
             </Grid>

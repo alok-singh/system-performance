@@ -25,58 +25,7 @@ import {
 } from 'patternfly-react'
 
 import {Host, Routes } from '../../config/constants';
-
-export interface App {
-    appName: string;
-    appId: number;
-    timesDeployed: number;
-
-    lastDeployed: {
-        time: Date,
-        sourceRef: string,
-        deployedBy: string;
-        dockerTag: string;
-    };
-
-    currentInstanceCount: number;
-    instanceConfig: {
-        ram: number;
-        cpu: number;
-    };
-
-    inprogressDeploymentDetail: {
-        time: Date;
-        sourceRef: string;
-        deployedBy: string;
-        dockerTag: string;
-        rolloutStatus: string;
-    };
-
-    deploymentStatus: string;
-    appEndpoint: Array<string>;
-
-}
-
-
-export interface AppListData {
-    environmentId: string;
-    environmentName: string;
-    rows: Array<App>;
-
-    sortingColumns: {
-        name: {
-            direction: string;
-            position: number;
-        }
-    };
-    columns: Array<any>;
-    pagination: {
-        page: number;
-        perPage: number;
-        perPageOptions: Array<number>;
-    }
-    itemCount: number;
-}
+import { AppListData} from '../../modals/appTypes';
 
 export default class AppList extends Component<{}, AppListData> {
     

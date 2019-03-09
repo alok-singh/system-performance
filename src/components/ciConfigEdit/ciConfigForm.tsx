@@ -1,52 +1,20 @@
 import React, { Component, Fragment } from 'react';
-import { 
-    FormControl, 
-    Form, 
-    FormGroup, 
-    Button, 
-    ControlLabel, 
-    TypeAheadSelect, 
-    Row, 
-    Col, 
-    HelpBlock 
+import {
+    FormControl,
+    Form,
+    FormGroup,
+    Button,
+    ControlLabel,
+    TypeAheadSelect,
+    Row,
+    Col,
+    HelpBlock
 } from 'patternfly-react'
 
 import ArgsFieldSet from './argsFieldSet';
-import {Host, Routes } from '../../config/constants';
+import { Host, Routes } from '../../config/constants';
 
-// import {Form} from 'react-bootstrap';
-
-export interface CIConfigResponse {
-    success: boolean;
-    response: any[];
-    error: { message: string } | null;
-}
-
-export interface DockerRepository {
-    id: string;
-    registryUrl: string;
-    isDefault: boolean;
-}
-
-export interface CIConfigFormState {
-    repositoryOptions: Array<DockerRepository>;
-
-    form: {
-        dockerFilePath: string;
-        tagPattern: string;
-        args: Array<{ key: string, value: string }>;
-        repository: string;
-        dockerfile: string;
-    }
-
-    validation: {
-        dockerFilePath: string;
-        tagPattern: string;
-        args: string;
-        repository: string;
-        dockerfile: string;
-    }
-}
+import { CIConfigResponse, CIConfigFormState } from '../../modals/ciConfigTypes'
 
 export default class CIConfigForm extends Component<{}, CIConfigFormState> {
 

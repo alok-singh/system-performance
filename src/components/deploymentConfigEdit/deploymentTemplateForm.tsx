@@ -18,10 +18,7 @@ import {
     Routes 
 } from '../../config/constants';
 
-export interface Description {
-    id: string;
-    name: string;
-}
+import { Description } from '../../modals/deploymentTemplateTypes';
 
 export interface DeploymentTemplateFormState {
     chartRepositoryOptions: Description[];

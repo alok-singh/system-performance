@@ -1,65 +1,24 @@
 import React, { Component, Fragment } from 'react';
-import { 
-    FormControl, 
-    FormGroup, 
-    ControlLabel, 
-    Button, 
-    Form, 
-    Row, 
-    Checkbox, 
-    HelpBlock, 
-    ToastNotification, 
-    ToastNotificationList 
+import {
+    FormControl,
+    FormGroup,
+    ControlLabel,
+    Button,
+    Form,
+    Row,
+    Checkbox,
+    HelpBlock,
+    ToastNotification,
+    ToastNotificationList
 } from 'patternfly-react'
 
 import {
-    Host, 
-    Routes 
+    Host,
+    Routes
 } from '../../config/constants';
 
-export interface DockerRegistryConfig {
-    id: string | null;
-    pluginId: string;
-    registryURL: string;
-    registryType: string;
-    aWSAccessKeyId: string;
-    aWSSecretAccessKey: string;
-    aWSRegion: string;
-    username: string;
-    password: string;
-    isDefault: boolean;
-}
+import { DockerRegistryConfigFormProps, DockerRegistryConfigFormState } from '../../modals/dockerRegistryTypes';
 
-export interface DockerRegistryConfigFormState {
-    //Response code and errors
-    code: number;
-    successMessage: string | null;
-
-    errors: Array<{
-        code: number;
-        internalMessage: string,
-        moreInfo: string,
-        userMessage: string,
-    }>,
-
-    buttonLabel: string;
-    dockerRegistryConfig: DockerRegistryConfig;
-
-    isValid: {
-        pluginId: boolean;
-        registryURL: boolean;
-        registryType: boolean;
-        aWSAccessKeyId: boolean;
-        aWSSecretAccessKey: boolean;
-        aWSRegion: boolean;
-        username: boolean;
-        password: boolean;
-    }
-}
-
-interface DockerRegistryConfigFormProps {
-    id: string;
-}
 export default class DockerRegistryConfigForm extends Component<DockerRegistryConfigFormProps, DockerRegistryConfigFormState> {
     // Reference to Checkbox
     checkboxRef: any;

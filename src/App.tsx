@@ -5,7 +5,7 @@ import FlowChart from './components/flowChart/main';
 import CreateDocker from './components/createDocker/main';
 import Graphs from './components/graphs/main';
 import AppList from './components/appList/main';
-import DockerRegistryList from './components/dockerRegistry/main';
+import DockerRegistryList from './components/dockerRegistryList/main';
 import DockerRegistryConfigEdit from './components/dockerRegistryEdit/main';
 import CIConfigEdit from './components/ciConfigEdit/main';
 import SourceConfigEdit from './components/sourceConfigEdit/main';

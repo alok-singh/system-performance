@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { RouteComponentProps } from 'react-router';
-import DockerRegistryConfigForm from '../common/dockerRegistryConfigForm';
+import DockerRegistryConfigForm from './dockerRegistryConfigForm';
 
 interface DockerRegistryConfigRouterProps {
     id: string

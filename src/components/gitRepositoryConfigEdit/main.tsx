@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { RouteComponentProps } from 'react-router';
 
-import GitRepositoryConfigForm from '../common/gitRepositoryConfigForm';
+import GitRepositoryConfigForm from './gitRepositoryConfigForm';
 
 interface GitRepositoryConfigRouterProps {
   repoId: string;

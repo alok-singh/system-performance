@@ -1,16 +1,14 @@
 import React, { Component } from "react";
-import { 
-    FormControl, 
-    FormGroup, 
-    ControlLabel, 
-    Button, 
-    Row, 
-    Col 
+import {
+    FormControl,
+    FormGroup,
+    ControlLabel,
+    Button,
+    Row,
+    Col
 } from 'patternfly-react'
 
-export interface ArgsFieldSetState {
-    args: Array<{ key: string, value: String }>;
-}
+import { ArgsFieldSetState } from '../../modals/ciConfigTypes';
 
 export default class ArgsFieldSet extends Component<any, ArgsFieldSetState> {
 

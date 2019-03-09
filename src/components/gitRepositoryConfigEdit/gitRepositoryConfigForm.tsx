@@ -17,49 +17,8 @@ import {
     Routes 
 } from '../../config/constants';
 
-export interface GitRepositoryConfig {
-    id: number | null;
-    name: string;
-    url: string;
-    userName: string;
-    authMode: string;
-    password: string;
-    sshKey: string;
-    accessToken: string;
-    active: boolean;
-}
-export interface GitRepositoryConfigFormState {
-    isDisabled: boolean;
+import { GitRepositoryConfigFormState, GitRepositoryConfigFormProps } from '../../modals/gitRepositoriesModal';
 
-    //Response code and errors
-    code: number;
-    successMessage: string | null;
-
-    errors: Array<{
-        code: number;
-        internalMessage: string,
-        moreInfo: string,
-        userMessage: string,
-    }>,
-
-    buttonLabel: string;
-    gitRepoConfig: GitRepositoryConfig,
-
-    isValid: {
-        name: boolean;
-        url: boolean;
-        userName: boolean;
-        authMode: boolean;
-        password: boolean;
-        sshKey: boolean;
-        accessToken: boolean;
-    }
-
-}
-
-interface GitRepositoryConfigFormProps {
-    repoId: string;
-}
 export default class GitRepositoryConfigForm extends Component<GitRepositoryConfigFormProps, GitRepositoryConfigFormState> {
     // Reference to Checkbox
     checkboxRef: any;

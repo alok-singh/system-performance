@@ -5,7 +5,6 @@ import { withRouter, Link } from 'react-router-dom';
 import * as resolve from 'table-resolver';
 
 import {Host, Routes } from '../../config/constants';
-import DockerRegistryConfig from '../common/dockerRegistryConfigForm';
 
 import { 
     ToastNotificationList, 
@@ -19,24 +18,7 @@ import {
     Table
 } from 'patternfly-react';
 
-
-export interface DockerRegistryListState {
-    //Response code and errors
-    code: number;
-    errors: Array<{
-        code: number;
-        internalMessage: string,
-        moreInfo: string,
-        userMessage: string,
-    }>,
-
-    //Data
-    rows: Array<DockerRegistryConfig>;
-
-    // column definitions
-    columns: Array<any>;
-
-}
+import { DockerRegistryListState } from '../../modals/dockerRegistryTypes';
 
 export class DockerRegistryList extends Component<{}, DockerRegistryListState> {
     static onRow(row, { rowIndex }) {

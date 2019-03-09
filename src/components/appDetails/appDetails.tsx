@@ -13,8 +13,7 @@ import {
     tableCellFormatter,
     Table
 } from 'patternfly-react';
-
-import { AppDetailsProps, AppDetailsState, Instance } from './appTypes';
+import { AppDetailsProps, AppDetailsState, Instance } from '../../modals/appTypes';
 
 export default class AppDetails extends Component<AppDetailsProps, AppDetailsState> {
 
