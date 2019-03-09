@@ -19,7 +19,7 @@ export const gitRepositoryColumns = [{
         },
         formatters: [
             (name, obj) => {
-                const LINK = `/form/git-repo-config/${obj.rowData.id}`;
+                const LINK = `/form-global/git-repo-config/${obj.rowData.id}`;
                 return (
                     <span className="font-black">
                         <Link to={LINK}>{name}</Link>

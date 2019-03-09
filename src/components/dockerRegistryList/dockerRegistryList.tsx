@@ -61,7 +61,7 @@ export class DockerRegistryList extends Component<{}, DockerRegistryListState> {
                         },
                         formatters: [
                             (id, obj) => {
-                                const LINK = `/form/docker-register/${obj.rowData.id}`;
+                                const LINK = `/form-global/docker-register/${obj.rowData.id}`;
                                 return (
                                     <span className="font-black">
                                         <Link to={LINK}>{id}</Link>
@@ -236,7 +236,7 @@ export class DockerRegistryList extends Component<{}, DockerRegistryListState> {
 
                 <Row bsClass="m-lr-0 flexbox flex-justify m-tb-20">
                     <h1 className="m-0">Docker Registries</h1>
-                    <Link to='/form/docker-register'>Add New </Link>
+                    <Link to='/form-global/docker-register'>Add New </Link>
                 </Row>
 
                 <Table.PfProvider striped bordered hover dataTable

@@ -129,7 +129,7 @@ export default class GitRepositoryList extends Component<{}, GitRepositoryListSt
 
                 <Row bsClass="m-lr-0 flexbox flex-justify m-tb-20">
                     <h1 className="m-0">Git Repositories</h1>
-                    <Link to='/form/git-repo-config'>Add New Repository </Link>
+                    <Link to='/form-global/git-repo-config'>Add New Repository </Link>
                 </Row>
 
                 <Table.PfProvider striped bordered hover dataTable columns={columns} components={tableComponents} >
