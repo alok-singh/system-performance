@@ -28,7 +28,7 @@ import 'patternfly-react/dist/css/patternfly-react.css';
 import './css/base.css';
 
 
-class App extends Component <any, any>{
+export default class App extends Component <any, any>{
 	
 	constructor(props) {
 		super(props);
@@ -79,5 +79,3 @@ class App extends Component <any, any>{
 	    );
   	}
 }
-
-export default App;

@@ -56,7 +56,4 @@ export interface DockerRegistryListState {
     //Data
     rows: Array<DockerRegistryConfig>;
 
-    // column definitions
-    columns: Array<any>;
-
 }

@@ -9,6 +9,9 @@ import * as resolve from 'table-resolver';
 import {Host, Routes } from '../../config/constants';
 
 import { 
+    Card,
+    CardTitle,
+    CardBody,
     ToastNotificationList, 
     ToastNotification, 
     Grid, 
@@ -23,7 +26,7 @@ import {
 import { DockerRegistryListState } from '../../modals/dockerRegistryTypes';
 
 export class DockerRegistryList extends Component<{}, DockerRegistryListState> {
-    static onRow(row, { rowIndex }) {
+    onRow(row, { rowIndex }) {
         return {
             className: classNames({ selected: row.selected }),
             role: 'row'
@@ -36,15 +39,12 @@ export class DockerRegistryList extends Component<{}, DockerRegistryListState> {
         super(props);
 
         this.customHeaderFormatters = customHeaderFormattersDefinition;
-
+        this.renderCellProps = this.renderCellProps.bind(this);
+        this.closeNotification = this.closeNotification.bind(this);
         this.state = {
             code: 0,
             errors: [],
-
-            rows: [],
-
-            columns: dockerRepositoryColumns,
-
+            rows: []
         };
     }
 
@@ -60,8 +60,7 @@ export class DockerRegistryList extends Component<{}, DockerRegistryListState> {
             headers: { 'Content-type': 'application/json' },
         })
         .then(response => response.json())
-        .then(
-            (response) => {
+        .then(response => {
                 console.log(response);
                 let state = { ...this.state };
                 state.code = response.code;
@@ -82,33 +81,31 @@ export class DockerRegistryList extends Component<{}, DockerRegistryListState> {
     }
 
     //Clears error messages and response code
-    closeNotification = () => {
+    closeNotification() {
         let state = { ...this.state };
         state.code = 0;
         state.errors = [];
         this.setState(state);
     }
 
-    renderNotification = () => {
-        let { code, errors } = { ...this.state };
-        
+    renderCellProps() {
+        return cellProps => {
+            return this.customHeaderFormatters({
+                cellProps: cellProps,
+                columns: dockerRepositoryColumns,
+                rows: this.state.rows
+            });
+        }
+    }
+
+    renderNotifications() {
+        let { code, errors } = this.state;
         let successCodes = new Set([200, 201, 202, 203, 204, 205, 206, 207, 208, 226]);
 
         if (successCodes.has(code)) {
-            return <ToastNotification type="success">
-                <span>Docker Registry Found</span>
-                <div className="pull-right toast-pf-action">
-                    <Button bsClass="transparent"
-                        onClick={this.closeNotification}>
-                        <span className="fa fa-close"></span>
-                    </Button>
-                </div>
-            </ToastNotification>
-        }
-        else {
-            errors.map((element) => {
-                return <ToastNotification type="error">
-                    <span>Error!!!{element.userMessage}</span>
+            return <ToastNotificationList>
+                <ToastNotification type="success">
+                    <span>Docker Registry Found</span>
                     <div className="pull-right toast-pf-action">
                         <Button bsClass="transparent"
                             onClick={this.closeNotification}>
@@ -116,48 +113,63 @@ export class DockerRegistryList extends Component<{}, DockerRegistryListState> {
                         </Button>
                     </div>
                 </ToastNotification>
+            </ToastNotificationList>
+        }
+        else {
+            errors.map((element) => {
+                return <ToastNotificationList>
+                    <ToastNotification type="error">
+                        <span>Error!!!{element.userMessage}</span>
+                        <div className="pull-right toast-pf-action">
+                            <Button bsClass="transparent"
+                                onClick={this.closeNotification}>
+                                <span className="fa fa-close"></span>
+                            </Button>
+                        </div>
+                    </ToastNotification>
+                </ToastNotificationList>
             });
         }
     }
 
-    render() {
-        const { columns, rows } = this.state;
-
-        return (
-            <Grid fluid>
-                <ToastNotificationList>
-                    {this.renderNotification()}
-                </ToastNotificationList>
-
+    renderPageTitle() {
+        return <Card>
+            <CardTitle>
                 <Row bsClass="m-lr-0 flexbox flex-justify m-tb-20">
                     <h1 className="m-0">Docker Registries</h1>
-                    <Link to='/form-global/docker-register'>Add New </Link>
+                    <Link to='/form-global/docker-register'>
+                        <Button bsStyle="primary">Add New</Button>
+                    </Link>
                 </Row>
+            </CardTitle>
+            <CardBody>
+                This is some basic text about docker registeries This is some basic text about docker registeries.
+            </CardBody>
+        </Card>
+    }
 
-                <Table.PfProvider striped bordered hover dataTable
-                    columns={columns}
-                    components={{
-                        header: {
-                            cell: cellProps => {
-                                return this.customHeaderFormatters({
-                                    cellProps: cellProps,
-                                    columns: columns,
-                                    rows: rows,
-                                });
-                            }
-                        }
-                    }}
-                >
-                    <Table.Header headerRows={resolve.headerRows({ columns })} />
+    renderTable() {
+        let rows = this.state.rows;
+        let tableComponents = {
+            header: {
+                cell: this.renderCellProps()
+            }
+        };
+        return <div className="table-wrapper">
+            <Table.PfProvider striped bordered hover dataTable
+                columns={dockerRepositoryColumns}
+                components={tableComponents}>
+                <Table.Header headerRows={resolve.headerRows({columns: dockerRepositoryColumns})} />
+                <Table.Body rows={rows} rowKey="id" onRow={this.onRow} />
+            </Table.PfProvider>
+        </div>
+    }
 
-                    <Table.Body rows={rows} rowKey="id"
-                        onRow={DockerRegistryList.onRow}
-                    />
-
-                </Table.PfProvider>
-
-            </Grid>
-
-        );
+    render() {
+        return <React.Fragment>
+            {this.renderPageTitle()}
+            {this.renderNotifications()}
+            {this.renderTable()}
+        </React.Fragment>
     }
 }

@@ -15,7 +15,10 @@ import {
     Button,
     customHeaderFormattersDefinition,
     tableCellFormatter,
-    Table
+    Table,
+    Card,
+    CardTitle,
+    CardBody
 } from 'patternfly-react'
 
 export default class GitRepositoryList extends Component<{}, GitRepositoryListState> {
@@ -81,7 +84,7 @@ export default class GitRepositoryList extends Component<{}, GitRepositoryListSt
         let successCodes = new Set([200, 201, 202, 203, 204, 205, 206, 207, 208, 226]);
 
         if (successCodes.has(code)) {
-            return (
+            return <ToastNotificationList>
                 <ToastNotification type="success">
                     <span>Git Repositories Found</span>
                     <div className="pull-right toast-pf-action">
@@ -91,11 +94,11 @@ export default class GitRepositoryList extends Component<{}, GitRepositoryListSt
                         </Button>
                     </div>
                 </ToastNotification>
-            )
+            </ToastNotificationList>
         }
         else {
             errors.map((element) => {
-                return (
+                return <ToastNotificationList>
                     <ToastNotification type="error">
                         <span>Error!!!{element.userMessage}</span>
                         <div className="pull-right toast-pf-action">
@@ -105,11 +108,27 @@ export default class GitRepositoryList extends Component<{}, GitRepositoryListSt
                             </Button>
                         </div>
                     </ToastNotification>
-                )
+                </ToastNotificationList>
             }
 
             );
         }
+    }
+
+    renderPageHeader() {
+        return <Card>
+            <CardTitle>
+                <Row bsClass="m-lr-0 flexbox flex-justify m-tb-20">
+                    <h1 className="m-0">Git Repositories</h1>
+                    <Link to='/form-global/git-repo-config'>
+                        <Button bsStyle="primary">Add New Repository</Button>
+                    </Link>
+                </Row>
+            </CardTitle>
+            <CardBody>
+                Following are the registered repositories.
+            </CardBody>
+        </Card>
     }
 
     render() {
@@ -120,23 +139,14 @@ export default class GitRepositoryList extends Component<{}, GitRepositoryListSt
                 cell: this.getCellPropsFunction(columns, rows)
             }
         };
-
-        return (
-            <Grid fluid>
-                <ToastNotificationList>
-                    {this.renderNotification()}
-                </ToastNotificationList>
-
-                <Row bsClass="m-lr-0 flexbox flex-justify m-tb-20">
-                    <h1 className="m-0">Git Repositories</h1>
-                    <Link to='/form-global/git-repo-config'>Add New Repository </Link>
-                </Row>
-
-                <Table.PfProvider striped bordered hover dataTable columns={columns} components={tableComponents} >
-                    <Table.Header headerRows={resolve.headerRows({ columns })} />
-                    <Table.Body rows={rows} rowKey="id" onRow={this.onRow} />
-                </Table.PfProvider>
-            </Grid>
-        );
+        return <React.Fragment>
+            {this.renderPageHeader()}
+            {this.renderNotification()}
+            <Table.PfProvider striped bordered hover dataTable columns={columns} components={tableComponents} >
+                <Table.Header headerRows={resolve.headerRows({ columns })} />
+                <Table.Body rows={rows} rowKey="id" onRow={this.onRow} />
+            </Table.PfProvider>
+        </React.Fragment>
+               
     }
 }

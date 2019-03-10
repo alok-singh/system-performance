@@ -15,7 +15,7 @@ const setupNavList: Array<navigationItemSetup> = [
         title: "Back",
         initialActive: false,
         iconClass: "fa fa-angle-left",
-        href: "/list/apps",
+        href: "back",
         isDisabled: false
     }, {
         // title: "Source Configurations",
@@ -65,15 +65,15 @@ const homeNavList: Array<navigationItem> = [
         iconClass: "fa fa-server",
         href: "/form-setup/source-config"
     }, {
+        title: "Global Config",
+        initialActive: false,
+        iconClass: "fa fa-globe",
+        href: "/form-global/git-repo-config"
+    }, {
         title: "App List",
         initialActive: false,
         iconClass: "fa fa-modx",
         href: "/list/apps"
-    }, {
-        title: "Environment Config",
-        initialActive: false,
-        iconClass: "fa fa-area-chart",
-        href: "/form-global/environment-register"
     }, {
         title: "Git Repository List",
         initialActive: false,
@@ -92,10 +92,42 @@ const homeNavList: Array<navigationItem> = [
     }
 ];
 
+const globalConfigNavList: Array<navigationItemSetup> = [
+    {
+        // title: "Source Configurations",
+        title: "Back",
+        initialActive: false,
+        iconClass: "fa fa-angle-left",
+        href: "back",
+        isDisabled: false
+    }, {
+        title: "Git Repo Config",
+        initialActive: false,
+        iconClass: "fa fa-github-square",
+        href: "/form-global/git-repo-config",
+        isDisabled: false
+    }, {
+        title: "Environment Config",
+        initialActive: false,
+        iconClass: "fa fa-envira",
+        href: "/form-global/environment-register",
+        isDisabled: false
+    }, {
+        title: "Docker Config",
+        initialActive: false,
+        iconClass: "fa fa-file",
+        href: "/form-global/docker-register",
+        isDisabled: false
+    }
+]
+
 export const navigationListProvider = (url: string, pathName: string): Array<navigationItem> => {
     let list = homeNavList;
-    if(url.indexOf('form-setup') !== -1){
+    if(url.indexOf('form-setup') !== -1) {
         list = setupNavList;
+    }
+    else if(url.indexOf('form-global') !== -1) {
+        list = globalConfigNavList;
     }
     return list.map(navItem => {
         if(pathName == navItem.href){

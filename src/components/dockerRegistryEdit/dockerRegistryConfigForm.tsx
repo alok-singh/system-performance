@@ -9,7 +9,10 @@ import {
     Checkbox,
     HelpBlock,
     ToastNotification,
-    ToastNotificationList
+    ToastNotificationList,
+    Card,
+    CardTitle,
+    CardBody
 } from 'patternfly-react'
 
 import {
@@ -359,17 +362,27 @@ export default class DockerRegistryConfigForm extends Component<DockerRegistryCo
         }
     }
 
+    renderPageTitle() {
+        return <Card>
+            <CardTitle>
+                <Row bsClass="m-lr-0 flexbox flex-justify m-tb-20">
+                    <h1 className="m-0">Docker Registry Configuration</h1>
+                </Row>
+            </CardTitle>
+            <CardBody>
+                This is some basic text about docker registeries This is some basic text about docker registeries.
+            </CardBody>
+        </Card>
+    }
+
     render() {
-        return (
+        return <div>
+            {this.renderPageTitle()}
             <div className="w-80 margin-auto">
                 <Row>
                     <ToastNotificationList>
                         {this.renderNotification()}
                     </ToastNotificationList>
-                </Row>
-
-                <Row>
-                    <h1>Docker Registry Configuration</h1>
                 </Row>
                 <Form>
                     <Row>
@@ -432,6 +445,6 @@ export default class DockerRegistryConfigForm extends Component<DockerRegistryCo
                 </Row>
 
             </div>
-        )
+        </div>
     }
 }
