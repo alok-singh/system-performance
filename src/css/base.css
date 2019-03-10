@@ -176,5 +176,16 @@ button:focus {
     background-color: rgba(0, 0, 0, 0.01);
 }
 
+.nav-form-wrapper {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-around;
+    height: calc(100vh - 200px);
+    overflow-y: scroll;
+}
 
+.nav-form-wrapper .source-config-form {
+    width: 50%;
+    margin: 0px;
+}
 

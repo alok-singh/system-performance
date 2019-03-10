@@ -8,10 +8,13 @@ export default class VerticalNav extends Component <any> {
 			<ul className="list-group">
 				{this.props.items.map((item, index) => {
 					return <li key={`key-nav-${index}`} className={`list-group-item ${item.initialActive ? 'active' : ''}`}>
-						<a href="#">
+						{item.href ? <Link to={item.href}>
+	                		<span className={item.iconClass} title={item.title}></span>
+	                		<span className="list-group-item-value">{item.title}</span>
+	                	</Link> : <a href="#">
 							<span className={item.iconClass} title={item.title}></span>
 							<span className="list-group-item-value">{item.title}</span>
-						</a>
+						</a>}
 						{item.subItems ? <ul className={`submenu ${item.isCollapsed ? 'collapsed' : ''}`}>
 							{item.subItems.map((subItem, index) => {
 								return 	<li key={`key-subnav-${index}`} className={`list-group-item ${subItem.isActive ? 'active' : ''}`}>				                

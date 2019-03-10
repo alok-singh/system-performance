@@ -5,7 +5,10 @@ import {
     ControlLabel, 
     Button, 
     Form, 
-    TypeAheadSelect 
+    TypeAheadSelect,
+    Card,
+    CardTitle,
+    CardBody 
 } from 'patternfly-react'
 
 import {
@@ -14,6 +17,7 @@ import {
 } from '../../config/constants';
 
 import { SourceConfigFormState, } from '../../modals/sourceConfigTypes';
+import DirectionalNavigation from '../common/directionalNavigation';
 
 export default class SourceConfigForm extends Component<{}, SourceConfigFormState> {
 
@@ -147,96 +151,139 @@ export default class SourceConfigForm extends Component<{}, SourceConfigFormStat
         return null;
     }
 
+    renderDirectionalNavigation() {
+        let steps = [{
+            title: 'Step 4',
+            isActive: true,
+            href: '#',
+            isAllowed: false
+        }, {
+            title: 'Step 5',
+            isActive: true,
+            href: '#',
+            isAllowed: false
+        }, {
+            title: 'Step 6',
+            isActive: true,
+            href: '#',
+            isAllowed: false
+        }, {
+            title: 'Step 7',
+            isActive: true,
+            href: '#',
+            isAllowed: false
+        }, {
+            title: 'Step 8',
+            isActive: true,
+            href: '#',
+            isAllowed: false
+        }];
+        return <DirectionalNavigation steps={steps} />
+    }
+
+    renderPageHeader() {
+        return <Card>
+            <CardTitle>
+                Source Configuration
+            </CardTitle>
+            <CardBody>
+                This is some description about Source configuration what is required to be filled.
+            </CardBody>
+        </Card>
+    }
+
     render() {
-
-        return (
-            <div className="source-config-form">
-                <h1>Source Configuration</h1>
-                <Form onSubmit={this.testConnection}>
-                    <FormGroup>
-                        <ControlLabel>Select Account</ControlLabel>
-                        <Fragment>
-                            <TypeAheadSelect
-                                labelKey="name"
-                                options={this.state.accountOptions}
-                                clearButton
-                                placeholder="Choose account..."
-                                isValid={this.isDropDownValid('account')}
-                                onChange={(event) => this.handleOptions(event, 'account')}
-                            />
-                        </Fragment>
-                    </FormGroup>
-
-
-                    <FormGroup controlId="url" validationState={this.getValidationState('url')}>
-                        <ControlLabel>Git URL</ControlLabel>
-                        <FormControl
-                            type="text"
-                            value={this.state.url}
-                            placeholder="Enter Git URL"
-                            onChange={this.handlers.get('url')}/>
-                        <FormControl.Feedback />
-                    </FormGroup>
-
-                    <FormGroup controlId="path" validationState={this.getValidationState('path')}>
-                        <ControlLabel>Path</ControlLabel>
-                        <FormControl
-                            type="text"
-                            value={this.state.path}
-                            placeholder="Enter Path"
-                            onChange={this.handlers.get('path')} />
-                        <FormControl.Feedback />
-                    </FormGroup>
-
-                    <FormGroup
-                        controlId="appName" validationState={this.getValidationState('appName')}>
-                        <ControlLabel>App Name</ControlLabel>
-                        <FormControl
-                            type="text"
-                            value={this.state.appName}
-                            placeholder="Enter App Name"
-                            onChange={this.handlers.get('appName')} />
-                    </FormGroup>
-
-                    <FormGroup
-                        controlId="productionBranch" validationState={this.getValidationState('productionBranch')}>
-                        <ControlLabel>Production Branch</ControlLabel>
-                        <FormControl
-                            type="text"
-                            value={this.state.productionBranch}
-                            placeholder="Enter Production Branch"
-                            onChange={this.handlers.get('productionBranch')} />
-                    </FormGroup>
-
-                    <FormGroup
-                        controlId="ciBranch" validationState={this.getValidationState('ciBranch')}>
-                        <ControlLabel>CI Branch</ControlLabel>
-                        <FormControl
-                            type="text"
-                            value={this.state.ciBranch}
-                            placeholder="Enter CI Branch"
-                            onChange={this.handlers.get('ciBranch')} />
-                    </FormGroup>
-
-                    <FormGroup
-                        controlId="ctBranch" validationState={this.getValidationState('ctBranch')}>
-                        <ControlLabel>CT Branch</ControlLabel>
-                        <FormControl
-                            type="text"
-                            value={this.state.ctBranch}
-                            placeholder="Enter CT Branch"
-                            onChange={this.handlers.get('ctBranch')} />
-                    </FormGroup>
+        return <React.Fragment>
+            {this.renderPageHeader()}
+            <div className="nav-form-wrapper">
+                {this.renderDirectionalNavigation()}
+                <div className="source-config-form">
+                    <Form onSubmit={this.testConnection}>
+                        <FormGroup>
+                            <ControlLabel>Select Account</ControlLabel>
+                            <Fragment>
+                                <TypeAheadSelect
+                                    labelKey="name"
+                                    options={this.state.accountOptions}
+                                    clearButton
+                                    placeholder="Choose account..."
+                                    isValid={this.isDropDownValid('account')}
+                                    onChange={(event) => this.handleOptions(event, 'account')}
+                                />
+                            </Fragment>
+                        </FormGroup>
 
 
-                    <Button type="button" bsStyle="primary"
-                        disabled={this.isFormValid()}
-                        onClick={this.testConnection}>
-                        Test Connection
-                    </Button>
-                    <Button type="button" bsStyle="success" >Next</Button>
-                </Form>
+                        <FormGroup controlId="url" validationState={this.getValidationState('url')}>
+                            <ControlLabel>Git URL</ControlLabel>
+                            <FormControl
+                                type="text"
+                                value={this.state.url}
+                                placeholder="Enter Git URL"
+                                onChange={this.handlers.get('url')}/>
+                            <FormControl.Feedback />
+                        </FormGroup>
+
+                        <FormGroup controlId="path" validationState={this.getValidationState('path')}>
+                            <ControlLabel>Path</ControlLabel>
+                            <FormControl
+                                type="text"
+                                value={this.state.path}
+                                placeholder="Enter Path"
+                                onChange={this.handlers.get('path')} />
+                            <FormControl.Feedback />
+                        </FormGroup>
+
+                        <FormGroup
+                            controlId="appName" validationState={this.getValidationState('appName')}>
+                            <ControlLabel>App Name</ControlLabel>
+                            <FormControl
+                                type="text"
+                                value={this.state.appName}
+                                placeholder="Enter App Name"
+                                onChange={this.handlers.get('appName')} />
+                        </FormGroup>
+
+                        <FormGroup
+                            controlId="productionBranch" validationState={this.getValidationState('productionBranch')}>
+                            <ControlLabel>Production Branch</ControlLabel>
+                            <FormControl
+                                type="text"
+                                value={this.state.productionBranch}
+                                placeholder="Enter Production Branch"
+                                onChange={this.handlers.get('productionBranch')} />
+                        </FormGroup>
+
+                        <FormGroup
+                            controlId="ciBranch" validationState={this.getValidationState('ciBranch')}>
+                            <ControlLabel>CI Branch</ControlLabel>
+                            <FormControl
+                                type="text"
+                                value={this.state.ciBranch}
+                                placeholder="Enter CI Branch"
+                                onChange={this.handlers.get('ciBranch')} />
+                        </FormGroup>
+
+                        <FormGroup
+                            controlId="ctBranch" validationState={this.getValidationState('ctBranch')}>
+                            <ControlLabel>CT Branch</ControlLabel>
+                            <FormControl
+                                type="text"
+                                value={this.state.ctBranch}
+                                placeholder="Enter CT Branch"
+                                onChange={this.handlers.get('ctBranch')} />
+                        </FormGroup>
+
+
+                        <Button type="button" bsStyle="primary"
+                            disabled={this.isFormValid()}
+                            onClick={this.testConnection}>
+                            Test Connection
+                        </Button>
+                        <Button type="button" bsStyle="success" >Next</Button>
+                    </Form>
+                </div>
             </div>
-        )
+        </React.Fragment>
     }
 }
