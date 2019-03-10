@@ -1,0 +1,19 @@
+ul.submenu {
+    padding-left: 0px;
+    background: #252323;
+    transition-duration: 800ms;
+    overflow: hidden;
+}
+
+ul.submenu.collapsed {
+    max-height: 0px;
+}
+
+.list-group-item:hover ul.submenu.collapsed{
+    max-height: 500px;
+}
+
+
+ul.submenu .list-group-item.active a{
+    background: #252323;
+}

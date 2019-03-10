@@ -25,57 +25,40 @@ import 'patternfly/dist/css/patternfly-additions.css';
 import 'patternfly/dist/css/rcue.css';
 import 'patternfly/dist/css/rcue-additions.css';
 import 'patternfly-react/dist/css/patternfly-react.css';
+import 'patternfly-react-extensions/dist/css/patternfly-react-extensions.css';
 import './css/base.css';
+import './css/navigation.css';
 
 
-export default class App extends Component <any, any>{
-	
-	constructor(props) {
-		super(props);
-		this.state = {
-			previousURL: location.href,
-			navItems: navigationListProvider(location.pathname, location.pathname)
-		};
-	}
+export default class App extends Component <any, any> {	
 
-	componentDidUpdate() {
-		if(this.state.previousURL != location.href){
-			this.setState({
-				previousURL: location.href,
-				navItems: navigationListProvider(location.href, location.pathname)
-			});
-		}
-	}
-	
 	render() {
-	    return (
-	       	<Navigation item={this.state.navItems}>
-	        	<Switch>
-	            	
-	            	<Route exact path="/create-docker" component={CreateDocker} />
-		            
-		            <Route exact path="/form-setup/ci-config" component={CIConfigEdit} />
-		            <Route exact path="/form-setup/source-config" component={SourceConfigEdit} />
-		            <Route exact path="/form-setup/deployment-template" component={DeploymentConfigEdit} />
-		            <Route exact path="/form-setup/flow-chart" component={FlowChart} />
-		            
-		            <Route exact path="/form-global/git-repo-config" component={GitRepositoryConfigEdit} />
-		            <Route exact path="/form-global/git-repo-config/:repoId" component={GitRepositoryConfigEdit} />
-		            <Route exact path="/form-global/environment-register" component={EnvironmentRegister} />
-	            	<Route exact path="/form-global/docker-register" component={DockerRegistryConfigEdit} />
-	            	<Route exact path="/form-global/docker-register/:id" component={DockerRegistryConfigEdit} />
+	    return <Navigation items={navigationListProvider(location.pathname)}>
+        	<Switch>
+            	
+            	<Route exact path="/create-docker" component={CreateDocker} />
+	            
+	            <Route exact path="/form-setup/ci-config" component={CIConfigEdit} />
+	            <Route exact path="/form-setup/source-config" component={SourceConfigEdit} />
+	            <Route exact path="/form-setup/deployment-template" component={DeploymentConfigEdit} />
+	            <Route exact path="/form-setup/flow-chart" component={FlowChart} />
+	            
+	            <Route exact path="/form-global/git-repo-config" component={GitRepositoryConfigEdit} />
+	            <Route exact path="/form-global/git-repo-config/:repoId" component={GitRepositoryConfigEdit} />
+	            <Route exact path="/form-global/environment-register" component={EnvironmentRegister} />
+            	<Route exact path="/form-global/docker-register" component={DockerRegistryConfigEdit} />
+            	<Route exact path="/form-global/docker-register/:id" component={DockerRegistryConfigEdit} />
 
-	            	<Route exact path="/list/apps" component={AppList} />
-					<Route exact path="/list/docker-registries" component={DockerRegistryList} />
-		            <Route exact path="/list/git-repos" component={GitRepoList} />
+            	<Route exact path="/list/apps" component={AppList} />
+				<Route exact path="/list/docker-registries" component={DockerRegistryList} />
+	            <Route exact path="/list/git-repos" component={GitRepoList} />
 
-	            	<Route exact path="/details/app/:appId" component={AppDetails} />
-	            	<Route exact path="/details/graphs" component={Graphs} />
+            	<Route exact path="/details/app/:appId" component={AppDetails} />
+            	<Route exact path="/details/graphs" component={Graphs} />
 
-	            	<Route component={FallbackComponent} />
+            	<Route component={FallbackComponent} />
 
-	        	</Switch>
-	        </Navigation>
-	    );
+        	</Switch>
+        </Navigation>
   	}
 }

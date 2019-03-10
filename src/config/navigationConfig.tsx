@@ -1,149 +1,80 @@
 interface navigationItem {
-	title: string;
-	initialActive: boolean;
+    title: string;
 	iconClass: string;
-	href: string;
+    isCollapsed?: boolean;
+    isActive?: boolean;
+	href?: string;
+    subItems?: navigationItem[]
 }
 
-interface navigationItemSetup extends navigationItem {
-    isDisabled: boolean;
-}
-
-const setupNavList: Array<navigationItemSetup> = [
-    {
-        // title: "Source Configurations",
-        title: "Back",
-        initialActive: false,
-        iconClass: "fa fa-angle-left",
-        href: "back",
-        isDisabled: false
+const navigationList: navigationItem[] = [{
+    title: 'Dashboard',
+    iconClass: 'fa fa-dashboard',
+    subItems: [{
+        title: 'Git Repository List',
+        iconClass: 'fa fa-github-square',
+        href: '/list/git-repos'
     }, {
-        // title: "Source Configurations",
-        title: "Step 4",
-        initialActive: false,
-        iconClass: "fa fa-github-square",
-        href: "/form-setup/source-config",
-        isDisabled: false
+        title: 'Docker Registries',
+        iconClass: 'fa fa-book',
+        href: '/list/docker-registries'
     }, {
-        // title: "CI Configurations",
-        title: "Step 5",
-        initialActive: false,
-        iconClass: "fa fa-github-square",
-        href: "/form-setup/ci-config",
-        isDisabled: false
-    }, {
-        // title: "Deployment Template",
-        title: "Step 6",
-        initialActive: false,
-        iconClass: "fa fa-github-square",
-        href: "/form-setup/deployment-template",
-        isDisabled: false
-    }, {
-        // title: "Deployment Template",
-        title: "Step 7",
-        initialActive: false,
-        iconClass: "fa fa-github-square",
-        href: "/form-setup/properties-config",
-        isDisabled: false
-    }, {
-        // title: "Flow Chart",
-        // it contains environment specific configuration
-        // it contains deployment template selection on pipeline
-        title: "Step 8",
-        initialActive: true,
-        iconClass: "fa fa-dashboard",
-        href: "/form-setup/flow-chart",
-        isDisabled: false
-    }
-
-];
-
-const homeNavList: Array<navigationItem> = [
-    {
-        title: "Setup",
-        initialActive: false,
-        iconClass: "fa fa-server",
-        href: "/form-setup/source-config"
-    }, {
-        title: "Global Config",
-        initialActive: false,
-        iconClass: "fa fa-globe",
-        href: "/form-global/git-repo-config"
+        title: 'Graphs',
+        iconClass: 'fa fa-area-chart',
+        href: '/details/graphs'
     }, {
         title: "App List",
-        initialActive: false,
         iconClass: "fa fa-modx",
         href: "/list/apps"
+    }]
+}, {
+    title: 'Global Config',
+    iconClass: 'fa fa-globe',
+    subItems: [{
+        title: 'Git Repo Config',
+        iconClass: 'fa fa-globe',
+        href: '/form-global/git-repo-config'
     }, {
-        title: "Git Repository List",
-        initialActive: false,
-        iconClass: "fa fa-github-square",
-        href: "/list/git-repos"
+        title: 'Environment Config',
+        iconClass: 'fa fa-envira',
+        href: '/form-global/environment-register'
     }, {
-        title: "Docker Registries",
-        initialActive: false,
-        iconClass: "fa fa-book",
-        href: "/list/docker-registries"
-    }, {
-        title: "Graphs",
-        initialActive: false,
-        iconClass: "fa fa-area-chart",
-        href: "/details/graphs"
-    }
-];
+        title: 'Docker Config',
+        iconClass: 'fa fa-file',
+        href: '/form-global/docker-register'
+    }]
+}, {
+    title: 'Setup',
+    iconClass: 'fa fa-server',
+    href: '/form-setup/source-config'
+}];
 
-const globalConfigNavList: Array<navigationItemSetup> = [
-    {
-        // title: "Source Configurations",
-        title: "Back",
-        initialActive: false,
-        iconClass: "fa fa-angle-left",
-        href: "back",
-        isDisabled: false
-    }, {
-        title: "Git Repo Config",
-        initialActive: false,
-        iconClass: "fa fa-github-square",
-        href: "/form-global/git-repo-config",
-        isDisabled: false
-    }, {
-        title: "Environment Config",
-        initialActive: false,
-        iconClass: "fa fa-envira",
-        href: "/form-global/environment-register",
-        isDisabled: false
-    }, {
-        title: "Docker Config",
-        initialActive: false,
-        iconClass: "fa fa-file",
-        href: "/form-global/docker-register",
-        isDisabled: false
-    }
-]
-
-export const navigationListProvider = (url: string, pathName: string): Array<navigationItem> => {
-    let list = homeNavList;
-    if(url.indexOf('form-setup') !== -1) {
-        list = setupNavList;
-    }
-    else if(url.indexOf('form-global') !== -1) {
-        list = globalConfigNavList;
-    }
-    return list.map(navItem => {
-        if(pathName == navItem.href){
-            navItem.initialActive = true;
+export const navigationListProvider = (pathName: string) => {
+    return navigationList.map(menuItem => {
+        menuItem.subItems = menuItem.subItems ? menuItem.subItems.map(subItem => {
+            subItem.isActive = false;
+            return subItem;
+        }) : undefined;
+        return menuItem;
+    }).map(menuItem => {
+        if(menuItem.subItems){
+            let activeSubMenu = menuItem.subItems.find(subMenu => pathName == subMenu.href);
+            if(activeSubMenu) {
+                activeSubMenu.isActive = true;
+                menuItem.isCollapsed = false;
+            }
+            else{
+                menuItem.isCollapsed = true;
+            }
         }
-        else{
-            navItem.initialActive = false;
-        }
-        return navItem;
+        return menuItem;
     });
 } 
 
 
 /*{
-    title: "Create Docker",
-    initialActive: false,
-    iconClass: "fa fa-file-text",
-    href: "/create-docker"
+    title: 'Create Docker',
+    isActive: false,
+    iconClass: 'fa fa-file-text',
+    href: '/create-docker'
 },*/ 
