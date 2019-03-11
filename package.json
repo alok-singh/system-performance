@@ -11,6 +11,7 @@
     "classnames": "^2.2.6",
     "moment": "^2.24.0",
     "patternfly-react": "^2.30.3",
+    "patternfly-react-extensions": "^2.16.23",
     "prop-types": "^15.7.1",
     "react": "^16.8.1",
     "react-archer": "^1.0.2",

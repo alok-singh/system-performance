@@ -263,22 +263,24 @@ export default class DockerRegistryConfigForm extends Component<DockerRegistryCo
         errors = this.state.errors;
         if (code === 200 || code === 201) {
             return (
-                <ToastNotification type="success">
-                    <span>{this.state.successMessage}</span>
-                    <div className="pull-right toast-pf-action">
-                        <Button bsClass="transparent"
-                            onClick={this.closeNotification}>
-                            <span className="fa fa-close"></span>
-                        </Button>
-                    </div>
-                </ToastNotification>
+                <ToastNotificationList>
+                    <ToastNotification type="success">
+                        <span>{this.state.successMessage}</span>
+                        <div className="pull-right toast-pf-action">
+                            <Button bsClass="transparent"
+                                onClick={this.closeNotification}>
+                                <span className="fa fa-close"></span>
+                            </Button>
+                        </div>
+                    </ToastNotification>
+                </ToastNotificationList>
             )
         }
 
         else if (this.state.errors.length) {
             var self = this;
             return (
-                <Fragment>
+                <ToastNotificationList>
                     {this.state.errors.map(function (error, index) {
                         return (
                             <ToastNotification key={index} type="error">
@@ -293,7 +295,7 @@ export default class DockerRegistryConfigForm extends Component<DockerRegistryCo
                         )
                     })}
 
-                </Fragment>
+                </ToastNotificationList>
             );
 
         }
@@ -379,11 +381,9 @@ export default class DockerRegistryConfigForm extends Component<DockerRegistryCo
         return <div>
             {this.renderPageTitle()}
             <div className="w-80 margin-auto">
-                <Row>
-                    <ToastNotificationList>
-                        {this.renderNotification()}
-                    </ToastNotificationList>
-                </Row>
+
+                {this.renderNotification()}
+
                 <Form>
                     <Row>
                         <FormGroup controlId="pluginId" validationState={this.validate('pluginId').result}>

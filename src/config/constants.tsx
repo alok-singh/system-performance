@@ -20,6 +20,8 @@ export const Routes = {
     GIT_REPO_CONFIG: "/config/git-repo-config",
     INSTANCE_LIST: "/logs/instances",
     LOGS: "/logs",
+    PROPERTIES: "/config/properties",
+    PROPERTY_OPTIONS: "properties-options",
 }
 export const FormType = {
     SAVE: "SAVE",

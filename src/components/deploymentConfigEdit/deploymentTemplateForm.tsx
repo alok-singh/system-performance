@@ -190,7 +190,7 @@ export default class DeploymentTemplateForm extends Component<{}, DeploymentTemp
     }
 
     //@description: Is 'subset' subset of 'json'
-    //NOTE: Empty Subset is not a subset
+    //NOTE: Empty Array - not a subset
     isSubset = (json: any, subset: any): boolean => {
         let valid = true;
         
@@ -224,9 +224,6 @@ export default class DeploymentTemplateForm extends Component<{}, DeploymentTemp
 
             let key = new Set(Object.keys(json));
             let keySubset = new Set(Object.keys(subset));
-            
-            // Handling empty objects 
-            valid = valid && keySubset.size > 0;
 
             keySubset.forEach(element => {
                 valid = valid && (key.has(element)) &&
@@ -294,6 +291,7 @@ export default class DeploymentTemplateForm extends Component<{}, DeploymentTemp
                                     <ControlLabel>Chart Repository</ControlLabel>
                                     <Fragment>
                                         <TypeAheadSelect
+                                            id="id"
                                             labelKey="name"
                                             options={this.state.chartRepositoryOptions}
                                             clearButton
@@ -309,6 +307,7 @@ export default class DeploymentTemplateForm extends Component<{}, DeploymentTemp
                                     <ControlLabel>Reference Template</ControlLabel>
                                     <Fragment>
                                         <TypeAheadSelect
+                                            id="id"
                                             labelKey="name"
                                             options={this.state.referenceTemplateOptions}
                                             clearButton
