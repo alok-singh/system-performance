@@ -8,13 +8,18 @@ import {
     TypeAheadSelect,
     Row,
     Col,
-    HelpBlock
+    HelpBlock,
+    Card,
+    CardTitle,
+    CardBody
 } from 'patternfly-react'
 
 import ArgsFieldSet from './argsFieldSet';
 import { Host, Routes } from '../../config/constants';
 
-import { CIConfigResponse, CIConfigFormState } from '../../modals/ciConfigTypes'
+import { CIConfigResponse, CIConfigFormState } from '../../modals/ciConfigTypes';
+
+import DirectionalNavigation from '../common/directionalNavigation';
 
 export default class CIConfigForm extends Component<{}, CIConfigFormState> {
 
@@ -191,85 +196,128 @@ export default class CIConfigForm extends Component<{}, CIConfigFormState> {
     refresh = () => {
 
     }
+
+    renderDirectionalNavigation() {
+        let steps = [{
+            title: 'Step 4',
+            isActive: false,
+            href: '/form-setup/source-config',
+            isAllowed: true
+        }, {
+            title: 'Step 5',
+            isActive: true,
+            href: '/form-setup/ci-config',
+            isAllowed: true
+        }, {
+            title: 'Step 6',
+            isActive: false,
+            href: '/form-setup/deployment-template',
+            isAllowed: false
+        }, {
+            title: 'Step 7',
+            isActive: false,
+            href: '/form-setup/properties-config',
+            isAllowed: false
+        }, {
+            title: 'Step 8',
+            isActive: false,
+            href: '/form-setup/flow-chart',
+            isAllowed: false
+        }];
+        return <DirectionalNavigation steps={steps} />
+    }
+
+    renderPageHeader() {
+        return <Card>
+            <CardTitle>
+                CI Configuration
+            </CardTitle>
+            <CardBody>
+                This is some description about CI Configuration what is required to be filled.
+            </CardBody>
+        </Card>
+    }
+
     render() {
+        return <React.Fragment>
+            {this.renderPageHeader()}
+            <div className="nav-form-wrapper">
+                {this.renderDirectionalNavigation()}
+                <div className="source-config-form">
+                    <Form>
+                        <Row>
+                            <Col xs={12} lg={6}>
+                                <FormGroup controlId="dockerFilePath"
+                                    validationState={this.getValidationState("dockerFilePath")}>
+                                    <ControlLabel>Docker File Path</ControlLabel>
 
-        return (
-            <div className="ci-config-form margin-auto">
-                <h1>CI Configuration</h1>
-                <Form>
-                    <Row>
-                        <Col xs={12} lg={6}>
-                            <FormGroup controlId="dockerFilePath"
-                                validationState={this.getValidationState("dockerFilePath")}>
-                                <ControlLabel>Docker File Path</ControlLabel>
+                                    <FormControl
+                                        type="text" required
+                                        value={this.state.form.dockerFilePath}
+                                        placeholder="Enter Docker File Path"
+                                        onChange={(event) => this.handleChange(event, 'dockerFilePath')} />
 
-                                <FormControl
-                                    type="text" required
-                                    value={this.state.form.dockerFilePath}
-                                    placeholder="Enter Docker File Path"
-                                    onChange={(event) => this.handleChange(event, 'dockerFilePath')} />
+                                    <HelpBlock>{this.state.validation.dockerFilePath}</HelpBlock>
 
-                                <HelpBlock>{this.state.validation.dockerFilePath}</HelpBlock>
+                                </FormGroup>
 
-                            </FormGroup>
+                                <FormGroup>
+                                    <ControlLabel>Docker Repository</ControlLabel>
+                                    <Fragment>
+                                        <TypeAheadSelect
+                                            labelKey="registryUrl"
+                                            multiple={false}
+                                            options={this.state.repositoryOptions}
+                                            clearButton
+                                            isValid={this.isDropDownValid('repository')}
+                                            onChange={(event) => { this.handleRepositoryOptions(event) }}
+                                            placeholder="Select Docker Repository..."
+                                        />
+                                    </Fragment>
+                                    <HelpBlock>{this.state.validation.repository}</HelpBlock>
 
-                            <FormGroup>
-                                <ControlLabel>Docker Repository</ControlLabel>
-                                <Fragment>
-                                    <TypeAheadSelect
-                                        labelKey="registryUrl"
-                                        multiple={false}
-                                        options={this.state.repositoryOptions}
-                                        clearButton
-                                        isValid={this.isDropDownValid('repository')}
-                                        onChange={(event) => { this.handleRepositoryOptions(event) }}
-                                        placeholder="Select Docker Repository..."
-                                    />
-                                </Fragment>
-                                <HelpBlock>{this.state.validation.repository}</HelpBlock>
+                                </FormGroup>
 
-                            </FormGroup>
+                                <FormGroup controlId="tagPattern" validationState={this.getValidationState('tagPattern')}>
+                                    <ControlLabel>Tag Pattern</ControlLabel>
+                                    <FormControl
+                                        type="text"
+                                        value={this.state.form.tagPattern}
+                                        placeholder="Enter Tag Pattern"
+                                        onChange={(event) => this.handleChange(event, 'tagPattern')} />
+                                </FormGroup>
+                                <HelpBlock>{this.state.validation.tagPattern}</HelpBlock>
 
-                            <FormGroup controlId="tagPattern" validationState={this.getValidationState('tagPattern')}>
-                                <ControlLabel>Tag Pattern</ControlLabel>
-                                <FormControl
-                                    type="text"
-                                    value={this.state.form.tagPattern}
-                                    placeholder="Enter Tag Pattern"
-                                    onChange={(event) => this.handleChange(event, 'tagPattern')} />
-                            </FormGroup>
-                            <HelpBlock>{this.state.validation.tagPattern}</HelpBlock>
+                                <ArgsFieldSet callbackFromCIConfig={this.saveArgs} />
+                            </Col>
 
-                            <ArgsFieldSet callbackFromCIConfig={this.saveArgs} />
-                        </Col>
+                            <Col xs={12} lg={6}>
+                                <FormGroup
+                                    controlId="text" validationState={this.getValidationState('dockerfile')}>
+                                    <ControlLabel>Docker File</ControlLabel>
+                                    <FormControl
+                                        height="100"
+                                        componentClass="textarea"
+                                        value={this.state.form.dockerfile}
+                                        placeholder="Docker Config File"
+                                        onChange={(event) => this.handleChange(event, 'dockerfile')} />
+                                </FormGroup>
 
-                        <Col xs={12} lg={6}>
-                            <FormGroup
-                                controlId="text" validationState={this.getValidationState('dockerfile')}>
-                                <ControlLabel>Docker File</ControlLabel>
-                                <FormControl
-                                    height="100"
-                                    componentClass="textarea"
-                                    value={this.state.form.dockerfile}
-                                    placeholder="Docker Config File"
-                                    onChange={(event) => this.handleChange(event, 'dockerfile')} />
-                            </FormGroup>
+                                <Button type="button" bsClass="align-right" bsStyle="primary" onClick={this.refresh}>
+                                    Refresh
+                                </Button>
 
-                            <Button type="button" bsClass="align-right" bsStyle="primary" onClick={this.refresh}>
-                                Refresh
-                            </Button>
+                            </Col>
+                        </Row>
 
-                        </Col>
-                    </Row>
-
-                    <Button type="button" bsStyle="primary"
-                        disabled={this.isFormValid()}
-                        onClick={this.save}>
-                        Save
-                    </Button>
-                </Form>
-            </div>
-
-        )
+                        <Button type="button" bsStyle="primary"
+                            disabled={this.isFormValid()}
+                            onClick={this.save}>
+                            Save
+                        </Button>
+                    </Form>
+                </div>
+            </div>    
+        </React.Fragment>
     }
 }

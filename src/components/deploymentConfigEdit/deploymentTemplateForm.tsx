@@ -10,7 +10,10 @@ import {
     Tabs, 
     Tab, 
     Row, 
-    Col 
+    Col ,
+    Card,
+    CardTitle,
+    CardBody
 } from 'patternfly-react'
 
 import { 
@@ -19,6 +22,8 @@ import {
 } from '../../config/constants';
 
 import { Description } from '../../modals/deploymentTemplateTypes';
+
+import DirectionalNavigation from '../common/directionalNavigation';
 
 export interface DeploymentTemplateFormState {
     chartRepositoryOptions: Description[];
@@ -276,123 +281,167 @@ export default class DeploymentTemplateForm extends Component<{}, DeploymentTemp
 
     }
 
+    renderDirectionalNavigation() {
+        let steps = [{
+            title: 'Step 4',
+            isActive: false,
+            href: '/form-setup/source-config',
+            isAllowed: true
+        }, {
+            title: 'Step 5',
+            isActive: false,
+            href: '/form-setup/ci-config',
+            isAllowed: true
+        }, {
+            title: 'Step 6',
+            isActive: true,
+            href: '/form-setup/deployment-template',
+            isAllowed: true
+        }, {
+            title: 'Step 7',
+            isActive: false,
+            href: '/form-setup/properties-config',
+            isAllowed: false
+        }, {
+            title: 'Step 8',
+            isActive: false,
+            href: '/form-setup/flow-chart',
+            isAllowed: false
+        }];
+        return <DirectionalNavigation steps={steps} />
+    }
+
+    renderPageHeader() {
+        return <Card>
+            <CardTitle>
+                Deployment Template
+            </CardTitle>
+            <CardBody>
+                This is some description about Deployment Template what is required to be filled.
+            </CardBody>
+        </Card>
+    }
+
     render() {
-        return (
-            <div className="deployment-template margin-auto">
-                <h1>Deployment Template</h1>
-                <Form>
-                    <ExpandCollapse
-                        bordered={true}
-                        textCollapsed="Show Advanced Configuration"
-                        textExpanded="Hide Advanced Configuration">
-                        <Row bsClass="bg-gray flexbox">
-                            <Col lg={12}>
-                                <FormGroup>
-                                    <ControlLabel>Chart Repository</ControlLabel>
-                                    <Fragment>
-                                        <TypeAheadSelect
-                                            id="id"
-                                            labelKey="name"
-                                            options={this.state.chartRepositoryOptions}
-                                            clearButton
-                                            multiple={false}
-                                            placeholder="Select Chart Repository..."
-                                            isValid={this.isDropDownValid('chartRepository')}
-                                            onChange={(events) => this.handleOptions(events, 'chartRepository')}
-                                        />
-                                    </Fragment>
-                                </FormGroup>
-
-                                <FormGroup>
-                                    <ControlLabel>Reference Template</ControlLabel>
-                                    <Fragment>
-                                        <TypeAheadSelect
-                                            id="id"
-                                            labelKey="name"
-                                            options={this.state.referenceTemplateOptions}
-                                            clearButton
-                                            isValid={this.isDropDownValid('referenceTemplate')}
-                                            onChange={(events) => this.handleOptions(events, 'referenceTemplate')}
-                                            placeholder="Select Reference Template..."
-                                        />
-                                    </Fragment>
-                                </FormGroup>
-                            </Col>
-                        </Row>
-
-                    </ExpandCollapse>
-                    <div className="mt-25"></div>
-                    <Tabs defaultActiveKey={1} id="deployment-config">
-                        <Tab eventKey={1} title="JSON">
-                            <Row bsClass="bg-gray flexbox p-25">
-                                <Col lg={6}>
-                                    <FormGroup
-                                        controlId="text">
-                                        <FormControl
-                                            height="100"
-                                            componentClass="textarea"
-                                            value={this.state.deploymentConfig.json.value}
-                                            placeholder="JSON"
-                                            disabled={true} />
+        return <React.Fragment>
+            {this.renderPageHeader()}
+            <div className="nav-form-wrapper">
+                {this.renderDirectionalNavigation()}
+                <div className="source-config-form">
+                    <Form>
+                        <ExpandCollapse
+                            bordered={true}
+                            textCollapsed="Show Advanced Configuration"
+                            textExpanded="Hide Advanced Configuration">
+                            <Row bsClass="bg-gray flexbox">
+                                <Col lg={12}>
+                                    <FormGroup>
+                                        <ControlLabel>Chart Repository</ControlLabel>
+                                        <Fragment>
+                                            <TypeAheadSelect
+                                                id="id"
+                                                labelKey="name"
+                                                options={this.state.chartRepositoryOptions}
+                                                clearButton
+                                                multiple={false}
+                                                placeholder="Select Chart Repository..."
+                                                isValid={this.isDropDownValid('chartRepository')}
+                                                onChange={(events) => this.handleOptions(events, 'chartRepository')}
+                                            />
+                                        </Fragment>
                                     </FormGroup>
-                                </Col>
-                                <Col lg={6}>
-                                    <FormGroup
-                                        controlId="text">
-                                        <FormControl
-                                            height="100"
-                                            componentClass="textarea"
-                                            value={this.state.deploymentConfig.subset.value}
-                                            placeholder="JSON"
-                                            onChange={(event) => { this.handleJsonValue(event, 'json') }} />
-                                    </FormGroup>
-                                    <Button type="button" bsClass="align-right" bsStyle="primary" onClick={this.validateJson}>
-                                        Validate JSON
-                                    </Button>
 
+                                    <FormGroup>
+                                        <ControlLabel>Reference Template</ControlLabel>
+                                        <Fragment>
+                                            <TypeAheadSelect
+                                                id="id"
+                                                labelKey="name"
+                                                options={this.state.referenceTemplateOptions}
+                                                clearButton
+                                                isValid={this.isDropDownValid('referenceTemplate')}
+                                                onChange={(events) => this.handleOptions(events, 'referenceTemplate')}
+                                                placeholder="Select Reference Template..."
+                                            />
+                                        </Fragment>
+                                    </FormGroup>
                                 </Col>
                             </Row>
-                        </Tab>
-                        <Tab eventKey={2} title="YAML">
-                            <Row bsClass="bg-gray flexbox p-25">
-                                <Col lg={6}>
-                                    <FormGroup
-                                        controlId="text">
-                                        <FormControl
-                                            height="100"
-                                            componentClass="textarea"
-                                            value={this.state.deploymentConfig.json.value}
-                                            placeholder="JSON"
-                                            disabled={true} />
-                                    </FormGroup>
-                                </Col>
-                                <Col lg={6}>
-                                    <FormGroup
-                                        controlId="text">
-                                        <FormControl
-                                            height="100"
-                                            componentClass="textarea"
-                                            value={this.state.deploymentConfig.subset.value}
-                                            placeholder="JSON"
-                                            onChange={(event) => { this.handleJsonValue(event, 'json') }} />
-                                    </FormGroup>
-                                    <Button type="button" bsClass="align-right" bsStyle="primary" >
-                                        Validate YAML
-                                    </Button>
-                                </Col>
-                            </Row>
-                        </Tab>
 
-                    </Tabs>
+                        </ExpandCollapse>
+                        <div className="mt-25"></div>
+                        <Tabs defaultActiveKey={1} id="deployment-config">
+                            <Tab eventKey={1} title="JSON">
+                                <Row bsClass="bg-gray flexbox p-25">
+                                    <Col lg={6}>
+                                        <FormGroup
+                                            controlId="text">
+                                            <FormControl
+                                                height="100"
+                                                componentClass="textarea"
+                                                value={this.state.deploymentConfig.json.value}
+                                                placeholder="JSON"
+                                                disabled={true} />
+                                        </FormGroup>
+                                    </Col>
+                                    <Col lg={6}>
+                                        <FormGroup
+                                            controlId="text">
+                                            <FormControl
+                                                height="100"
+                                                componentClass="textarea"
+                                                value={this.state.deploymentConfig.subset.value}
+                                                placeholder="JSON"
+                                                onChange={(event) => { this.handleJsonValue(event, 'json') }} />
+                                        </FormGroup>
+                                        <Button type="button" bsClass="align-right" bsStyle="primary" onClick={this.validateJson}>
+                                            Validate JSON
+                                        </Button>
 
-                    <Button type="button"
-                        bsStyle="primary"
-                        onClick={this.saveDeploymentTemplate}
-                        disabled={this.isFormValid()}>
-                        Save
-                    </Button>
-                </Form>
+                                    </Col>
+                                </Row>
+                            </Tab>
+                            <Tab eventKey={2} title="YAML">
+                                <Row bsClass="bg-gray flexbox p-25">
+                                    <Col lg={6}>
+                                        <FormGroup
+                                            controlId="text">
+                                            <FormControl
+                                                height="100"
+                                                componentClass="textarea"
+                                                value={this.state.deploymentConfig.json.value}
+                                                placeholder="JSON"
+                                                disabled={true} />
+                                        </FormGroup>
+                                    </Col>
+                                    <Col lg={6}>
+                                        <FormGroup
+                                            controlId="text">
+                                            <FormControl
+                                                height="100"
+                                                componentClass="textarea"
+                                                value={this.state.deploymentConfig.subset.value}
+                                                placeholder="JSON"
+                                                onChange={(event) => { this.handleJsonValue(event, 'json') }} />
+                                        </FormGroup>
+                                        <Button type="button" bsClass="align-right" bsStyle="primary" >
+                                            Validate YAML
+                                        </Button>
+                                    </Col>
+                                </Row>
+                            </Tab>
+
+                        </Tabs>
+
+                        <Button type="button"
+                            bsStyle="primary"
+                            onClick={this.saveDeploymentTemplate}
+                            disabled={this.isFormValid()}>
+                            Save
+                        </Button>
+                    </Form>
+                </div>
             </div>
-        );
+        </React.Fragment>
     }
 }

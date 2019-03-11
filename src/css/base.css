@@ -179,13 +179,13 @@ button:focus {
 .nav-form-wrapper {
     display: flex;
     align-items: flex-start;
-    justify-content: space-around;
+    justify-content: center;
     height: calc(100vh - 200px);
     overflow-y: scroll;
 }
 
 .nav-form-wrapper .source-config-form {
-    width: 50%;
+    width: 70%;
     margin: 0px;
+    margin-left: 50px;
 }
-

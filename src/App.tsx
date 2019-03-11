@@ -43,7 +43,7 @@ export default class App extends Component <any, any> {
 	            <Route exact path="/form-setup/source-config" component={SourceConfigEdit} />
 	            <Route exact path="/form-setup/deployment-template" component={DeploymentConfigEdit} />
 	            <Route exact path="/form-setup/flow-chart" component={FlowChart} />
-            	<Route exact path="/form-setup/properties" component={PropertiesForm} />
+            	<Route exact path="/form-setup/properties-config" component={PropertiesForm} />
 	            
 	            <Route exact path="/form-global/git-repo-config" component={GitRepositoryConfigEdit} />
 	            <Route exact path="/form-global/git-repo-config/:repoId" component={GitRepositoryConfigEdit} />

@@ -17,7 +17,7 @@ interface DirectionalNavigationItemProps {
 export default class ProgressNavigation extends Component<DirectionalNavigationItemProps, any> {
 
 	renderBox(title, isActive, href, isAllowed) {
-		return <div className={`hexagon ${isAllowed ? 'disabled' : ''} ${isActive ? 'active' : ''}`}>
+		return <div key={href} className={`hexagon ${isAllowed ? '' : 'disabled'} ${isActive ? 'active' : ''}`}>
 			<Link to={href}>
 				{title}
 			</Link>

@@ -14,7 +14,7 @@
     left: 0;
     height: 100%;
     width: 51%;
-    background-color: #64C7CC;
+    background-color: #39a5dc;;
     transform: skew(0deg, 15deg);
 }
 
@@ -25,6 +25,29 @@
     right: 0;
     height: 100%;
     width: 50%;
-    background-color: #64C7CC;
+    background-color: #0088ce;
     transform: skew(0deg, -15deg);
+}
+
+.hexagon a {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1;
+    color: #fff;
+    font-size: 18px;
+}
+
+.hexagon a:hover {
+    text-decoration: none;
+    color: #fff;
+}
+
+.hexagon.disabled:before {
+    background: #a7a7a7;
+}
+
+.hexagon.disabled:after {
+    background: #989898;
 }
