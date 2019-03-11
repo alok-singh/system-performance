@@ -9,7 +9,10 @@ import {
     Row, 
     HelpBlock,
     ToastNotificationList, 
-    ToastNotification
+    Card,
+    CardTitle,
+    CardBody,
+    ToastNotification,
 } from 'patternfly-react'
 
 import { 
@@ -285,22 +288,26 @@ export default class GitRepositoryConfigForm extends Component<GitRepositoryConf
         errors = this.state.errors;
         if (code === 200 || code === 201) {
             return (
-                <ToastNotification type="success">
-                    <span>{this.state.successMessage}</span>
-                    <div className="pull-right toast-pf-action">
-                        <Button bsClass="transparent"
-                            onClick={this.closeNotification}>
-                            <span className="fa fa-close"></span>
-                        </Button>
-                    </div>
-                </ToastNotification>
+                <Row>
+                    <ToastNotificationList>
+                        <ToastNotification type="success">
+                            <span>{this.state.successMessage}</span>
+                            <div className="pull-right toast-pf-action">
+                                <Button bsClass="transparent"
+                                    onClick={this.closeNotification}>
+                                    <span className="fa fa-close"></span>
+                                </Button>
+                            </div>
+                        </ToastNotification>
+                    </ToastNotificationList>
+                </Row>
             )
         }
         else if (this.state.errors.length) {
 
             var self = this;
-            return (
-                <Fragment>
+            return <Row>
+                <ToastNotificationList>
                     {this.state.errors.map(function (error, index) {
                         return (
                             <ToastNotification key={index} type="error">
@@ -314,27 +321,30 @@ export default class GitRepositoryConfigForm extends Component<GitRepositoryConf
                             </ToastNotification>
                         )
                     })}
-
-                </Fragment>
-            );
-
+                </ToastNotificationList>
+            </Row>
         }
+    }
+
+    renderPageHeader() {
+        return <Card>
+            <CardTitle>
+                <CardTitle>
+                    Git Repository Configuration
+                </CardTitle>
+            </CardTitle>
+            <CardBody>
+                Following are the Git Repository Configurations.
+            </CardBody>
+        </Card>
     }
 
     render() {
         const label = this.getControlLableAuthMode();
-
-        return (
-            <div className="margin-auto w-80">
-
-                <Row>
-                    <ToastNotificationList>
-                        {this.renderNotification()}
-                    </ToastNotificationList>
-                </Row>
-
-                <Row><h1>Git Repository Configuration</h1></Row>
-
+        return <React.Fragment>
+            {this.renderPageHeader()}
+            {this.renderNotification()}
+            <div className="source-config-form">
                 <Form>
                     <Row>
                         <FormGroup controlId="name" validationState={this.validate('name').result}>
@@ -406,14 +416,11 @@ export default class GitRepositoryConfigForm extends Component<GitRepositoryConf
                         </Button>
                     </Row>
                 </Form>
-
                 <Row className="m-tb-20">
                     <hr></hr>
                     <span className="small-text">All fields are Mandatory</span>
                 </Row>
-
             </div>
-        );
-
+        </React.Fragment>
     }
 }

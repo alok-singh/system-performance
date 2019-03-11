@@ -32,7 +32,7 @@ interface NodeProps {
     handleMouseUp(event: any): void;
     handleMouseDown(event: any): void;
     handleTitleChange(event: any): void;
-    handleClickCircle(event:any, isInput:boolean): void;
+    handleClickConnector(event:any, isInput:boolean): void;
     handleClickOptions(event: any): void;
     handleMouseEnter(event: any): void;
     onChangeInput(event: any, key: string): void;
@@ -60,12 +60,12 @@ export default class Node extends React.Component <NodeProps>{
                 </div>
                 <div 
                     className={this.props.activeIn ? "active junction" : "junction"}
-                    onClick={(event) => this.props.handleClickCircle(event, true)}
+                    onClick={(event) => this.props.handleClickConnector(event, true)}
                     style={{left: '0px'}}
                 />
                 <div 
                     className={this.props.activeOut ? "active junction" : "junction"}
-                    onClick={(event) => this.props.handleClickCircle(event, false)}
+                    onClick={(event) => this.props.handleClickConnector(event, false)}
                     style={{right: '0px', transform: 'translate(50%, -50%)'}}
                 />
                 <div 

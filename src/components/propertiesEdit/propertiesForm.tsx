@@ -309,30 +309,27 @@ export class PropertiesForm extends Component<{}, PropertiesFormState> {
 
 
     render() {
-        return (
-            <Fragment>
-                {this.renderPageHeader()}
-                {this.renderNotification()}
-                <div className="nav-form-wrapper">
-                    {this.renderDirectionalNavigation()}
-                    <div className="source-config-form">
-                        <Form className="margin-auto">
-                            {this.renderFieldSet()}
-                            <Row className="m-lr-0">
-                                <Col xs={12} lg={12}>
-                                    <Button type="button"
-                                        bsStyle="primary"
-                                        disabled={this.isFormNotValid()}
-                                        onClick={this.save}>Save</Button>
+        return <Fragment>
+            {this.renderPageHeader()}
+            {this.renderNotification()}
+            <div className="nav-form-wrapper">
+                {this.renderDirectionalNavigation()}
+                <div className="source-config-form">
+                    <Form className="margin-auto">
+                        {this.renderFieldSet()}
+                        <Row className="m-lr-0">
+                            <Col xs={12} lg={12}>
+                                <Button type="button"
+                                    bsStyle="primary"
+                                    disabled={this.isFormNotValid()}
+                                    onClick={this.save}>Save</Button>
 
-                                    <p className="float-right">{this.state.validationMessage}</p>
-                                </Col>
-                            </Row>
-                        </Form>
-                    </div>
+                                <p className="float-right">{this.state.validationMessage}</p>
+                            </Col>
+                        </Row>
+                    </Form>
                 </div>
-            </Fragment>
-
-        )
+            </div>
+        </Fragment>
     }
 } 
