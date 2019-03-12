@@ -21,7 +21,8 @@ export const Routes = {
     INSTANCE_LIST: "/logs/instances",
     LOGS: "/logs",
     PROPERTIES: "/config/properties",
-    PROPERTY_OPTIONS: "properties-options"
+    PROPERTY_OPTIONS: "properties-options",
+    ENVIRONMENT: "/config/environment"
 }
 export const FormType = {
     SAVE: "SAVE",

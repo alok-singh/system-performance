@@ -332,7 +332,7 @@ export default class FlowChart extends Component <{}, AppState> {
                 onChangeInput={({target}, key) => {this.onChangeInput(target.value, node.id, key)}}
                 handleMouseDown={(event) => this.handleMouseDown(event, node.id)}
                 handleMouseUp={(event) => this.handleMouseUp(event, node.id)}
-                handleClickCircle={(event, isInput) => this.handleClickCircle(event, node.id, isInput)}
+                handleClickConnector={(event, isInput) => this.handleClickCircle(event, node.id, isInput)}
                 handleTitleChange={(event) => this.handleTitleChange(event, node.id)}
                 handleClickOptions={(event) => this.handleClickOptions(event, node)}
                 onChangeConfiguration={(event, listIndex, envID) => this.onChangeConfiguration(event, listIndex, envID, node.id)}
