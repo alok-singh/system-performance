@@ -9,6 +9,8 @@ import Popup from './popup';
 import {EnvironmentType} from '../../config/buildConfigurations';
 import {generateNode} from '../helpers/nodeGenerator';
 
+import {nodeSizes} from '../../config/sizes';
+
 import '../../css/flowchart.css';
 
 import {
@@ -108,9 +110,33 @@ export default class FlowChart extends Component <{}, AppState> {
 
             nodes = nodes.map( node => {
                 if (node.id == id) {
+                    // find all parents
+                    let parentsX = nodes.reduce((parents, currentNode) => {
+                        if(currentNode.downstreams.includes(node.id)){
+                            parents.push(currentNode.x);
+                        }
+                        return parents;
+                    }, []);
+
+                    let childrenX = node.downstreams.map(downstreamId => {
+                        return nodes.find(node => node.id == downstreamId).x;
+                    })
+                    
+                    // check minimum allowed x
+                    let minAllowedX = Math.max(...parentsX) + nodeSizes.nodeWidth + 50;
+                    let maxAllowedX = Math.min(...childrenX) - (nodeSizes.nodeWidth + 50);
+                    let finalX = node.x - xDiff;
+
+                    if(finalX <= minAllowedX){
+                        finalX = minAllowedX;
+                    }
+                    if(finalX >= maxAllowedX){
+                        finalX = maxAllowedX;
+                    }
+
                     node = {
                         ...node,
-                        x: node.x - xDiff,
+                        x: finalX,
                         y: node.y - yDiff
                     }
                 }

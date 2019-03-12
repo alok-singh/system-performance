@@ -178,27 +178,27 @@ export default class SourceConfigForm extends Component<{}, SourceConfigFormStat
         let steps = [{
             title: 'Step 4',
             isActive: true,
-            href: '#',
-            isAllowed: false
+            href: '/form-setup/source-config',
+            isAllowed: true
         }, {
             title: 'Step 5',
-            isActive: true,
-            href: '#',
+            isActive: false,
+            href: '/form-setup/ci-config',
             isAllowed: false
         }, {
             title: 'Step 6',
-            isActive: true,
-            href: '#',
+            isActive: false,
+            href: '/form-setup/deployment-template',
             isAllowed: false
         }, {
             title: 'Step 7',
-            isActive: true,
-            href: '#',
+            isActive: false,
+            href: '/form-setup/properties-config',
             isAllowed: false
         }, {
             title: 'Step 8',
-            isActive: true,
-            href: '#',
+            isActive: false,
+            href: '/form-setup/flow-chart',
             isAllowed: false
         }];
         return <DirectionalNavigation steps={steps} />
