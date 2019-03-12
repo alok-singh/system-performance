@@ -1,4 +1,5 @@
 import React, { Component, Fragment } from 'react';
+import yamlJsParser from 'yamljs';
 import { 
     FormControl, 
     FormGroup, 
@@ -33,15 +34,14 @@ export interface DeploymentTemplateFormState {
     referenceTemplate: Description;
     deploymentConfig: {
         json: {
-            obj: any,
-            value: string
-        },
-        subset: {
-            obj: any,
+            obj: any;
             value: string;
-
-        }
-        yaml: string;
+        };
+        subset: {
+            obj: any;
+            value: string;
+            yaml: string;
+        };
     };
 
 }
@@ -65,8 +65,8 @@ export default class DeploymentTemplateForm extends Component<{}, DeploymentTemp
                 subset: {
                     obj: { 'key': "value" },
                     value: "",
+                    yaml: ""
                 },
-                yaml: ""
             },
         }
     }
@@ -123,13 +123,13 @@ export default class DeploymentTemplateForm extends Component<{}, DeploymentTemp
         // ];
 
 
-        state.deploymentConfig.json.value = JSON.stringify(state.deploymentConfig.json.obj, undefined, 2);
+        state.deploymentConfig.json.value = JSON.stringify(state.deploymentConfig.json.obj, undefined, 2);        
 
         state.chartRepository = state.chartRepositoryOptions[0];
         state.referenceTemplate = state.referenceTemplateOptions[0];
         this.setState(state);
 
-        this.jsonToYaml(this.state.deploymentConfig.json.obj);
+        // this.jsonToYaml(this.state.deploymentConfig.json.obj);
 
 
     }
@@ -149,11 +149,17 @@ export default class DeploymentTemplateForm extends Component<{}, DeploymentTemp
 
     }
 
-    validateJson = (): boolean => {
+    validateJson = (key: string): boolean => {
         try {
             //TODO: instead of spread operator can be take deploymentConfig only?
-            let { deploymentConfig } = { ...this.state };
-            deploymentConfig.subset.obj = JSON.parse(this.state.deploymentConfig.subset.value);
+            let {deploymentConfig} = this.state;
+            
+            if(key == 'json') {
+                deploymentConfig.subset.obj = JSON.parse(this.state.deploymentConfig.subset.value);
+            }
+            else if(key == 'yaml') {
+                deploymentConfig.subset.obj = yamlJsParser.parse(this.state.deploymentConfig.subset.yaml);
+            }
 
             deploymentConfig.subset.value = JSON.stringify(deploymentConfig.subset.obj, undefined, 2);
 
@@ -190,7 +196,13 @@ export default class DeploymentTemplateForm extends Component<{}, DeploymentTemp
 
     handleJsonValue = (event: React.ChangeEvent<HTMLInputElement>, key: string) => {
         let state = { ...this.state };
-        state.deploymentConfig.subset.value = event.target.value;
+        if(key == 'json') {
+            state.deploymentConfig.subset.value = event.target.value;
+        }
+        else if(key == 'yaml') {
+            state.deploymentConfig.subset.yaml = event.target.value;
+        }
+        // yamlJsParser.parse
         this.setState(state);
     }
 
@@ -243,16 +255,9 @@ export default class DeploymentTemplateForm extends Component<{}, DeploymentTemp
         }
     }
 
-    jsonToYaml = (json: any) => {
-    }
-
-    yamlToJson = () => {
-
-    }
-
     saveDeploymentTemplate = () => {
         //Verify value is JSON
-        this.validateJson();
+        // this.validateJson();
 
         const URL = `${Host}${Routes.SAVE_DEPLOYMENT_TEMPLATE}`;
         let requestBody = {
@@ -394,7 +399,7 @@ export default class DeploymentTemplateForm extends Component<{}, DeploymentTemp
                                                 placeholder="JSON"
                                                 onChange={(event) => { this.handleJsonValue(event, 'json') }} />
                                         </FormGroup>
-                                        <Button type="button" bsClass="align-right" bsStyle="primary" onClick={this.validateJson}>
+                                        <Button type="button" bsClass="align-right" bsStyle="primary" onClick={() => this.validateJson('json')}>
                                             Validate JSON
                                         </Button>
 
@@ -409,7 +414,8 @@ export default class DeploymentTemplateForm extends Component<{}, DeploymentTemp
                                             <FormControl
                                                 height="100"
                                                 componentClass="textarea"
-                                                value={this.state.deploymentConfig.json.value}
+                                                // lookup https://github.com/jeremyfa/yaml.js for details
+                                                value={yamlJsParser.stringify(this.state.deploymentConfig.json.obj, 50)}
                                                 placeholder="JSON"
                                                 disabled={true} />
                                         </FormGroup>
@@ -420,11 +426,11 @@ export default class DeploymentTemplateForm extends Component<{}, DeploymentTemp
                                             <FormControl
                                                 height="100"
                                                 componentClass="textarea"
-                                                value={this.state.deploymentConfig.subset.value}
-                                                placeholder="JSON"
-                                                onChange={(event) => { this.handleJsonValue(event, 'json') }} />
+                                                value={this.state.deploymentConfig.subset.yaml}
+                                                placeholder="YAML"
+                                                onChange={(event) => { this.handleJsonValue(event, 'yaml') }} />
                                         </FormGroup>
-                                        <Button type="button" bsClass="align-right" bsStyle="primary" >
+                                        <Button type="button" bsClass="align-right" bsStyle="primary" onClick={() => this.validateJson('yaml')}>
                                             Validate YAML
                                         </Button>
                                     </Col>
