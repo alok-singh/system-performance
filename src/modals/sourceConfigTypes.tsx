@@ -12,14 +12,28 @@ export interface SourceConfigResponse {
 }
 
 export interface SourceConfigFormState {
-    accountOptions: Array<Account>;
-
-    account: Array<string>;
-    url: string;
-    path: string;
-    appName: string;
-    productionBranch: string;
-    ciBranch: string
-    ctBranch: string;
-    gitProvider: number;
+    accountOptions: Account[];
+    tagPattterOptions: { value: string, label: string }[];
+    form: {
+        account: Array<string>;
+        url: string;
+        path: string;
+        appName: string;
+        ciBranch: {
+            name: string;
+            tagPatternType: string;
+            tagPattern: string;
+        }
+        ctBranch: {
+            name: string;
+            tagPatternType: string;
+            tagPattern: string;
+        }
+        productionBranch: {
+            name: string;
+            tagPatternType: string;
+            tagPattern: string;
+        }
+        gitProvider: number;
+    }
 }

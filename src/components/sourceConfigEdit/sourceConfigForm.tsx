@@ -1,19 +1,21 @@
-import React, { Component, Fragment } from 'react';
-import { 
-    FormControl, 
-    FormGroup, 
-    ControlLabel, 
-    Button, 
-    Form, 
+import React, { Component, Fragment, ChangeEvent } from 'react';
+import {
+    FormControl,
+    FormGroup,
+    ControlLabel,
+    Button,
+    Form,
     TypeAheadSelect,
     Card,
     CardTitle,
-    CardBody 
+    CardBody,
+    Row,
+    Col
 } from 'patternfly-react'
 
 import {
-    Host, 
-    Routes 
+    Host,
+    Routes
 } from '../../config/constants';
 
 import { SourceConfigFormState, } from '../../modals/sourceConfigTypes';
@@ -27,21 +29,42 @@ export default class SourceConfigForm extends Component<{}, SourceConfigFormStat
         super(props);
         this.state = {
             accountOptions: [],
-            account: [],
-            url: "",
-            path: "",
-            appName: "",
-            productionBranch: "",
-            ciBranch: "",
-            ctBranch: "",
-            gitProvider: 0,
+            tagPattterOptions: [
+                { label: "Branch Fixed", value: "BRANCH_FIXED" },
+                { label: "Branch Regex", value: "BRANCH_REGEX" },
+                { label: "Tag Fixed", value: "TAG_ANY" },
+                { label: "Tag Regex", value: "TAG_REGEX" },
+            ],
+
+            form: {
+                account: [],
+                url: "",
+                path: "",
+                appName: "",
+                productionBranch: {
+                    name: "",
+                    tagPatternType: "BRANCH_FIXED",
+                    tagPattern: ""
+                },
+                ciBranch: {
+                    name: "",
+                    tagPatternType: "BRANCH_FIXED",
+                    tagPattern: ""
+                },
+                ctBranch: {
+                    name: "",
+                    tagPatternType: "BRANCH_FIXED",
+                    tagPattern: ""
+                },
+                gitProvider: 0,
+            }
 
         };
 
-        this.handlers = Object.keys(this.state)
+        this.handlers = ["account", "url", "path", "appName"]
             .reduce((map: Map<string, ((event: React.ChangeEvent<HTMLInputElement>) => void)>, key: string) => {
                 map.set(key, this.handleValueChange(key))
-                return map
+                return map;
             },
                 new Map<string, ((event: React.ChangeEvent<HTMLInputElement>) => void)>());
 
@@ -50,6 +73,8 @@ export default class SourceConfigForm extends Component<{}, SourceConfigFormStat
     componentDidMount = () => {
         this.getAccounts();
     }
+
+    validationRules = new SourceConfigValidation();
 
     //@TODO: remove hard coding
     getAccounts = () => {
@@ -68,7 +93,7 @@ export default class SourceConfigForm extends Component<{}, SourceConfigFormStat
 
     handleChange = (e: React.ChangeEvent<HTMLInputElement>, key: string) => {
         let state = this.state;
-        state[key] = e.target.value;
+        state.form[key] = e.target.value;
         this.setState(state);
     }
 
@@ -77,43 +102,48 @@ export default class SourceConfigForm extends Component<{}, SourceConfigFormStat
         if (e.length) {
             newState[key] = e.map(function (element) { return element.name });
             if (key === 'account') {
-                newState.gitProvider = e[0].id;
-                newState.url = e[0].url;
+                newState.form.gitProvider = e[0].id;
+                newState.form.url = e[0].url;
             }
         }
         else {
             newState[key] = "";
             if (key === 'account') {
-                newState.gitProvider = 0;
-                newState.url = "";
+                newState.form.gitProvider = 0;
+                newState.form.url = "";
             }
         }
-
         this.setState(newState);
+    }
 
+    handleBranchInfo = (event, branchType: string, key: string): void => {
+        let state = { ...this.state };
+        state.form[branchType][key] = event.target.value;
+        this.setState(state);
     }
 
     testConnection = () => {
         let URL = `${Host}${Routes.SAVE_SOURCE_CONFIG}`;
         let requestBody = {
-            appName: this.state.appName,
+            appName: this.state.form.appName,
             material: [{
-                url: this.state.url,
-                productionBranch: this.state.productionBranch,
-                ciBranch: this.state.ciBranch,
-                ctBranch: this.state.ctBranch,
-                gitProviderId: this.state.gitProvider,
-                path: this.state.path,
+                url: this.state.form.url,
+                productionBranch: this.state.form.productionBranch.name,
+                ciBranch: this.state.form.ciBranch.name,
+                ctBranch: this.state.form.ctBranch.name,
+                gitProviderId: this.state.form.gitProvider,
+                path: this.state.form.path,
             }
             ]
         };
-        console.log(URL);
-        console.log(requestBody);
+
+        // console.log(URL);
+        console.log(this.state);
 
         fetch(URL, {
             method: 'POST',
             headers: { 'Content-type': 'application/x-www-form-urlencoded' },
-            body: JSON.stringify(requestBody)
+            // body: JSON.stringify(requestBody)
         })
             .then(response => response.json())
             .then(
@@ -127,55 +157,48 @@ export default class SourceConfigForm extends Component<{}, SourceConfigFormStat
                 }
             )
     }
-    isFormValid = () => {
-        let keys = Object.keys(this.state);
-        let isValid = true;
 
-        keys.forEach(key => {
-            if (typeof (this.state[key]) != "number") {
-                isValid = isValid && ((this.state[key].length > 0));
-            }
-        });
-        return !isValid;
+
+    isFormNotValid = (): boolean => {
+        return false;
     }
 
     isDropDownValid = (key: string) => {
-        return !!this.state[key].length;
+        // return !!this.state[key].length;
     }
 
-    getValidationState = (key) => {
-        const length = this.state[key].length;
-        if (length > 6) return 'success';
-        else if (length > 3) return 'warning';
-        else if (length > 0) return 'error';
-        return null;
+    getValidationState = (key: string): string | null => {
+        let param = this.state.form[key];
+
+        return this.validationRules[key](param).result;
+
     }
 
     renderDirectionalNavigation() {
         let steps = [{
             title: 'Step 4',
             isActive: true,
-            href: '/form-setup/source-config',
-            isAllowed: true
+            href: '#',
+            isAllowed: false
         }, {
             title: 'Step 5',
-            isActive: false,
-            href: '/form-setup/ci-config',
+            isActive: true,
+            href: '#',
             isAllowed: false
         }, {
             title: 'Step 6',
-            isActive: false,
-            href: '/form-setup/deployment-template',
+            isActive: true,
+            href: '#',
             isAllowed: false
         }, {
             title: 'Step 7',
-            isActive: false,
-            href: '/form-setup/properties-config',
+            isActive: true,
+            href: '#',
             isAllowed: false
         }, {
             title: 'Step 8',
-            isActive: false,
-            href: '/form-setup/flow-chart',
+            isActive: true,
+            href: '#',
             isAllowed: false
         }];
         return <DirectionalNavigation steps={steps} />
@@ -192,6 +215,59 @@ export default class SourceConfigForm extends Component<{}, SourceConfigFormStat
         </Card>
     }
 
+    renderBranchInfo(branchType: string, title: string) {
+        return (
+            <fieldset>
+                <legend>{title}</legend>
+                <Row>
+                    <Col xs={12} lg={12}>
+                        <FormGroup
+                            controlId={branchType} validationState={this.getValidationState(branchType)}>
+                            <ControlLabel>Name</ControlLabel>
+                            <FormControl
+                                type="text"
+                                value={this.state.form[branchType].name}
+                                onChange={(event) => { this.handleBranchInfo(event, branchType, 'name') }}
+                                placeholder="Enter Branch Name" />
+                        </FormGroup>
+                    </Col>
+                </Row>
+
+                <Row>
+                    <Col lg={6} >
+                        <FormGroup controlId={`${branchType}TagPattern`}>
+                            <ControlLabel>Tag Pattern Type</ControlLabel>
+                            <FormControl
+                                componentClass="select"
+                                value={this.state.form[branchType].tagPatternType}
+                                onChange={(event) => { this.handleBranchInfo(event, branchType, 'tagPatternType') }}
+                                placeholder="Select Tag Pattern" >
+                                {this.state.tagPattterOptions.map(
+                                    (element, index) => {
+                                        return (
+                                            <option key={index} value={element.value}>{element.label}</option>
+                                        )
+                                    })}
+                            </FormControl>
+                        </FormGroup>
+                    </Col>
+
+                    <Col lg={6} >
+                        <FormGroup controlId="productionBranchTagPattern">
+                            <ControlLabel>Tag Pattern</ControlLabel>
+                            <FormControl
+                                type="text"
+                                value={this.state.form[branchType].tagPattern}
+                                onChange={(event) => { this.handleBranchInfo(event, branchType, 'tagPattern') }}
+                                placeholder="Enter Tag Pattern" >
+                            </FormControl>
+                        </FormGroup>
+                    </Col>
+                </Row>
+            </fieldset>
+        )
+    }
+
     render() {
         return <React.Fragment>
             {this.renderPageHeader()}
@@ -199,10 +275,11 @@ export default class SourceConfigForm extends Component<{}, SourceConfigFormStat
                 {this.renderDirectionalNavigation()}
                 <div className="source-config-form">
                     <Form onSubmit={this.testConnection}>
-                        <FormGroup>
+                        <FormGroup controlId="account" >
                             <ControlLabel>Select Account</ControlLabel>
                             <Fragment>
                                 <TypeAheadSelect
+                                    id="id"
                                     labelKey="name"
                                     options={this.state.accountOptions}
                                     clearButton
@@ -213,14 +290,13 @@ export default class SourceConfigForm extends Component<{}, SourceConfigFormStat
                             </Fragment>
                         </FormGroup>
 
-
                         <FormGroup controlId="url" validationState={this.getValidationState('url')}>
                             <ControlLabel>Git URL</ControlLabel>
                             <FormControl
                                 type="text"
-                                value={this.state.url}
+                                value={this.state.form.url}
                                 placeholder="Enter Git URL"
-                                onChange={this.handlers.get('url')}/>
+                                onChange={this.handlers.get('url')} />
                             <FormControl.Feedback />
                         </FormGroup>
 
@@ -228,7 +304,7 @@ export default class SourceConfigForm extends Component<{}, SourceConfigFormStat
                             <ControlLabel>Path</ControlLabel>
                             <FormControl
                                 type="text"
-                                value={this.state.path}
+                                value={this.state.form.path}
                                 placeholder="Enter Path"
                                 onChange={this.handlers.get('path')} />
                             <FormControl.Feedback />
@@ -239,44 +315,17 @@ export default class SourceConfigForm extends Component<{}, SourceConfigFormStat
                             <ControlLabel>App Name</ControlLabel>
                             <FormControl
                                 type="text"
-                                value={this.state.appName}
+                                value={this.state.form.appName}
                                 placeholder="Enter App Name"
                                 onChange={this.handlers.get('appName')} />
                         </FormGroup>
 
-                        <FormGroup
-                            controlId="productionBranch" validationState={this.getValidationState('productionBranch')}>
-                            <ControlLabel>Production Branch</ControlLabel>
-                            <FormControl
-                                type="text"
-                                value={this.state.productionBranch}
-                                placeholder="Enter Production Branch"
-                                onChange={this.handlers.get('productionBranch')} />
-                        </FormGroup>
-
-                        <FormGroup
-                            controlId="ciBranch" validationState={this.getValidationState('ciBranch')}>
-                            <ControlLabel>CI Branch</ControlLabel>
-                            <FormControl
-                                type="text"
-                                value={this.state.ciBranch}
-                                placeholder="Enter CI Branch"
-                                onChange={this.handlers.get('ciBranch')} />
-                        </FormGroup>
-
-                        <FormGroup
-                            controlId="ctBranch" validationState={this.getValidationState('ctBranch')}>
-                            <ControlLabel>CT Branch</ControlLabel>
-                            <FormControl
-                                type="text"
-                                value={this.state.ctBranch}
-                                placeholder="Enter CT Branch"
-                                onChange={this.handlers.get('ctBranch')} />
-                        </FormGroup>
-
+                        {this.renderBranchInfo('ciBranch', "CI Branch")}
+                        {this.renderBranchInfo('ctBranch', "CT Branch")}
+                        {this.renderBranchInfo('productionBranch', "Production Branch")}
 
                         <Button type="button" bsStyle="primary"
-                            disabled={this.isFormValid()}
+                            disabled={this.isFormNotValid()}
                             onClick={this.testConnection}>
                             Test Connection
                         </Button>
@@ -287,3 +336,33 @@ export default class SourceConfigForm extends Component<{}, SourceConfigFormStat
         </React.Fragment>
     }
 }
+
+class SourceConfigValidation {
+    defaultText = (value: string): { message: string | null, result: string | null } => {
+        length = value.length;
+        if (length > 8) {
+            return { message: null, result: 'success' }
+        }
+        else if (length > 0) {
+            return { message: 'Enter 8 atleast Characters', result: 'error' }
+        };
+        return { message: null, result: null }
+    }
+
+    branch = (obj: { name: string, tagPattern: string, tagPatternType: string }): { message: string | null, result: string | null } => {
+        console.log("branch valida");
+
+        return { message: 'Enter 8 atleast Characters', result: null };
+
+
+    }
+
+    appName = this.defaultText;
+    url = this.defaultText;
+    path = this.defaultText;
+    name = this.defaultText;
+    ciBranch = this.branch;
+    ctBranch = this.branch;
+    productionBranch = this.branch;
+
+} 

@@ -214,9 +214,7 @@ export class PropertiesForm extends Component<{}, PropertiesFormState> {
         return (
             <Card>
                 <CardTitle>
-                    <CardTitle>
-                        Properties
-                    </CardTitle>
+                    Properties
                 </CardTitle>
                 <CardBody>
                     Following are the Application properties.
