@@ -1,23 +1,31 @@
 export interface ArgsFieldSetState {
-    args: Array<{ key: string, value: String }>;
+    args: Array<{ key: string, value: string }>;
 }
 
-export interface CIConfigResponse {
-    success: boolean;
-    response: any[];
-    error: { message: string } | null;
+export interface CIConfigFormProps {
+    id: string;
 }
 
 export interface DockerRepository {
     id: string;
-    registryUrl: string;
+    registryURL: string;
     isDefault: boolean;
 }
 
 export interface CIConfigFormState {
     repositoryOptions: Array<DockerRepository>;
+    buttonLabel: string;
+    code: 0,
+    errors: {
+        code: number;
+        internalMessage: string;
+        moreInfo: string;
+        userMessage: string;
+    }[],
+    successMessage: string | null,
 
     form: {
+        appId: string | null;
         dockerFilePath: string;
         tagPattern: string;
         args: Array<{ key: string, value: string }>;
@@ -25,11 +33,12 @@ export interface CIConfigFormState {
         dockerfile: string;
     }
 
-    validation: {
-        dockerFilePath: string;
-        tagPattern: string;
-        args: string;
-        repository: string;
-        dockerfile: string;
+    isValid: {
+        dockerFilePath: boolean;
+        tagPattern: boolean;
+        args: boolean;
+        repository: boolean;
+        dockerfile: boolean;
     }
+
 }

@@ -1,23 +1,23 @@
 import React, { Component, Fragment } from 'react';
-import { 
-    FormControl, 
-    FormGroup, 
-    ControlLabel, 
-    Button, 
-    Form, 
-    Checkbox, 
-    Row, 
+import {
+    FormControl,
+    FormGroup,
+    ControlLabel,
+    Button,
+    Form,
+    Checkbox,
+    Row,
     HelpBlock,
-    ToastNotificationList, 
+    ToastNotificationList,
     Card,
     CardTitle,
     CardBody,
     ToastNotification,
 } from 'patternfly-react'
 
-import { 
-    Host, 
-    Routes 
+import {
+    Host,
+    Routes
 } from '../../config/constants';
 
 import { GitRepositoryConfigFormState, GitRepositoryConfigFormProps } from '../../modals/gitRepositoriesModal';
@@ -55,7 +55,7 @@ export default class GitRepositoryConfigForm extends Component<GitRepositoryConf
                 name: false,
                 url: false,
                 userName: false,
-                authMode: false,
+                authMode: true,
                 password: false,
                 sshKey: false,
                 accessToken: false,
@@ -138,9 +138,12 @@ export default class GitRepositoryConfigForm extends Component<GitRepositoryConf
                 else return { message: null, result: "success", isValid: true };
 
             case "password":
-                if (this.state.gitRepoConfig.password.length < 6)
+                if (this.state.gitRepoConfig.password.length < 6) {
                     return { message: 'Password must have 6 characters', result: 'error', isValid: false }
-                else return { message: null, result: "success", isValid: true };
+                }
+                else {
+                    return { message: null, result: "success", isValid: true };
+                }
 
             case "accessToken":
                 if (this.state.gitRepoConfig.accessToken.length < 10)
@@ -175,6 +178,7 @@ export default class GitRepositoryConfigForm extends Component<GitRepositoryConf
         else {
             isValid = isValid && this.state.isValid.sshKey;
         }
+
         return !isValid;
     }
 
@@ -207,10 +211,9 @@ export default class GitRepositoryConfigForm extends Component<GitRepositoryConf
         else {
             url = `${Host}${Routes.GIT_REPO_CONFIG}`;
             method = "POST";
-            successMessage = "Git Repository Updated";
+            successMessage = "Git Repository Saved";
         }
 
-        console.log(url, method)
 
         let optionalField = this.getDynamicKey();
 
@@ -223,8 +226,6 @@ export default class GitRepositoryConfigForm extends Component<GitRepositoryConf
             active: this.checkboxRef.checked,
             [optionalField]: this.state.gitRepoConfig[optionalField],
         }
-
-        console.log(url, requestBody);
 
         fetch(url, {
             method: method,
@@ -329,9 +330,7 @@ export default class GitRepositoryConfigForm extends Component<GitRepositoryConf
     renderPageHeader() {
         return <Card>
             <CardTitle>
-                <CardTitle>
-                    Git Repository Configuration
-                </CardTitle>
+                Git Repository Configuration
             </CardTitle>
             <CardBody>
                 Following are the Git Repository Configurations.

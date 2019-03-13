@@ -8,10 +8,10 @@ export const Host = "http://localhost:3001";
 export const Routes = {
 
     GET_SAVED_DEPLOYMENT_TEMPLATE: "",
-    GET_DOCKER_REPOSITORY: "/config/git-repo-config",
+    // GET_DOCKER_REPOSITORY: "/config/git-repo-config",
     GET_ACCOUNT: "/config/docker-registry-config",
 
-    SAVE_CI: "/pipeline-config/ci/save",
+    CI_CONFIG: "/pipeline-config/ci/save",
     SAVE_SOURCE_CONFIG: "/pipeline-config/app/create",
     SAVE_DEPLOYMENT_TEMPLATE: "",
 
