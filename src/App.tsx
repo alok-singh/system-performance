@@ -13,7 +13,6 @@ import DeploymentConfigEdit from './components/deploymentConfigEdit/main';
 import GitRepositoryConfigEdit from './components/gitRepositoryConfigEdit/main';
 import GitRepoList from './components/gitRepoList/main';
 import AppDetails from './components/appDetails/main';
-import EnvironmentRegister from './components/environmentRegister/main';
 import PropertiesForm from './components/propertiesEdit/main';
 import FallbackComponent from './components/fallback/main';
 
@@ -29,6 +28,7 @@ import 'patternfly-react/dist/css/patternfly-react.css';
 import 'patternfly-react-extensions/dist/css/patternfly-react-extensions.css';
 import './css/base.css';
 import './css/navigation.css';
+import EnvironmentRegisterPage from './components/environmentRegister/main';
 
 
 export default class App extends Component <any, any> {	
@@ -38,18 +38,29 @@ export default class App extends Component <any, any> {
         	<Switch>
             	
             	<Route exact path="/create-docker" component={CreateDocker} />
-	            
-	            <Route exact path="/form-setup/ci-config" component={CIConfigEdit} />
+
 	            <Route exact path="/form-setup/source-config" component={SourceConfigEdit} />
+	            <Route exact path="/form-setup/ci-config" component={CIConfigEdit} />
+	            <Route exact path="/form-setup/ci-config/:id" component={CIConfigEdit} />
+
 	            <Route exact path="/form-setup/deployment-template" component={DeploymentConfigEdit} />
 	            <Route exact path="/form-setup/flow-chart" component={FlowChart} />
+
             	<Route exact path="/form-setup/properties-config" component={PropertiesForm} />
+            	<Route exact path="/form-setup/properties-config/:id" component={PropertiesForm} />
 	            
+
+
 	            <Route exact path="/form-global/git-repo-config" component={GitRepositoryConfigEdit} />
 	            <Route exact path="/form-global/git-repo-config/:repoId" component={GitRepositoryConfigEdit} />
-	            <Route exact path="/form-global/environment-register" component={EnvironmentRegister} />
+
+	            <Route exact path="/form-global/environment-register" component={EnvironmentRegisterPage} />
+	            <Route exact path="/form-global/environment-register/:id" component={EnvironmentRegisterPage} />
+
             	<Route exact path="/form-global/docker-register" component={DockerRegistryConfigEdit} />
             	<Route exact path="/form-global/docker-register/:id" component={DockerRegistryConfigEdit} />
+
+
 
             	<Route exact path="/list/apps" component={AppList} />
 				<Route exact path="/list/docker-registries" component={DockerRegistryList} />

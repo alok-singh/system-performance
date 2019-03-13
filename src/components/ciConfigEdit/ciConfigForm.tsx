@@ -11,25 +11,32 @@ import {
     HelpBlock,
     Card,
     CardTitle,
-    CardBody
+    CardBody,
+    ToastNotification,
+    ToastNotificationList,
 } from 'patternfly-react'
 
 import ArgsFieldSet from './argsFieldSet';
 import { Host, Routes } from '../../config/constants';
 
-import { CIConfigResponse, CIConfigFormState } from '../../modals/ciConfigTypes';
+import { CIConfigFormState, CIConfigFormProps, DockerRepository } from '../../modals/ciConfigTypes';
 
 import DirectionalNavigation from '../common/directionalNavigation';
 
-export default class CIConfigForm extends Component<{}, CIConfigFormState> {
+export default class CIConfigForm extends Component<CIConfigFormProps, CIConfigFormState> {
 
     constructor(props) {
         super(props);
 
         this.state = {
             repositoryOptions: [],
+            code: 0,
+            errors: [],
+            successMessage: null,
+            buttonLabel: "SAVE",
 
             form: {
+                appId: null,
                 dockerFilePath: "",
                 tagPattern: "",
                 args: [],
@@ -37,29 +44,84 @@ export default class CIConfigForm extends Component<{}, CIConfigFormState> {
                 dockerfile: "",
             },
 
-            validation: {
-                dockerFilePath: "",
-                tagPattern: "",
-                args: "",
-                repository: "",
-                dockerfile: "",
-            }
+            isValid: {
+                dockerFilePath: false,
+                tagPattern: false,
+                args: false,
+                repository: false,
+                dockerfile: false,
+            },
 
         };
+    }
 
+    componentDidMount = () => {
+        this.getDockerRepositories();
+        if (this.props.id) {
+            this.getCIConfig(this.props.id);
+        }
+    }
+
+    getCIConfig = (id: string) => {
+        const URL = `${Host}${Routes.CI_CONFIG}/${id}`;
+        fetch(URL, {
+            method: 'GET',
+            headers: { 'Content-type': 'application/json' },
+        })
+            .then(response => response.json())
+            .then(
+                (response) => {
+                    this.saveResponse(response, "Found Saved CI Configuration");
+                    setTimeout(() => {
+                        this.closeNotification();
+                    }, 2000);
+                },
+                (error) => {
+
+                }
+            )
+    }
+
+    saveResponse = (response, successMessage: string) => {
+        let state = { ...this.state };
+        state.code = response.code;
+        state.errors = response.errors || [];
+        if (response.result) {
+            let config = response.result;
+            let argsFromResponse = JSON.parse(config.dockerBuildConfig.args);
+            let argsParsed = [];
+            argsParsed = argsFromResponse.map(
+                (element) => {
+                    let key = Object.keys(element)[0];
+                    return { key: key, value: element[key] };
+                }
+            )
+            state.form = {
+                appId: config.appId,
+                dockerFilePath: config.dockerBuildConfig.dockerfilePath,
+                tagPattern: config.dockerBuildConfig.tag,
+                //TODO: UPDATE dockerfile, dockerrepository, Args
+                args: argsParsed,
+                repository: config.dockerBuildConfig.repository,
+                dockerfile: config.dockerBuildConfig.dockerfile,
+            }
+            state.successMessage = successMessage;
+        }
+        state.buttonLabel = "UPDATE";
+        this.setState(state);
+        console.log(this.state.form);
     }
 
     handleChange = (e: React.ChangeEvent<HTMLInputElement>, key: string) => {
         let state = { ...this.state };
         state.form[key] = e.target.value;
-        state.validation[key] = this.validate(key).message;
         this.setState(state);
     }
 
     handleRepositoryOptions = (e: Array<any>) => {
         let state = { ...this.state };
         if (e.length) {
-            state.form.repository = e[0].registryUrl;
+            state.form.repository = e[0].registryURL;
         } else {
             state.form.repository = "";
         }
@@ -67,23 +129,35 @@ export default class CIConfigForm extends Component<{}, CIConfigFormState> {
 
     }
 
-    isFormValid = () => {
+    //Clears error messages and response code
+    closeNotification = () => {
+        let state = { ...this.state };
+        state.code = 0;
+        state.successMessage = null;
+        state.errors = [];
+        this.setState(state);
+    }
+
+
+    isFormNotValid = () => {
         let keys = Object.keys(this.state);
         let isValid = true;
         keys.forEach(key => {
             isValid = isValid && (this.state[key].length > 0);
         });
-        return !isValid;
+        // return !isValid;
+        return false;
     }
 
-    save = () => {
+    saveOrUpdate = () => {
+        let url, method;
+
         let lastIndex = this.state.form.args.length - 1;
         //Remove last element if empty
         let args = (this.state.form.args[lastIndex].key && this.state.form.args[lastIndex].value)
             ? this.state.form.args
             : this.state.form.args.slice(0, -1);
 
-        const URL = `${Host}${Routes.SAVE_CI}`;
 
         let formattedArgs = args.map(function (element) {
             let obj = {
@@ -92,29 +166,41 @@ export default class CIConfigForm extends Component<{}, CIConfigFormState> {
             return obj;
         });
 
-        //@TODO: UPDATE APPID
+        if (this.state.form.appId) {
+            url = `${Host}${Routes.CI_CONFIG}/${this.state.form.appId}`;
+            method = "PUT";
+        }
+        else {
+            url = `${Host}${Routes.CI_CONFIG}`;
+            method = "POST";
+        }
+
         let requestBody = {
-            appId: 41,
+            appId: this.state.form.appId,
             beforeDockerBuild: [],
             dockerBuildConfig: {
                 dockerfilePath: this.state.form.dockerFilePath,
                 repository: this.state.form.repository,
                 tag: this.state.form.tagPattern,
                 args: JSON.stringify(formattedArgs),
+                //TODO: is  dockerfile required?
+                dockerfile: this.state.form.dockerfile
             },
             afterDockerBuild: [],
         }
-        console.log(URL, requestBody);
 
-        fetch(URL, {
-            method: 'POST',
+        fetch(url, {
+            method: method,
             headers: { 'Content-type': 'application/json' },
             body: JSON.stringify(requestBody)
         })
             .then(response => response.json())
             .then(
                 (response) => {
-                    console.log(response)
+                    this.saveResponse(response, "CI Configuration Saved");
+                    setTimeout(() => {
+                        this.closeNotification();
+                    }, 2000);
                 },
                 (error) => {
 
@@ -128,73 +214,85 @@ export default class CIConfigForm extends Component<{}, CIConfigFormState> {
         this.setState(state);
     }
 
-    validate = (key: string): { message: string | null, result: string | null } => {
+    validate = (key: string): { message: string | null, result: string | null, isValid: boolean } => {
         let length = this.state.form[key].length;
-        let state = { ...this.state };
-        if (length > 6) {
-            return { message: 'Looks Good', result: 'success' }
+
+        if (length === 0) return { message: null, result: null, isValid: false };
+
+        if (length < 2) {
+            return { message: 'Too Short', result: 'error', isValid: false }
         }
-        else if (length > 3) {
-            return { message: 'InvalidW', result: 'warning' }
+        switch (key) {
+            case "dockerFilePath":
+                if (this.state.form.dockerFilePath.length < 10)
+                    return { message: "Invalid path", result: "error", isValid: false }
+                else return { message: "", result: "success", isValid: true }
+
+            case "tagPattern":
+                if (this.state.form.tagPattern.length < 10)
+                    return { message: "Invalid Tag Pattern", result: "error", isValid: false }
+                else return { message: "", result: "success", isValid: true }
+
+            case "args":
+                if (this.state.form.args.length < 1)
+                    return { message: "No Args", result: "error", isValid: false }
+                else return { message: "", result: "success", isValid: true }
+
+            case "repository":
+                if (this.state.form.repository.length < 10)
+                    return { message: "Repository Invalid", result: "error", isValid: false }
+                else return { message: "", result: "success", isValid: true }
+
+            case "dockerfile":
+                if (this.state.form.dockerfile.length < 1)
+                    return { message: "Docker File Empty", result: "error", isValid: false }
+                else return { message: "", result: "success", isValid: true }
+
+            default: return { message: null, result: null, isValid: false }
+
         }
-        else if (length > 0) {
-            return { message: 'Invalid', result: 'error' }
-        };
-        return { message: null, result: null }
-    }
-
-    getValidationState = (key: string): string | null => {
-        return this.validate(key).result
     }
 
 
-    isDropDownValid = (key: string) => {
-        let state = { ...this.state };
-        if (state.form[key].length <= 0)
-            state.validation[key] = "Select Repository";
-        else state.validation[key] = "";
-
-        return !!this.state.form[key].length;
-    }
-
-    // @TODO: remove hard coding
     getDockerRepositories = () => {
-        const URL = `${Host}${Routes.GET_DOCKER_REPOSITORY}`;
+        const URL = `${Host}${Routes.DOCKER_REGISTRY_CONFIG}`;
 
-        // fetch(URL, {
-        //     method: 'GET',
-        //     headers: { 'Content-type': 'application/json' },
-        // })
-        //     .then(response => response.json())
-        //     .then(
-        //         (response) => {
-        //             console.log(response)
+        fetch(URL, {
+            method: 'GET',
+            headers: { 'Content-type': 'application/json' },
+        })
+            .then(response => response.json())
+            .then(
+                (response) => {
+                    let state = { ...this.state };
+                    state.repositoryOptions = response.result.dockerRegistries.map((element) => {
+                        return ({ id: element.id, registryURL: element.registryURL, isDefault: element.isDefault })
+                    });
+                    let e = state.repositoryOptions.find(element => element.isDefault);
+                    state.form.repository = e ? e.registryURL : state.repositoryOptions[0].registryURL;
+                    this.setState(state);
+                },
+                (error) => {
 
-        //         },
-        //         (error) => {
+                }
+            )
 
-        //         }
-        //     )
-
-        let state = { ...this.state };
-
-        state.repositoryOptions = [
-            { id: "ecr-a", registryUrl: "https://djdf.com", isDefault: false },
-            { id: "ecr-ammm", registryUrl: "https://djdfkk.com", isDefault: true }
-        ];
-
-        let e = state.repositoryOptions.find(element => element.isDefault);
-        state.form.repository = e ? e.registryUrl : state.repositoryOptions[0].registryUrl;
-        this.setState(state);
-    }
-
-    componentDidMount = () => {
-        this.getDockerRepositories();
 
     }
 
     refresh = () => {
 
+    }
+
+    getSelectedDockerRepository = (): Array<DockerRepository> => {
+        let allOptions = this.state.repositoryOptions;
+        let repo = this.state.form.repository;
+
+        let option = allOptions.find((option) => {
+            return option.registryURL == repo;
+        })
+        // console.log(option);
+        return [allOptions[0]];
     }
 
     renderDirectionalNavigation() {
@@ -238,8 +336,56 @@ export default class CIConfigForm extends Component<{}, CIConfigFormState> {
         </Card>
     }
 
+
+    renderNotification = () => {
+        if (!this.state.successMessage) return;
+
+        let { code, errors } = { ...this.state };
+        errors = this.state.errors;
+        if (code) {
+            return (
+                <Row>
+                    <ToastNotificationList>
+                        <ToastNotification type="success">
+                            <span>{this.state.successMessage}</span>
+                            <div className="pull-right toast-pf-action">
+                                <Button bsClass="transparent"
+                                    onClick={this.closeNotification}>
+                                    <span className="fa fa-close"></span>
+                                </Button>
+                            </div>
+                        </ToastNotification>
+                    </ToastNotificationList>
+                </Row>
+            )
+        }
+        else if (this.state.errors.length) {
+
+            var self = this;
+            return <Row>
+                <ToastNotificationList>
+                    {this.state.errors.map(function (error, index) {
+                        return (
+                            <ToastNotification key={index} type="error">
+                                <span>{error.userMessage}</span>
+                                <div className="pull-right toast-pf-action">
+                                    <Button bsClass="transparent"
+                                        onClick={self.closeNotification}>
+                                        <span className="fa fa-close"></span>
+                                    </Button>
+                                </div>
+                            </ToastNotification>
+                        )
+                    })}
+                </ToastNotificationList>
+            </Row>
+        }
+    }
+
     render() {
+        // console.log(this.state.repositoryOptions.slice(0, 1))
         return <React.Fragment>
+            {this.renderNotification()}
             {this.renderPageHeader()}
             <div className="nav-form-wrapper">
                 {this.renderDirectionalNavigation()}
@@ -248,76 +394,75 @@ export default class CIConfigForm extends Component<{}, CIConfigFormState> {
                         <Row>
                             <Col xs={12} lg={6}>
                                 <FormGroup controlId="dockerFilePath"
-                                    validationState={this.getValidationState("dockerFilePath")}>
+                                    validationState={this.validate("dockerFilePath").result}>
                                     <ControlLabel>Docker File Path</ControlLabel>
-
+                                    <HelpBlock className="float-right">{this.validate("dockerFilePath").message}</HelpBlock>
                                     <FormControl
                                         type="text" required
                                         value={this.state.form.dockerFilePath}
                                         placeholder="Enter Docker File Path"
                                         onChange={(event) => this.handleChange(event, 'dockerFilePath')} />
-
-                                    <HelpBlock>{this.state.validation.dockerFilePath}</HelpBlock>
-
                                 </FormGroup>
 
                                 <FormGroup>
                                     <ControlLabel>Docker Repository</ControlLabel>
+                                    <HelpBlock className="float-right"></HelpBlock>
                                     <Fragment>
                                         <TypeAheadSelect
-                                            labelKey="registryUrl"
+                                            id="id"
+                                            labelKey="registryURL"
                                             multiple={false}
+                                            defaultSelected={this.state.repositoryOptions.slice(0, 1)}
                                             options={this.state.repositoryOptions}
                                             clearButton
-                                            isValid={this.isDropDownValid('repository')}
                                             onChange={(event) => { this.handleRepositoryOptions(event) }}
                                             placeholder="Select Docker Repository..."
                                         />
                                     </Fragment>
-                                    <HelpBlock>{this.state.validation.repository}</HelpBlock>
 
                                 </FormGroup>
 
-                                <FormGroup controlId="tagPattern" validationState={this.getValidationState('tagPattern')}>
+                                <FormGroup controlId="tagPattern" validationState={this.validate('tagPattern').result}>
                                     <ControlLabel>Tag Pattern</ControlLabel>
+                                    <HelpBlock className="float-right">{this.validate("tagPattern").message}</HelpBlock>
                                     <FormControl
                                         type="text"
                                         value={this.state.form.tagPattern}
                                         placeholder="Enter Tag Pattern"
                                         onChange={(event) => this.handleChange(event, 'tagPattern')} />
                                 </FormGroup>
-                                <HelpBlock>{this.state.validation.tagPattern}</HelpBlock>
+                                <ArgsFieldSet args={this.state.form.args} callbackFromCIConfig={this.saveArgs} />
 
-                                <ArgsFieldSet callbackFromCIConfig={this.saveArgs} />
                             </Col>
 
                             <Col xs={12} lg={6}>
                                 <FormGroup
-                                    controlId="text" validationState={this.getValidationState('dockerfile')}>
+                                    controlId="text" validationState={this.validate('dockerfile').result}>
                                     <ControlLabel>Docker File</ControlLabel>
+                                    <HelpBlock className="float-right">{this.validate("dockerfile").message}</HelpBlock>
                                     <FormControl
                                         height="100"
+                                        disabled={true}
                                         componentClass="textarea"
                                         value={this.state.form.dockerfile}
                                         placeholder="Docker Config File"
                                         onChange={(event) => this.handleChange(event, 'dockerfile')} />
                                 </FormGroup>
 
-                                <Button type="button" bsClass="align-right" bsStyle="primary" onClick={this.refresh}>
+                                {/* <Button type="button" bsClass="align-right" bsStyle="primary" onClick={this.refresh}>
                                     Refresh
-                                </Button>
-
+                                </Button> */}
                             </Col>
                         </Row>
 
                         <Button type="button" bsStyle="primary"
-                            disabled={this.isFormValid()}
-                            onClick={this.save}>
-                            Save
+                            disabled={this.isFormNotValid()}
+                            onClick={this.saveOrUpdate}>
+                            {this.state.buttonLabel}
                         </Button>
                     </Form>
                 </div>
-            </div>    
+            </div>
         </React.Fragment>
     }
 }

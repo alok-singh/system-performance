@@ -50,9 +50,9 @@ export default class DockerRegistryConfigForm extends Component<DockerRegistryCo
             },
 
             isValid: {
-                pluginId: false,
+                pluginId: true,
                 registryURL: false,
-                registryType: false,
+                registryType: true,
                 aWSAccessKeyId: false,
                 aWSSecretAccessKey: false,
                 aWSRegion: false,
@@ -367,9 +367,7 @@ export default class DockerRegistryConfigForm extends Component<DockerRegistryCo
     renderPageTitle() {
         return <Card>
             <CardTitle>
-                <Row bsClass="m-lr-0 flexbox flex-justify m-tb-20">
-                    <h1 className="m-0">Docker Registry Configuration</h1>
-                </Row>
+                Docker Registry Configuration
             </CardTitle>
             <CardBody>
                 This is some basic text about docker registeries This is some basic text about docker registeries.
