@@ -1,4 +1,4 @@
-import {EnvironmentList as environments} from '../../config/buildConfigurations';
+import {DeploymentTemplateList, TriggerTypeList} from '../../config/buildConfigurations';
 
 export const generateNode = () => {
     return {
@@ -11,7 +11,8 @@ export const generateNode = () => {
         condition: '',
         triggerType: '',
         buildType: '',
-        environments: JSON.parse(JSON.stringify(environments)),
+        deploymentTemplates: JSON.parse(JSON.stringify(DeploymentTemplateList)),
+        triggerTypeLists: JSON.parse(JSON.stringify(TriggerTypeList)),
         downstreams: []
     }
 }

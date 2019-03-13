@@ -1,45 +1,35 @@
-export interface EnvironmentType {
+export interface DeploymentTemplateType {
 	title: string;
 	id: string;
 	isActive: boolean;
 }
 
-export const EnvironmentList: Array<EnvironmentType> = [
+export interface TriggerType {
+	title: string;
+	id: string;
+	isActive: boolean;
+}
+
+export const DeploymentTemplateList: Array<DeploymentTemplateType> = [
 	{
-		title: 'Build 1',
+		title: 'Rolling',
 		id: '1',
 		isActive: true
 	},{
-		title: 'Build 2',
+		title: 'Blue Green',
 		id: '2',
 		isActive: false
+	}
+];
+
+export const TriggerTypeList: Array<TriggerType> = [
+	{
+		title: 'Automated',
+		id: '1',
+		isActive: true
 	},{
-		title: 'Build 3',
-		id: '3',
-		isActive: false
-	},{
-		title: 'Build 2',
+		title: 'Manual',
 		id: '2',
-		isActive: false
-	},{
-		title: 'Build 3',
-		id: '3',
-		isActive: false
-	},{
-		title: 'Build 2',
-		id: '2',
-		isActive: false
-	},{
-		title: 'Build 3',
-		id: '3',
-		isActive: false
-	},{
-		title: 'Build 2',
-		id: '2',
-		isActive: false
-	},{
-		title: 'Build 3',
-		id: '3',
 		isActive: false
 	}
 ];

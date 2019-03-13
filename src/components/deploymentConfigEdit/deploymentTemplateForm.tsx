@@ -1,15 +1,12 @@
 import React, { Component, Fragment } from 'react';
 import yamlJsParser from 'yamljs';
-import { 
-    FormControl, 
+import {  
     FormGroup, 
     ControlLabel, 
     Button, 
     Form, 
     TypeAheadSelect, 
     ExpandCollapse, 
-    Tabs, 
-    Tab, 
     Row, 
     Col ,
     Card,
@@ -22,7 +19,16 @@ import {
     Routes 
 } from '../../config/constants';
 
-import { Description } from '../../modals/deploymentTemplateTypes';
+import TemplateForm from './templateForm';
+
+import { Description, DeploymentConfigType } from '../../modals/deploymentTemplateTypes';
+
+import {isSubset} from '../helpers/isSubset';
+import {
+    deploymentTemplateDummyData, 
+    chartRepositoryOptionsDummyData, 
+    referenceTemplateOptionsDummyData,
+} from '../helpers/deploymentFormData';
 
 import DirectionalNavigation from '../common/directionalNavigation';
 
@@ -32,17 +38,7 @@ export interface DeploymentTemplateFormState {
 
     chartRepository: Description;
     referenceTemplate: Description;
-    deploymentConfig: {
-        json: {
-            obj: any;
-            value: string;
-        };
-        subset: {
-            obj: any;
-            value: string;
-            yaml: string;
-        };
-    };
+    deploymentConfig: DeploymentConfigType;
 
 }
 
@@ -99,18 +95,10 @@ export default class DeploymentTemplateForm extends Component<{}, DeploymentTemp
         //TODO: remove hard coding
         let state = { ...this.state };
 
-        state.chartRepositoryOptions = [
-            { id: '1', name: "Chart Repo One" },
-            { id: '2', name: "Chart Repo Two" },
-            { id: '3', name: "Chart Repo Three" },
-        ];
-        state.referenceTemplateOptions = [
-            { id: '1', name: "Reference Template 1" },
-            { id: '2', name: "Reference Template 2" },
-            { id: '3', name: "Reference Template 3" },
-        ];
-
-        state.deploymentConfig.json.obj = { "glossary": { "title": "example glossary", "GlossDiv": { "title": "S", "GlossList": { "GlossEntry": { "ID": "SGML", "SortAs": "SGML", "GlossTerm": "Standard Generalized Markup Language", "Acronym": "SGML", "Abbrev": "ISO 8879:1986", "GlossDef": { "para": "A meta-markup language, used to create markup languages such as DocBook.", "GlossSeeAlso": ["GML", "XML"] }, "GlossSee": "markup" } } } } };
+        state.chartRepositoryOptions = chartRepositoryOptionsDummyData;
+        state.referenceTemplateOptions = referenceTemplateOptionsDummyData;
+        state.deploymentConfig.json.obj = deploymentTemplateDummyData;
+        
         // state.deploymentConfig.json.obj = [
         //     {
         //         "glossary": "val1",
@@ -173,7 +161,7 @@ export default class DeploymentTemplateForm extends Component<{}, DeploymentTemp
             );
 
             // console.log("VALID json");
-            console.log("IS SUBSET", this.isSubset(this.state.deploymentConfig.json.obj, this.state.deploymentConfig.subset.obj));
+            console.log("IS SUBSET", isSubset(this.state.deploymentConfig.json.obj, this.state.deploymentConfig.subset.obj));
 
             return true;
         }
@@ -206,55 +194,6 @@ export default class DeploymentTemplateForm extends Component<{}, DeploymentTemp
         this.setState(state);
     }
 
-    //@description: Is 'subset' subset of 'json'
-    //NOTE: Empty Array - not a subset
-    isSubset = (json: any, subset: any): boolean => {
-        let valid = true;
-        
-        //Case json is Array
-        if (Array.isArray(json)) {
-
-            let parentSet = new Set(Object.keys(json[0]));
-            let keysOfAllElements: Array<string> = [];
-            for (let i = 0; i < subset.length; i++) {
-                keysOfAllElements = keysOfAllElements.concat(Object.keys(subset[i]));
-            }
-            let childrenSet = new Set(keysOfAllElements);
-
-            //Case both Arrays and subset Array is non empty
-            if (Array.isArray(subset) && (subset.length) && (subset.length <= json.length) && (childrenSet.size <= parentSet.size)) {
-                // console.log("Both Arrays")
-                json = json[0];
-                for (let i = 0; i < subset.length; i++) {
-                    valid = valid && this.isSubset(json, subset[i]);
-                    if (!valid) return valid;
-                }
-                return valid;
-            }
-            else {
-                return false;
-            }
-        }
-
-        //Case Both Objects
-        else if (typeof (json) == 'object' && typeof (subset) == 'object' && !Array.isArray(subset) && !Array.isArray(json)) {
-
-            let key = new Set(Object.keys(json));
-            let keySubset = new Set(Object.keys(subset));
-
-            keySubset.forEach(element => {
-                valid = valid && (key.has(element)) &&
-                    (typeof (json[element]) == typeof (subset[element])) &&
-                    (this.isSubset(json[element], subset[element]));
-            });
-
-            return !!valid;
-        }
-        else {
-            return (typeof (json) == typeof (subset) && !Array.isArray(subset) && !Array.isArray(json));
-        }
-    }
-
     saveDeploymentTemplate = () => {
         //Verify value is JSON
         // this.validateJson();
@@ -284,6 +223,14 @@ export default class DeploymentTemplateForm extends Component<{}, DeploymentTemp
                 }
             );
 
+    }
+
+    renderDeploymentTemplateForm() {
+        return <TemplateForm 
+            deploymentConfig={this.state.deploymentConfig}
+            handleJsonValue={this.handleJsonValue}
+            validateJson={this.validateJson}
+        />
     }
 
     renderDirectionalNavigation() {
@@ -375,69 +322,7 @@ export default class DeploymentTemplateForm extends Component<{}, DeploymentTemp
 
                         </ExpandCollapse>
                         <div className="mt-25"></div>
-                        <Tabs defaultActiveKey={1} id="deployment-config">
-                            <Tab eventKey={1} title="JSON">
-                                <Row bsClass="bg-gray flexbox p-25">
-                                    <Col lg={6}>
-                                        <FormGroup
-                                            controlId="text">
-                                            <FormControl
-                                                height="100"
-                                                componentClass="textarea"
-                                                value={this.state.deploymentConfig.json.value}
-                                                placeholder="JSON"
-                                                disabled={true} />
-                                        </FormGroup>
-                                    </Col>
-                                    <Col lg={6}>
-                                        <FormGroup
-                                            controlId="text">
-                                            <FormControl
-                                                height="100"
-                                                componentClass="textarea"
-                                                value={this.state.deploymentConfig.subset.value}
-                                                placeholder="JSON"
-                                                onChange={(event) => { this.handleJsonValue(event, 'json') }} />
-                                        </FormGroup>
-                                        <Button type="button" bsClass="align-right" bsStyle="primary" onClick={() => this.validateJson('json')}>
-                                            Validate JSON
-                                        </Button>
-
-                                    </Col>
-                                </Row>
-                            </Tab>
-                            <Tab eventKey={2} title="YAML">
-                                <Row bsClass="bg-gray flexbox p-25">
-                                    <Col lg={6}>
-                                        <FormGroup
-                                            controlId="text">
-                                            <FormControl
-                                                height="100"
-                                                componentClass="textarea"
-                                                // lookup https://github.com/jeremyfa/yaml.js for details
-                                                value={yamlJsParser.stringify(this.state.deploymentConfig.json.obj, 50)}
-                                                placeholder="JSON"
-                                                disabled={true} />
-                                        </FormGroup>
-                                    </Col>
-                                    <Col lg={6}>
-                                        <FormGroup
-                                            controlId="text">
-                                            <FormControl
-                                                height="100"
-                                                componentClass="textarea"
-                                                value={this.state.deploymentConfig.subset.yaml}
-                                                placeholder="YAML"
-                                                onChange={(event) => { this.handleJsonValue(event, 'yaml') }} />
-                                        </FormGroup>
-                                        <Button type="button" bsClass="align-right" bsStyle="primary" onClick={() => this.validateJson('yaml')}>
-                                            Validate YAML
-                                        </Button>
-                                    </Col>
-                                </Row>
-                            </Tab>
-
-                        </Tabs>
+                        {this.renderDeploymentTemplateForm()}
 
                         <Button type="button"
                             bsStyle="primary"

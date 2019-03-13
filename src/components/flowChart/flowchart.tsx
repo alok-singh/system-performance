@@ -6,8 +6,16 @@ import Defs from './defs';
 import BackDrop from './backdrop';
 import Popup from './popup';
 
-import {EnvironmentType} from '../../config/buildConfigurations';
+import {DeploymentTemplateType, TriggerType} from '../../config/buildConfigurations';
 import {generateNode} from '../helpers/nodeGenerator';
+import {deploymentTemplateDummyData} from '../helpers/deploymentFormData';
+
+import { DeploymentConfigType } from '../../modals/deploymentTemplateTypes';
+
+import TemplateForm from '../deploymentConfigEdit/templateForm';
+import yamlJsParser from 'yamljs';
+
+import {isSubset} from '../helpers/isSubset';
 
 import {nodeSizes} from '../../config/sizes';
 
@@ -20,7 +28,8 @@ import {
     Card,
     CardDropdownButton,
     MenuItem,
-    CardFooter
+    CardFooter,
+    AboutModal
 } from 'patternfly-react';
 
 interface NodeAttr {
@@ -33,7 +42,8 @@ interface NodeAttr {
     condition: string;
     triggerType: string;
     buildType: string;
-    environments: EnvironmentType[]; 
+    deploymentTemplates: DeploymentTemplateType[];
+    triggerTypeLists: TriggerType[];
     downstreams: string[]
 }
 
@@ -46,6 +56,8 @@ interface AppState {
     startNode: NodeAttr | null;
     topEdge: EdgeType;
     topNodeId: string | null;
+    showModal: boolean;
+    deploymentConfig: DeploymentConfigType;
 }
 
 interface EdgeType {
@@ -70,7 +82,19 @@ export default class FlowChart extends Component <{}, AppState> {
             edgeInProgress: false,
             startNode: null,
             topEdge: null,
-            topNodeId: null
+            topNodeId: null,
+            showModal: false,
+            deploymentConfig: {
+                json: {
+                    obj: { 'key': 'value' },
+                    value: ""
+                },
+                subset: {
+                    obj: { 'key': "value" },
+                    value: "",
+                    yaml: ""
+                },
+            }
         };
         this.onClickSVG = this.onClickSVG.bind(this);
     }
@@ -78,6 +102,15 @@ export default class FlowChart extends Component <{}, AppState> {
     coord: NodePosition | null = null
     
     mouseMoveEvent: ((event: any) => void)[] = []
+    
+    componentDidMount() {
+        let {deploymentConfig} = this.state;
+        deploymentConfig.json.obj = deploymentTemplateDummyData;
+        deploymentConfig.json.value = JSON.stringify(deploymentTemplateDummyData, null, 2);
+        this.setState({
+            deploymentConfig 
+        });
+    }
 
     onClickPopup(event: any) {
         console.log('nothing to do');
@@ -262,14 +295,14 @@ export default class FlowChart extends Component <{}, AppState> {
         event.stopPropagation();
     }
 
-    onChangeConfiguration(event: any, listIndex: number, envID: number, id: string) {
+    onChangeConfiguration(key: string, listIndex: number, envID: string, id: string) {
         let nodes = this.state.nodes.map(node => {
             if(node.id == id){
-                node.environments = node.environments.map(environment => {
-                    environment.isActive = false;
-                    return environment;
+                node[key] = node[key].map(item => {
+                    item.isActive = false;
+                    return item;
                 });
-                node.environments[listIndex].isActive = true;
+                node[key][listIndex].isActive = true;
             }
             return node;
         });
@@ -278,14 +311,11 @@ export default class FlowChart extends Component <{}, AppState> {
         });
     }
 
-    onChangeInput(value: string, id: string, key: string) {
-        let {nodes} = this.state;
-        nodes.filter(node => node.id == id).forEach( node => {
-            node[key] = value
-        })
+    onClickEnvironmentConfiguration(id: string) {
+        console.log(id);
         this.setState({
-            nodes: nodes
-        });
+            showModal: true
+        })
     }
 
     onMouseOverEdge(startNode, endNode) {
@@ -339,6 +369,63 @@ export default class FlowChart extends Component <{}, AppState> {
         return retNodes;
     }
 
+    handleJsonValue (event: React.ChangeEvent<HTMLInputElement>, key: string) {
+        let state = { ...this.state };
+        if(key == 'json') {
+            state.deploymentConfig.subset.value = event.target.value;
+        }
+        else if(key == 'yaml') {
+            state.deploymentConfig.subset.yaml = event.target.value;
+        }
+        this.setState(state);
+    }
+    
+    validateJson = (key: string): boolean => {
+        try {
+            //TODO: instead of spread operator can be take deploymentConfig only?
+            let {deploymentConfig} = this.state;
+            
+            if(key == 'json') {
+                deploymentConfig.subset.obj = JSON.parse(this.state.deploymentConfig.subset.value);
+            }
+            else if(key == 'yaml') {
+                deploymentConfig.subset.obj = yamlJsParser.parse(this.state.deploymentConfig.subset.yaml);
+            }
+
+            deploymentConfig.subset.value = JSON.stringify(deploymentConfig.subset.obj, undefined, 2);
+
+            this.setState(Object.assign({}, this.state, deploymentConfig));
+
+            // console.log("VALID json");
+            console.log("IS SUBSET", isSubset(this.state.deploymentConfig.json.obj, this.state.deploymentConfig.subset.obj));
+
+            return true;
+        }
+        catch (error) {
+            console.error("INVALID JSON");
+            return false;
+        }
+
+    }
+
+    renderModal() {
+        return <AboutModal
+            show={this.state.showModal}
+            onHide={() => this.setState({showModal: false})}
+            productTitle="Deployment Template"
+            trademarkText="This configuration may effect other pipelines as well"
+        >
+            <AboutModal.Versions>
+                <TemplateForm 
+                    deploymentConfig={this.state.deploymentConfig}
+                    handleJsonValue={this.handleJsonValue}
+                    validateJson={this.validateJson}
+                />
+                <Button style={{marginLeft: '10px'}} bsStyle="success">Save</Button>
+            </AboutModal.Versions>
+        </AboutModal>
+    }
+
     renderNodeList() {
         let {nodes} = this.state;
         return this.getNodeList(this.state.nodes).map(node => {
@@ -353,15 +440,16 @@ export default class FlowChart extends Component <{}, AppState> {
                 condition={node.condition}
                 triggerType={node.triggerType}
                 buildType={node.buildType}
-                environments={node.environments}
+                deploymentTemplates={node.deploymentTemplates}
+                triggerTypeLists={node.triggerTypeLists}
                 handleMouseEnter={(event) => {this.handleMouseEnterNode(node.id)}}
-                onChangeInput={({target}, key) => {this.onChangeInput(target.value, node.id, key)}}
                 handleMouseDown={(event) => this.handleMouseDown(event, node.id)}
                 handleMouseUp={(event) => this.handleMouseUp(event, node.id)}
                 handleClickConnector={(event, isInput) => this.handleClickConnector(event, node.id, isInput)}
                 handleTitleChange={(event) => this.handleTitleChange(event, node.id)}
                 handleClickOptions={(event) => this.handleClickOptions(event, node)}
-                onChangeConfiguration={(event, listIndex, envID) => this.onChangeConfiguration(event, listIndex, envID, node.id)}
+                onChangeConfiguration={(key, listIndex, envID) => this.onChangeConfiguration(key, listIndex, envID, node.id)}
+                onClickEnvironmentConfiguration={() => this.onClickEnvironmentConfiguration(node.id)}
             />
         })
     }
@@ -432,6 +520,7 @@ export default class FlowChart extends Component <{}, AppState> {
             <div className="flow-chart">
                 {this.renderAddButton()}
                 {this.renderOptionsPopup()}
+                {this.renderModal()}
                 <div className="svg-wrapper">
                     <svg onClick={() => this.onClickSVG()}>
                         {this.renderBackDrop()}

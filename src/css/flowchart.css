@@ -56,9 +56,30 @@ svg {
 }
 
 .flow-chart .svg-wrapper .card-pf-body .dropdown {
-    width: 82px;
+    width: 92px;
 }
 
 .flow-chart .svg-wrapper .card-pf-body .dropdown button {
     width: 100%
+}
+
+
+/*
+    Modal overwrite CSS
+*/
+
+.modal .modal-dialog {
+    width: 900px;
+}
+
+.modal .modal-dialog .tab-content .align-right-primary {
+    color: #333;
+}
+
+.modal .modal-dialog .nav-tabs > li > a {
+    color: #fff;
+}
+
+.modal .modal-dialog .nav-tabs > li.active > a {
+    color: #0088ce;
 }

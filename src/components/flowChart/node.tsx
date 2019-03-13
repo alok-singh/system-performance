@@ -2,6 +2,8 @@ import * as React from 'react';
 import {nodeSizes} from '../../config/sizes';
 import {nodeColors} from '../../config/colors';
 
+import {DeploymentTemplateType, TriggerType} from '../../config/buildConfigurations';
+
 import {
     Button, 
     CardTitle, 
@@ -25,38 +27,46 @@ interface NodeProps {
     title: string;
     activeIn: boolean;
     activeOut: boolean;
-    environments: Array<any>;
     condition: string;
     triggerType: string;
     buildType: string;
+    deploymentTemplates: DeploymentTemplateType[];
+    triggerTypeLists: TriggerType[];
     handleMouseUp(event: any): void;
     handleMouseDown(event: any): void;
     handleTitleChange(event: any): void;
     handleClickConnector(event:any, isInput:boolean): void;
     handleClickOptions(event: any): void;
     handleMouseEnter(event: any): void;
-    onChangeInput(event: any, key: string): void;
-    onChangeConfiguration(event: any, listIndex: number, envID: number): void;
+    onChangeConfiguration(key: string, listIndex: number, id: string): void;
+    onClickEnvironmentConfiguration(event: any): void;
 }
 
 export default class Node extends React.Component <NodeProps>{
 
     renderCardContent() {
-        let environmentTitle = this.props.environments.filter(env => env.isActive)[0].title;
+        let deploymentTemplateTitle = this.props.deploymentTemplates.filter(env => env.isActive)[0].title;
+        let triggerTypeListsTitle = this.props.triggerTypeLists.filter(env => env.isActive)[0].title;
         return <Card style={{position: 'relative', height: '100%', padding: '0px', margin: '0px', cursor: 'move'}}>
             <CardTitle style={{padding: '5px 10px', margin: '0px', borderBottom: '1px solid #d1d1d1'}}>
-                <input placeholder="Add title" value={this.props.title} onChange={this.props.handleTitleChange} style={{border: 'none', fontSize: '14px', lineHeight: '14px'}} />
+                <input placeholder="Add title" value={this.props.title} onChange={this.props.handleTitleChange} style={{border: 'none', fontSize: '14px', lineHeight: '14px', width: '90%'}} />
             </CardTitle>
-            <CardBody style={{padding: '10px', margin: '0px'}} >
-                <div>
-                    <DropdownButton bsStyle="default" title={environmentTitle} id="dropdown-example">
-                        {this.props.environments.map((envionment, index) => {
-                            return <MenuItem key={`env-${index}`} eventKey={index} active={envionment.isActive} onClick={() => this.props.onChangeConfiguration(event, index, envionment.id)}>
-                                {envionment.title}
+            <CardBody style={{padding: '3px 8px', margin: '0px'}} >
+                <div style={{display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', flexWrap: 'wrap'}}>
+                    <DropdownButton bsStyle="default" title={deploymentTemplateTitle} id="dropdown-example">
+                        {this.props.deploymentTemplates.map((deploymentTemplate, index) => {
+                            return <MenuItem key={`env-${index}`} eventKey={index} active={deploymentTemplate.isActive} onClick={() => this.props.onChangeConfiguration('deploymentTemplates', index, deploymentTemplate.id)}>
+                                {deploymentTemplate.title}
                             </MenuItem>
                         })}
                     </DropdownButton>
-                    <Button style={{marginLeft: '5px'}}>Trigger Type</Button>
+                    <DropdownButton bsStyle="default" title={triggerTypeListsTitle} id="dropdown-example" style={{marginTop: '5px'}}>
+                        {this.props.triggerTypeLists.map((triggerType, index) => {
+                            return <MenuItem key={`env-${index}`} eventKey={index} active={triggerType.isActive} onClick={() => this.props.onChangeConfiguration('triggerTypeLists', index, triggerType.id)}>
+                                {triggerType.title}
+                            </MenuItem>
+                        })}
+                    </DropdownButton>
                 </div>
                 <div 
                     className={this.props.activeIn ? "active junction" : "junction"}
@@ -72,10 +82,8 @@ export default class Node extends React.Component <NodeProps>{
                     className="option-button fa fa-trash"
                     onClick={this.props.handleClickOptions}
                 />
-                <div style={{margin: '10px 0px'}}>
-                    <Button style={{marginRight: '5px'}}>Type</Button>
-                    <Button style={{marginRight: '5px'}}>Condition</Button>
-                    <Button>Config</Button>
+                <div style={{marginTop: '5px'}}>
+                    <Button style={{width: '100%'}} onClick={this.props.onClickEnvironmentConfiguration}>Environment Config</Button>
                 </div>
             </CardBody>
         </Card>
