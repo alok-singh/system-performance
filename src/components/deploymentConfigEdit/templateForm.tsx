@@ -1,26 +1,26 @@
-import React, {Component} from 'react';
-import { 
-    FormControl, 
-    FormGroup, 
-    Button, 
+import React, { Component } from 'react';
+import {
+    FormControl,
+    FormGroup,
+    Button,
     Tabs,
-    Tab, 
-    Row, 
-    Col 
+    Tab,
+    Row,
+    Col
 } from 'patternfly-react'
 import yamlJsParser from 'yamljs';
 
-import {DeploymentConfigType} from '../../modals/deploymentTemplateTypes';
+import { DeploymentConfigType } from '../../modals/deploymentTemplateTypes';
 
 interface TemplateFormProps {
-	deploymentConfig: DeploymentConfigType;
-	handleJsonValue(event: any, key: string): void;
-	validateJson(event: any): void;
+    deploymentConfig: DeploymentConfigType;
+    handleJsonValue(event: any, key: string): void;
+    validateJson(event: any): void;
 }
 
 export default class TemplateForm extends Component<TemplateFormProps, any> {
-	render() {
-		return <Tabs defaultActiveKey={1} id="deployment-config">
+    render() {
+        return <Tabs defaultActiveKey={1} id="deployment-config">
             <Tab eventKey={1} title="JSON">
                 <Row bsClass="bg-gray flexbox p-25">
                     <Col lg={6}>
@@ -35,21 +35,21 @@ export default class TemplateForm extends Component<TemplateFormProps, any> {
                         </FormGroup>
                     </Col>
                     <Col lg={6}>
-                        <FormGroup
-                            controlId="text">
+                        <FormGroup controlId="text">
                             <FormControl
                                 height="100"
                                 componentClass="textarea"
-                                value={this.props.deploymentConfig.subset.value}
+                                value={this.props.deploymentConfig.jsonSubset.value}
                                 placeholder="JSON"
-                                onChange={(event) => {this.props.handleJsonValue(event, 'json') }} />
+                                onChange={(event) => { this.props.handleJsonValue(event, 'json') }} />
                         </FormGroup>
-                        <Button type="button" bsClass="align-right" bsStyle="primary" onClick={() => this.props.validateJson('json')}>
-                            Validate JSON
+                        <Button type="button" bsClass="float-right" bsStyle="primary" onClick={() => this.props.validateJson('json')}>
+                            Save JSON
                         </Button>
 
                     </Col>
                 </Row>
+
             </Tab>
             <Tab eventKey={2} title="YAML">
                 <Row bsClass="bg-gray flexbox p-25">
@@ -71,16 +71,16 @@ export default class TemplateForm extends Component<TemplateFormProps, any> {
                             <FormControl
                                 height="100"
                                 componentClass="textarea"
-                                value={this.props.deploymentConfig.subset.yaml}
+                                value={this.props.deploymentConfig.yamlSubset}
                                 placeholder="YAML"
-                                onChange={(event) => {this.props.handleJsonValue(event, 'yaml')}} />
+                                onChange={(event) => { this.props.handleJsonValue(event, 'yaml') }} />
                         </FormGroup>
                         <Button type="button" bsClass="align-right" bsStyle="primary" onClick={() => this.props.validateJson('yaml')}>
-                            Validate YAML
+                            Save YAML
                         </Button>
                     </Col>
                 </Row>
             </Tab>
         </Tabs>
-	}
+    }
 }

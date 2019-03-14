@@ -89,11 +89,12 @@ export default class FlowChart extends Component <{}, AppState> {
                     obj: { 'key': 'value' },
                     value: ""
                 },
-                subset: {
+                jsonSubset: {
                     obj: { 'key': "value" },
                     value: "",
-                    yaml: ""
                 },
+                
+                yamlSubset: ""
             }
         };
         this.onClickSVG = this.onClickSVG.bind(this);
@@ -372,40 +373,60 @@ export default class FlowChart extends Component <{}, AppState> {
     handleJsonValue (event: React.ChangeEvent<HTMLInputElement>, key: string) {
         let state = { ...this.state };
         if(key == 'json') {
-            state.deploymentConfig.subset.value = event.target.value;
+            state.deploymentConfig.jsonSubset.value = event.target.value;
         }
         else if(key == 'yaml') {
-            state.deploymentConfig.subset.yaml = event.target.value;
+            state.deploymentConfig.yamlSubset = event.target.value;
         }
         this.setState(state);
     }
     
+    //Saves JSON/YAML, beautifies JSON ONLY, also checks for subset
+    //returns true - if JSON/YAML is valid JSON/YAML
     validateJson = (key: string): boolean => {
-        try {
-            //TODO: instead of spread operator can be take deploymentConfig only?
-            let {deploymentConfig} = this.state;
-            
-            if(key == 'json') {
-                deploymentConfig.subset.obj = JSON.parse(this.state.deploymentConfig.subset.value);
+        let state = { ...this.state };
+
+        if (key == 'json') {
+            try {
+                this.state.deploymentConfig.jsonSubset.obj = JSON.parse(state.deploymentConfig.jsonSubset.value);
+                this.state.deploymentConfig.jsonSubset.value = JSON.stringify(state.deploymentConfig.jsonSubset.obj, undefined, 2);
+                this.state.deploymentConfig.yamlSubset = yamlJsParser.stringify(state.deploymentConfig.jsonSubset.obj);
+
+                let is = isSubset(state.deploymentConfig.json.obj, state.deploymentConfig.jsonSubset.obj);
+                if (!is) {
+                    console.log("JSON NOT SUBSET")
+                }
+                else {
+                    console.log("valid json SUBSET")
+                }
+                this.setState(state);
+                return true;
+
+            } catch (error) {
+                console.error("INVALID JSON");
+                this.setState(state);
+                return false;
             }
-            else if(key == 'yaml') {
-                deploymentConfig.subset.obj = yamlJsParser.parse(this.state.deploymentConfig.subset.yaml);
+        }
+        else if (key == 'yaml') {
+            try {
+                state.deploymentConfig.jsonSubset.obj = yamlJsParser.parse(state.deploymentConfig.yamlSubset);
+                state.deploymentConfig.jsonSubset.value = JSON.stringify(state.deploymentConfig.jsonSubset.obj, undefined, 2);
+                let is = isSubset(state.deploymentConfig.json.obj, state.deploymentConfig.jsonSubset.obj);
+                if (!is) {
+                    console.log("YAML must be a subset")
+
+                }
+                else {
+                    console.log("Valid YAML Subset")
+                }
+                return true;
+            } catch (error) {
+                console.error("INVALID YAML");
+                return false;
             }
-
-            deploymentConfig.subset.value = JSON.stringify(deploymentConfig.subset.obj, undefined, 2);
-
-            this.setState(Object.assign({}, this.state, deploymentConfig));
-
-            // console.log("VALID json");
-            console.log("IS SUBSET", isSubset(this.state.deploymentConfig.json.obj, this.state.deploymentConfig.subset.obj));
-
-            return true;
         }
-        catch (error) {
-            console.error("INVALID JSON");
-            return false;
-        }
-
+        
     }
 
     renderModal() {

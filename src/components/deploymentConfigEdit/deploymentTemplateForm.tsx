@@ -1,48 +1,47 @@
 import React, { Component, Fragment } from 'react';
 import yamlJsParser from 'yamljs';
-import {  
-    FormGroup, 
-    ControlLabel, 
-    Button, 
-    Form, 
-    TypeAheadSelect, 
-    ExpandCollapse, 
-    Row, 
-    Col ,
+import {
+    FormGroup,
+    ControlLabel,
+    Button,
+    Form,
+    TypeAheadSelect,
+    ExpandCollapse,
+    Row,
+    Col,
     Card,
     CardTitle,
     CardBody
 } from 'patternfly-react'
 
-import { 
-    Host, 
-    Routes 
+import {
+    Host,
+    Routes
 } from '../../config/constants';
 
 import TemplateForm from './templateForm';
-
 import { Description, DeploymentConfigType } from '../../modals/deploymentTemplateTypes';
-
-import {isSubset} from '../helpers/isSubset';
-import {
-    deploymentTemplateDummyData, 
-    chartRepositoryOptionsDummyData, 
-    referenceTemplateOptionsDummyData,
-} from '../helpers/deploymentFormData';
-
+import { isSubset } from '../helpers/isSubset';
 import DirectionalNavigation from '../common/directionalNavigation';
+import { deploymentTemplateDummyData } from '../helpers/deploymentFormData';
+
+export interface DeploymentTemplateProps {
+    id: string;
+}
 
 export interface DeploymentTemplateFormState {
     chartRepositoryOptions: Description[];
     referenceTemplateOptions: Description[];
+    validationMessage: string;
 
-    chartRepository: Description;
-    referenceTemplate: Description;
-    deploymentConfig: DeploymentConfigType;
-
+    deploymentTemplate: {
+        chartRepositoryId: string;
+        referenceTemplateId: string;
+        deploymentConfig: DeploymentConfigType;
+    }
 }
 
-export default class DeploymentTemplateForm extends Component<{}, DeploymentTemplateFormState>{
+export default class DeploymentTemplateForm extends Component<DeploymentTemplateProps, DeploymentTemplateFormState>{
 
     constructor(props) {
         super(props);
@@ -50,30 +49,89 @@ export default class DeploymentTemplateForm extends Component<{}, DeploymentTemp
         this.state = {
             chartRepositoryOptions: [],
             referenceTemplateOptions: [],
+            validationMessage: "",
 
-            chartRepository: { id: "1", name: "one" },
-            referenceTemplate: { id: "1", name: "one" },
-            deploymentConfig: {
-                json: {
-                    obj: { 'key': 'value' },
-                    value: ""
+            deploymentTemplate: {
+                chartRepositoryId: "",
+                referenceTemplateId: "",
+
+                deploymentConfig: {
+                    json: {
+                        obj: { 'key': "value" },
+                        value: ""
+                    },
+                    jsonSubset: {
+                        obj: {},
+                        value: "",
+                    },
+                    yamlSubset: ""
+
                 },
-                subset: {
-                    obj: { 'key': "value" },
-                    value: "",
-                    yaml: ""
-                },
-            },
+
+            }
         }
     }
 
     componentDidMount = () => {
-        this.getSavedDeploymentTemplate();
+        this.getChartRepositories();
+        this.getReferenceTemplates();
+        if (this.props.id)
+            this.getDeploymentTemplate(this.props.id);
+
+        // //TODO: remove hard coding
+        let state = { ...this.state };
+        state.deploymentTemplate.deploymentConfig.json.obj = deploymentTemplateDummyData;
+        state.deploymentTemplate.deploymentConfig.json.value = JSON.stringify(state.deploymentTemplate.deploymentConfig.json.obj, undefined, 2);
+        this.setState(state);
 
     }
 
-    getSavedDeploymentTemplate = () => {
-        const URL = `${Host}${Routes.GET_SAVED_DEPLOYMENT_TEMPLATE}`;
+    getChartRepositories = () => {
+        const URL = `${Host}${Routes.CHART_REPO}`;
+
+        fetch(URL, {
+            method: 'GET',
+            headers: { 'Content-type': 'application/json' },
+        })
+            .then(response => response.json())
+            .then(
+                (response) => {
+
+                    let state = { ...this.state };
+                    state.chartRepositoryOptions = response.result.chartRepos
+                    this.setState(state);
+
+                },
+                (error) => {
+                    console.error(error);
+
+                }
+            );
+    }
+
+    getReferenceTemplates = () => {
+        const URL = `${Host}${Routes.REFERENCE_TEMPLATE}`;
+
+        fetch(URL, {
+            method: 'GET',
+            headers: { 'Content-type': 'application/json' },
+        })
+            .then(response => response.json())
+            .then(
+                (response) => {
+                    let state = { ...this.state };
+                    state.referenceTemplateOptions = response.result.refTemplates;
+                    this.setState(state);
+                },
+                (error) => {
+                    console.error(error);
+
+                }
+            );
+    }
+
+    getDeploymentTemplate = (id: string) => {
+        const URL = `${Host}${Routes.DEPLOYMENT_TEMPLATE}/${id}`;
 
         fetch(URL, {
             method: 'GET',
@@ -92,118 +150,106 @@ export default class DeploymentTemplateForm extends Component<{}, DeploymentTemp
                 }
             );
 
-        //TODO: remove hard coding
-        let state = { ...this.state };
-
-        state.chartRepositoryOptions = chartRepositoryOptionsDummyData;
-        state.referenceTemplateOptions = referenceTemplateOptionsDummyData;
-        state.deploymentConfig.json.obj = deploymentTemplateDummyData;
-        
-        // state.deploymentConfig.json.obj = [
-        //     {
-        //         "glossary": "val1",
-        //         "key2": "val2",
-        //     },
-        //     {
-        //         "glossary": "val1",
-        //         "key2": "val2",
-        //     }
-        // ];
-
-
-        state.deploymentConfig.json.value = JSON.stringify(state.deploymentConfig.json.obj, undefined, 2);        
-
-        state.chartRepository = state.chartRepositoryOptions[0];
-        state.referenceTemplate = state.referenceTemplateOptions[0];
-        this.setState(state);
-
-        // this.jsonToYaml(this.state.deploymentConfig.json.obj);
-
 
     }
 
     handleOptions = (e: Array<any>, key: string) => {
         let state = { ...this.state };
         if (e.length) {
-            state[key] = e[0];
+            state.deploymentTemplate[key] = e[0].id
         }
         else {
-            state[key] = {};
+            state.deploymentTemplate[key] = "";
         }
         this.setState(state);
 
-        // console.log(newState[key]);
-        // console.log(this.state[key]);
-
     }
 
+    isDropDownValid = (key: string): boolean => {
+        return true;
+    }
+
+    //Saves JSON/YAML, beautifies JSON ONLY, also checks for subset
+    //returns true - if JSON/YAML is valid JSON/YAML
     validateJson = (key: string): boolean => {
-        try {
-            //TODO: instead of spread operator can be take deploymentConfig only?
-            let {deploymentConfig} = this.state;
-            
-            if(key == 'json') {
-                deploymentConfig.subset.obj = JSON.parse(this.state.deploymentConfig.subset.value);
+        let state = { ...this.state };
+
+        if (key == 'json') {
+            try {
+                state.deploymentTemplate.deploymentConfig.jsonSubset.obj = JSON.parse(state.deploymentTemplate.deploymentConfig.jsonSubset.value);
+                state.deploymentTemplate.deploymentConfig.jsonSubset.value = JSON.stringify(state.deploymentTemplate.deploymentConfig.jsonSubset.obj, undefined, 2);
+                state.deploymentTemplate.deploymentConfig.yamlSubset = yamlJsParser.stringify(state.deploymentTemplate.deploymentConfig.jsonSubset.obj);
+
+                let is = isSubset(state.deploymentTemplate.deploymentConfig.json.obj, state.deploymentTemplate.deploymentConfig.jsonSubset.obj);
+                if (!is) {
+                    state.validationMessage = "JSON must be a subset";
+                }
+                else {
+                    state.validationMessage = "Valid JSON Subset";
+                }
+                this.setState(state);
+                return true;
+
+            } catch (error) {
+                console.error("INVALID JSON");
+                state.validationMessage = "JSON is not Valid";
+                this.setState(state);
+                return false;
             }
-            else if(key == 'yaml') {
-                deploymentConfig.subset.obj = yamlJsParser.parse(this.state.deploymentConfig.subset.yaml);
+        }
+        else if (key == 'yaml') {
+            try {
+                state.deploymentTemplate.deploymentConfig.jsonSubset.obj = yamlJsParser.parse(state.deploymentTemplate.deploymentConfig.yamlSubset);
+                state.deploymentTemplate.deploymentConfig.jsonSubset.value = JSON.stringify(state.deploymentTemplate.deploymentConfig.jsonSubset.obj, undefined, 2);
+                let is = isSubset(state.deploymentTemplate.deploymentConfig.json.obj, state.deploymentTemplate.deploymentConfig.jsonSubset.obj);
+                if (!is) {
+                    state.validationMessage = "YAML must be a subset";
+                }
+                else {
+                    state.validationMessage = "Valid YAML Subset";
+                }
+            } catch (error) {
+                console.error("INVALID YAML");
+                state.validationMessage = "YAML is not Valid";
             }
-
-            deploymentConfig.subset.value = JSON.stringify(deploymentConfig.subset.obj, undefined, 2);
-
-            this.setState(Object.assign({},
-                this.state.chartRepositoryOptions,
-                this.state.referenceTemplateOptions,
-                this.state.chartRepository,
-                this.state.referenceTemplate,
-                deploymentConfig
-            )
-            );
-
-            // console.log("VALID json");
-            console.log("IS SUBSET", isSubset(this.state.deploymentConfig.json.obj, this.state.deploymentConfig.subset.obj));
-
-            return true;
         }
-        catch (error) {
-            console.error("INVALID JSON");
-            return false;
-        }
-
+        
+        this.setState(state);
     }
 
-    isFormValid() {
+    isFormNotValid() {
         let isValid = true;
+        let depTemplate = this.state.deploymentTemplate;
+        isValid = isValid && !!depTemplate.chartRepositoryId && !!depTemplate.referenceTemplateId;
+        isValid = isValid && !!depTemplate.deploymentConfig.jsonSubset.obj || !!depTemplate.deploymentConfig.jsonSubset.value;
 
         return !isValid;
     }
 
-    isDropDownValid = (key: string) => {
-        return !!this.state[key].length;
-    }
+
 
     handleJsonValue = (event: React.ChangeEvent<HTMLInputElement>, key: string) => {
         let state = { ...this.state };
-        if(key == 'json') {
-            state.deploymentConfig.subset.value = event.target.value;
+        if (key == 'json') {
+            state.deploymentTemplate.deploymentConfig.jsonSubset.value = event.target.value;
         }
-        else if(key == 'yaml') {
-            state.deploymentConfig.subset.yaml = event.target.value;
+        else if (key == 'yaml') {
+            state.deploymentTemplate.deploymentConfig.yamlSubset = event.target.value;
         }
-        // yamlJsParser.parse
+
         this.setState(state);
     }
 
-    saveDeploymentTemplate = () => {
-        //Verify value is JSON
-        // this.validateJson();
+    
 
-        const URL = `${Host}${Routes.SAVE_DEPLOYMENT_TEMPLATE}`;
+    saveDeploymentTemplate = () => {
+
+        const URL = `${Host}${Routes.DEPLOYMENT_TEMPLATE}`;
         let requestBody = {
             pipelineGroupId: 0,
-            chartRepositoryId: this.state.chartRepository.id,
-            RefChartTemplate: this.state.referenceTemplate.id,
-            valuesOverride: JSON.stringify(this.state.deploymentConfig.subset.obj)
+            chartRepositoryId: this.state.deploymentTemplate.chartRepositoryId,
+            RefChartTemplate: this.state.deploymentTemplate.referenceTemplateId,
+            valuesOverride: JSON.stringify(this.state.deploymentTemplate.deploymentConfig.jsonSubset.obj)
         };
 
         fetch(URL, {
@@ -226,8 +272,8 @@ export default class DeploymentTemplateForm extends Component<{}, DeploymentTemp
     }
 
     renderDeploymentTemplateForm() {
-        return <TemplateForm 
-            deploymentConfig={this.state.deploymentConfig}
+        return <TemplateForm
+            deploymentConfig={this.state.deploymentTemplate.deploymentConfig}
             handleJsonValue={this.handleJsonValue}
             validateJson={this.validateJson}
         />
@@ -288,7 +334,7 @@ export default class DeploymentTemplateForm extends Component<{}, DeploymentTemp
                             <Row bsClass="bg-gray flexbox">
                                 <Col lg={12}>
                                     <FormGroup>
-                                        <ControlLabel>Chart Repository</ControlLabel>
+                                        <ControlLabel>Chart Repository*</ControlLabel>
                                         <Fragment>
                                             <TypeAheadSelect
                                                 id="id"
@@ -298,21 +344,21 @@ export default class DeploymentTemplateForm extends Component<{}, DeploymentTemp
                                                 multiple={false}
                                                 placeholder="Select Chart Repository..."
                                                 isValid={this.isDropDownValid('chartRepository')}
-                                                onChange={(events) => this.handleOptions(events, 'chartRepository')}
+                                                onChange={(events) => this.handleOptions(events, 'chartRepositoryId')}
                                             />
                                         </Fragment>
                                     </FormGroup>
 
                                     <FormGroup>
-                                        <ControlLabel>Reference Template</ControlLabel>
+                                        <ControlLabel>Reference Template*</ControlLabel>
                                         <Fragment>
                                             <TypeAheadSelect
                                                 id="id"
                                                 labelKey="name"
                                                 options={this.state.referenceTemplateOptions}
                                                 clearButton
-                                                isValid={this.isDropDownValid('referenceTemplate')}
-                                                onChange={(events) => this.handleOptions(events, 'referenceTemplate')}
+                                                // isValid={this.isDropDownValid('referenceTemplate')}
+                                                onChange={(events) => this.handleOptions(events, 'referenceTemplateId')}
                                                 placeholder="Select Reference Template..."
                                             />
                                         </Fragment>
@@ -327,9 +373,11 @@ export default class DeploymentTemplateForm extends Component<{}, DeploymentTemp
                         <Button type="button"
                             bsStyle="primary"
                             onClick={this.saveDeploymentTemplate}
-                            disabled={this.isFormValid()}>
+                            disabled={this.isFormNotValid()}>
                             Save
                         </Button>
+                        <p className="float-right">{this.state.validationMessage}</p>
+
                     </Form>
                 </div>
             </div>

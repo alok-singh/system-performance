@@ -45,6 +45,8 @@ export default class App extends Component <any, any> {
 	            <Route exact path="/form-setup/ci-config/:id" component={CIConfigEdit} />
 
 	            <Route exact path="/form-setup/deployment-template" component={DeploymentConfigEdit} />
+	            <Route exact path="/form-setup/deployment-template/:appId" component={DeploymentConfigEdit} />
+
 	            <Route exact path="/form-setup/flow-chart" component={FlowChart} />
 
             	<Route exact path="/form-setup/properties-config" component={PropertiesForm} />

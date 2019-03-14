@@ -13,9 +13,11 @@ export const Routes = {
 
     CI_CONFIG: "/pipeline-config/ci/save",
     SOURCE_CONFIG: "/pipeline-config/app/create",
-    SAVE_DEPLOYMENT_TEMPLATE: "",
+    DEPLOYMENT_TEMPLATE: "",
 
     APP_LIST: "",
+    CHART_REPO: "/pipeline-config/chart-repo",
+    REFERENCE_TEMPLATE:"/pipeline-config/ref-temp",
     DOCKER_REGISTRY_CONFIG: "/config/docker-registry-config",
     GIT_REPO_CONFIG: "/config/git-repo-config",
     INSTANCE_LIST: "/logs/instances",

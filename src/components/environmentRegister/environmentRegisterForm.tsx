@@ -148,8 +148,6 @@ export class EnvironmentRegisterForm extends Component<EnvironmentRegisterFormPr
     }
 
     renderNotifications() {
-        if (!this.state.successMessage) return;
-
         let { code, errors } = this.state;
 
         let successCodes = new Set([200, 201, 202, 203, 204, 205, 206, 207, 208, 226]);

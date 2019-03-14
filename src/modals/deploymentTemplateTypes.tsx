@@ -8,9 +8,11 @@ export interface DeploymentConfigType{
         obj: any;
         value: string;
     };
-    subset: {
+    jsonSubset: {
         obj: any;
         value: string;
-        yaml: string;
     };
+    
+    yamlSubset: any;
+
 }
