@@ -178,7 +178,7 @@ export default class SourceConfigForm extends Component<SourceConfigFormProps, S
         return !isValid;
     }
 
-    testConnection = () => {
+    saveOrUpdate = () => {
         let method, url;
         if (this.state.app.id) {
             url = `${Host}${Routes.SOURCE_CONFIG}/${this.state.app.id}`
@@ -194,10 +194,10 @@ export default class SourceConfigForm extends Component<SourceConfigFormProps, S
             appName: this.state.app.appName,
             material: this.state.app.material
         }
-
         fetch(url, {
             method: method,
             headers: { 'Content-type': 'application/json' },
+            body: JSON.stringify(requestBody)
         })
             .then(response => response.json())
             .then(
@@ -219,6 +219,7 @@ export default class SourceConfigForm extends Component<SourceConfigFormProps, S
         state.code = response.code;
         state.errors = response.errors || [];
         state.successMessage = successMessage;
+        state.buttonLabel = "UPDATE";
 
         if (response.result && response.result.source) {
             let source = response.result.source;
@@ -226,8 +227,6 @@ export default class SourceConfigForm extends Component<SourceConfigFormProps, S
             state.app.appName = source.appName;
             state.app.material = source.material
         }
-
-        console.log(this.state);
         this.setState(state)
     }
 
@@ -518,7 +517,7 @@ export default class SourceConfigForm extends Component<SourceConfigFormProps, S
                                     <Button type="button"
                                         bsStyle="primary"
                                         disabled={this.isFormNotValid()}
-                                        onClick={this.testConnection}>
+                                        onClick={this.saveOrUpdate}>
                                         {this.state.buttonLabel}
                                     </Button>
                                     <p>{this.state.validationMessage}</p>
@@ -535,7 +534,7 @@ export default class SourceConfigForm extends Component<SourceConfigFormProps, S
 class SourceConfigValidation {
     defaultText = (value: string): { message: string | null, result: string | null, isValid: boolean } => {
         length = value.length;
-        if (length > 8) {
+        if (length >= 8) {
             return { message: null, result: 'success', isValid: true }
         }
         else if (length > 0) {
@@ -543,16 +542,18 @@ class SourceConfigValidation {
         };
         return { message: null, result: null, isValid: false }
     }
+
     branchName = (value: string): { message: string | null, result: string | null, isValid: boolean } => {
         length = value.length;
-        if (length > 6) {
+        if (length >= 6) {
             return { message: null, result: 'success', isValid: true }
         }
         else if (length > 0) {
-            return { message: 'Enter 4 atleast Characters', result: 'error', isValid: false }
+            return { message: 'Enter 6 atleast Characters', result: 'error', isValid: false }
         };
         return { message: null, result: null, isValid: false }
     }
+
     url = this.defaultText;
     path = this.defaultText;
     value = this.branchName;
