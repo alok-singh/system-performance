@@ -1,4 +1,5 @@
-import {Host, Routes} from '../config/constants';
+import { Host, Routes } from '../config/constants';
+import { Error } from './commonTypes';
 
 export interface App {
     appName: string;
@@ -106,12 +107,7 @@ export interface AppDetailsState {
 
     code: number;
     successMessage: string | null;
-    errors: {
-        code: number;
-        internalMessage: string,
-        moreInfo: string,
-        userMessage: string,
-    }[],
+    errors: Error[],
 
 
     deploymentDetails: {

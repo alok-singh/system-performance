@@ -1,4 +1,5 @@
 import {Host, Routes } from '../config/constants';
+import { Error } from './commonTypes';
 
 export interface gitRepositoriesType {
     authMode: string;
@@ -32,12 +33,7 @@ export interface GitRepositoryConfigFormState {
     code: number;
     successMessage: string | null;
 
-    errors: Array<{
-        code: number;
-        internalMessage: string,
-        moreInfo: string,
-        userMessage: string,
-    }>,
+    errors: Error[],
 
     buttonLabel: string;
     gitRepoConfig: GitRepositoryConfig,
@@ -58,12 +54,7 @@ export interface GitRepositoryConfigFormState {
 export interface GitRepositoryListState {
     //Response code and errors
     code: number;
-    errors: Array<{
-        code: number;
-        internalMessage: string,
-        moreInfo: string,
-        userMessage: string,
-    }>,
+    errors: Error[],
 
     //Data
     rows: Array<GitRepositoryConfig>;

@@ -12,7 +12,7 @@ export const Routes = {
     GET_ACCOUNT: "/config/docker-registry-config",
 
     CI_CONFIG: "/pipeline-config/ci/save",
-    SAVE_SOURCE_CONFIG: "/pipeline-config/app/create",
+    SOURCE_CONFIG: "/pipeline-config/app/create",
     SAVE_DEPLOYMENT_TEMPLATE: "",
 
     APP_LIST: "",
