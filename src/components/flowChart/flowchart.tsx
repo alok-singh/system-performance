@@ -97,6 +97,7 @@ export default class FlowChart extends Component <{}, AppState> {
             }
         };
         this.onClickSVG = this.onClickSVG.bind(this);
+        this.handleJsonValue = this.handleJsonValue.bind(this);
     }
 
     coord: NodePosition | null = null
@@ -312,7 +313,6 @@ export default class FlowChart extends Component <{}, AppState> {
     }
 
     onClickEnvironmentConfiguration(id: string) {
-        console.log(id);
         this.setState({
             showModal: true
         })
@@ -370,7 +370,7 @@ export default class FlowChart extends Component <{}, AppState> {
     }
 
     handleJsonValue (event: React.ChangeEvent<HTMLInputElement>, key: string) {
-        let state = { ...this.state };
+        let state = this.state;
         if(key == 'json') {
             state.deploymentConfig.subset.value = event.target.value;
         }
