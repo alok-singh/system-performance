@@ -1,3 +1,5 @@
+import { Error } from './commonTypes';
+
 export interface DockerRegistryConfig {
     id: string | null;
     pluginId: string;
@@ -16,12 +18,7 @@ export interface DockerRegistryConfigFormState {
     code: number;
     successMessage: string | null;
 
-    errors: Array<{
-        code: number;
-        internalMessage: string,
-        moreInfo: string,
-        userMessage: string,
-    }>,
+    errors: Error[],
 
     buttonLabel: string;
     dockerRegistryConfig: DockerRegistryConfig;
@@ -46,12 +43,7 @@ export interface DockerRegistryConfigFormProps {
 export interface DockerRegistryListState {
     //Response code and errors
     code: number;
-    errors: Array<{
-        code: number;
-        internalMessage: string,
-        moreInfo: string,
-        userMessage: string,
-    }>,
+    errors: Error[],
 
     //Data
     rows: Array<DockerRegistryConfig>;

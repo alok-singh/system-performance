@@ -1,3 +1,5 @@
+import { Error } from './commonTypes';
+
 export interface ArgsFieldSetState {
     args: Array<{ key: string, value: string }>;
 }
@@ -16,12 +18,7 @@ export interface CIConfigFormState {
     repositoryOptions: Array<DockerRepository>;
     buttonLabel: string;
     code: 0,
-    errors: {
-        code: number;
-        internalMessage: string;
-        moreInfo: string;
-        userMessage: string;
-    }[],
+    errors: Error[],
     successMessage: string | null,
 
     form: {

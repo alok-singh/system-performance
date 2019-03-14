@@ -40,6 +40,7 @@ export default class App extends Component <any, any> {
             	<Route exact path="/create-docker" component={CreateDocker} />
 
 	            <Route exact path="/form-setup/source-config" component={SourceConfigEdit} />
+	            <Route exact path="/form-setup/source-config/:id" component={SourceConfigEdit} />
 	            <Route exact path="/form-setup/ci-config" component={CIConfigEdit} />
 	            <Route exact path="/form-setup/ci-config/:id" component={CIConfigEdit} />
 

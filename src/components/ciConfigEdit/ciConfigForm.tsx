@@ -341,8 +341,10 @@ export default class CIConfigForm extends Component<CIConfigFormProps, CIConfigF
         if (!this.state.successMessage) return;
 
         let { code, errors } = { ...this.state };
-        errors = this.state.errors;
-        if (code) {
+
+        let successCodes = new Set([200, 201, 202, 204, 204, 205, 206, 207, 208, 226]);
+
+        if (successCodes.has(code)) {
             return (
                 <Row>
                     <ToastNotificationList>

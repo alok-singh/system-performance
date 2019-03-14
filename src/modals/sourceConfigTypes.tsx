@@ -1,39 +1,39 @@
+import { Error } from './commonTypes';
 
-export interface Account {
+export interface Repository {
     name: string;
     id: number;
     url: string;
 }
-
-export interface SourceConfigResponse {
-    success: boolean;
-    response: [];
-    error: { message: string } | null;
+export interface SourceTypeConfig {
+    //tag pattern type
+    type: string;
+    value: string;
+    name: string;
 }
-
+export interface GitMaterial {
+    id: number | null;
+    name: string;
+    url: string;
+    gitProviderId: number;
+    path: string;
+    ciSource: SourceTypeConfig;
+    ctSource: SourceTypeConfig;
+    productionSource: SourceTypeConfig;
+}
 export interface SourceConfigFormState {
-    accountOptions: Account[];
-    tagPattterOptions: { value: string, label: string }[];
-    form: {
-        account: Array<string>;
-        url: string;
-        path: string;
+    repositoryOptions: Repository[];
+    tagOptions: { label: string, value: string }[];
+
+    code: number;
+    status: string;
+    errors: Error[];
+    successMessage: string | null;
+    buttonLabel: string;
+
+    app: {
+        appId: number | null;
         appName: string;
-        ciBranch: {
-            name: string;
-            tagPatternType: string;
-            tagPattern: string;
-        }
-        ctBranch: {
-            name: string;
-            tagPatternType: string;
-            tagPattern: string;
-        }
-        productionBranch: {
-            name: string;
-            tagPatternType: string;
-            tagPattern: string;
-        }
-        gitProvider: number;
+        material: GitMaterial[];
     }
 }
