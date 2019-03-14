@@ -13,6 +13,6 @@ interface SourceConfigProps extends RouteComponentProps<SourceConfigRouterProps>
 
 export default class SourceConfigEdit extends Component<SourceConfigProps> {
 	render() {
-    	return <SourceConfigForm id={this.props.match.params.id}/>
+    	return <SourceConfigForm appId={this.props.match.params.id}/>
   	}
 }

@@ -257,7 +257,7 @@ export default class DockerRegistryConfigForm extends Component<DockerRegistryCo
     }
 
     renderNotification = () => {
-        if (!this.state.successMessage) return;
+        // if (!this.state.successMessage) return;
 
         let { code, errors } = { ...this.state };
 

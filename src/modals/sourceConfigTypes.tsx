@@ -9,7 +9,6 @@ export interface SourceTypeConfig {
     //tag pattern type
     type: string;
     value: string;
-    name: string;
 }
 export interface GitMaterial {
     id: number | null;
@@ -24,6 +23,7 @@ export interface GitMaterial {
 export interface SourceConfigFormState {
     repositoryOptions: Repository[];
     tagOptions: { label: string, value: string }[];
+    validationMessage: string | null;
 
     code: number;
     status: string;
@@ -32,7 +32,7 @@ export interface SourceConfigFormState {
     buttonLabel: string;
 
     app: {
-        appId: number | null;
+        id: number | null;
         appName: string;
         material: GitMaterial[];
     }

@@ -25,7 +25,7 @@ import { SourceConfigFormState, } from '../../modals/sourceConfigTypes';
 import DirectionalNavigation from '../common/directionalNavigation';
 
 export interface SourceConfigFormProps {
-    id: string;
+    appId: string;
 }
 
 export default class SourceConfigForm extends Component<SourceConfigFormProps, SourceConfigFormState> {
@@ -35,11 +35,6 @@ export default class SourceConfigForm extends Component<SourceConfigFormProps, S
     constructor(props) {
         super(props);
         this.state = {
-            code: 0,
-            status: "",
-            errors: [],
-            successMessage: null,
-            buttonLabel: "SAVE",
             repositoryOptions: [],
             tagOptions: [
                 { label: "Branch Fixed", value: "SOURCE_TYPE_BRANCH_FIXED" },
@@ -47,9 +42,15 @@ export default class SourceConfigForm extends Component<SourceConfigFormProps, S
                 { label: "Tag Any", value: "SOURCE_TYPE_TAG_ANY" },
                 { label: "Tag Regex", value: "SOURCE_TYPE_TAG_REGEX" },
             ],
+            validationMessage: null,
+            buttonLabel: "SAVE",
 
+            code: 0,
+            status: "",
+            errors: [],
+            successMessage: null,
             app: {
-                appId: null,
+                id: null,
                 appName: "",
                 material: [
                     {
@@ -59,17 +60,14 @@ export default class SourceConfigForm extends Component<SourceConfigFormProps, S
                         gitProviderId: 0,
                         path: "",
                         productionSource: {
-                            name: "",
                             type: "SOURCE_TYPE_TAG_ANY",
                             value: "",
                         },
                         ciSource: {
-                            name: "",
                             type: "SOURCE_TYPE_TAG_ANY",
                             value: "",
                         },
                         ctSource: {
-                            name: "",
                             type: "SOURCE_TYPE_TAG_ANY",
                             value: "",
                         },
@@ -81,20 +79,15 @@ export default class SourceConfigForm extends Component<SourceConfigFormProps, S
 
 
     }
+
     validationRules = new SourceConfigValidation();
 
     componentDidMount = () => {
         this.getGitRepositories();
-        if (this.props.id) {
-            this.getSourceConfig();
+        if (this.props.appId) {
+            this.getSourceConfig(this.props.appId);
         }
     }
-
-    getSourceConfig = () => {
-
-    }
-
-
 
     getGitRepositories = () => {
         const URL = `${Host}${Routes.GIT_REPO_CONFIG}`;
@@ -116,7 +109,31 @@ export default class SourceConfigForm extends Component<SourceConfigFormProps, S
             )
     }
 
+
+    getSourceConfig = (id: string) => {
+        const URL = `${Host}${Routes.SOURCE_CONFIG}/${id}`;
+
+        fetch(URL, {
+            method: 'GET',
+            headers: { 'Content-type': 'application/json' },
+        })
+            .then(response => response.json())
+            .then(
+                (response) => {
+                    this.saveResponse(response, "Found Saved Configuration");
+                    setTimeout(() => {
+                        this.closeNotification();
+                    }, 2000)
+                },
+                (error) => {
+
+                }
+            )
+    }
+
     handleOptions = (repository: Array<any>, materialIndex: number) => {
+        if (!repository.length) return;
+
         let state = { ...this.state };
         state.app.material[materialIndex].url = repository[0].url;
         this.setState(state);
@@ -140,23 +157,40 @@ export default class SourceConfigForm extends Component<SourceConfigFormProps, S
         this.setState(state);
     }
 
-    //No field should be empty
     isFormNotValid = (): boolean => {
+        let isValid = true;
+        isValid = isValid && this.validationRules.appName(this.state.app.appName).isValid;
+        let material = this.state.app.material;
+        for (let i = 0; i < material.length; i++) {
+            isValid = isValid && this.validationRules.url(material[i].url).isValid;
+            isValid = isValid && this.validationRules.path(material[i].path).isValid;
 
-        return false;
+            if (material[i].ciSource.type != "SOURCE_TYPE_TAG_ANY")
+                isValid = isValid && this.validationRules.path(material[i].ciSource.value).isValid;
+
+            if (material[i].ctSource.type != "SOURCE_TYPE_TAG_ANY")
+                isValid = isValid && this.validationRules.path(material[i].ctSource.value).isValid;
+
+            if (material[i].productionSource.type != "SOURCE_TYPE_TAG_ANY")
+                isValid = isValid && this.validationRules.path(material[i].productionSource.value).isValid;
+
+        }
+        return !isValid;
     }
+
     testConnection = () => {
         let method, url;
-        if (this.state.app.appId) {
-            url = `${Host}${Routes.SOURCE_CONFIG}/:${this.state.app.appId}`
+        if (this.state.app.id) {
+            url = `${Host}${Routes.SOURCE_CONFIG}/${this.state.app.id}`
             method = "PUT";
         }
         else {
             url = `${Host}${Routes.SOURCE_CONFIG}`
             method = "POST"
         }
+
         let requestBody = {
-            id: this.state.app.appId,
+            id: this.state.app.id,
             appName: this.state.app.appName,
             material: this.state.app.material
         }
@@ -169,6 +203,9 @@ export default class SourceConfigForm extends Component<SourceConfigFormProps, S
             .then(
                 (response) => {
                     this.saveResponse(response, "Save Successful");
+                    setTimeout(() => {
+                        this.closeNotification();
+                    }, 2000)
                 },
                 (error) => {
 
@@ -177,8 +214,21 @@ export default class SourceConfigForm extends Component<SourceConfigFormProps, S
 
     }
 
-    saveResponse = (response, successMessage: String) => {
+    saveResponse = (response, successMessage: string) => {
+        let state = { ...this.state };
+        state.code = response.code;
+        state.errors = response.errors || [];
+        state.successMessage = successMessage;
 
+        if (response.result && response.result.source) {
+            let source = response.result.source;
+            state.app.id = source.id;
+            state.app.appName = source.appName;
+            state.app.material = source.material
+        }
+
+        console.log(this.state);
+        this.setState(state)
     }
 
     closeNotification = () => {
@@ -198,7 +248,7 @@ export default class SourceConfigForm extends Component<SourceConfigFormProps, S
             return (
                 <ToastNotificationList>
                     <ToastNotification type="success">
-                        <span>Properties Found</span>
+                        <span>{this.state.successMessage}</span>
                         <div className="pull-right toast-pf-action">
                             <Button bsClass="transparent"
                                 onClick={this.closeNotification}>
@@ -287,6 +337,7 @@ export default class SourceConfigForm extends Component<SourceConfigFormProps, S
                     (material, index) => {
                         return (
                             <div key={index}>
+                                <hr></hr>
                                 <Row className="m-lr-0">
                                     <Col xs={12} lg={12}>
                                         <FormGroup controlId="repositoryOptions" >
@@ -307,11 +358,9 @@ export default class SourceConfigForm extends Component<SourceConfigFormProps, S
 
                                 <Row className="m-lr-0">
                                     <Col xs={12} lg={12}>
-                                        <FormGroup controlId="url"
-                                            validationState={this.validationRules.url(this.state.app.material[index].url).result}>
-                                            <ControlLabel>Git URL*
+                                        <FormGroup controlId="url" validationState={this.validationRules.url(this.state.app.material[index].url).result}>
+                                            <ControlLabel>Git URL*</ControlLabel>
                                             <HelpBlock className="float-right">{this.validationRules.url(this.state.app.material[index].url).message}</HelpBlock>
-                                            </ControlLabel>
                                             <FormControl
                                                 type="text"
                                                 value={this.state.app.material[index].url}
@@ -336,23 +385,10 @@ export default class SourceConfigForm extends Component<SourceConfigFormProps, S
                                     </Col>
                                 </Row>
 
-                                <Row className="m-lr-0">
-                                    <Col xs={12} lg={12}>
-                                        <h3>CI Branch</h3>
-                                        <FormGroup controlId="name"
-                                            validationState={this.validationRules.branchName(this.state.app.material[index].ciSource.name).result}>
-                                            <ControlLabel>Name</ControlLabel>
-                                            <HelpBlock className="float-right">{this.validationRules.branchName(this.state.app.material[index].ciSource.name).message}</HelpBlock>
-                                            <FormControl
-                                                type="text"
-                                                value={this.state.app.material[index].ciSource.name}
-                                                placeholder="Enter Branch Name"
-                                                onChange={(event) => this.handleMaterialSourceChange(event, index, "ciSource", "name")} />
-                                        </FormGroup>
-                                    </Col>
-                                </Row>
+
 
                                 <Row className="m-lr-0">
+                                    <Col xs={12} lg={12}><h3>CI Source</h3></Col>
                                     <Col xs={6} lg={6}>
                                         <FormGroup controlId="tagOptions">
                                             <ControlLabel>Tag Pattern Type</ControlLabel>
@@ -368,7 +404,7 @@ export default class SourceConfigForm extends Component<SourceConfigFormProps, S
                                     <Col xs={6} lg={6}>
                                         <FormGroup controlId="tagpattern"
                                             validationState={this.validationRules.value(this.state.app.material[index].ciSource.value).result}>
-                                            <HelpBlock className="float-right">{this.validationRules.branchName(this.state.app.material[index].ciSource.value).message}</HelpBlock>
+                                            <HelpBlock className="float-right">{this.validationRules.value(this.state.app.material[index].ciSource.value).message}</HelpBlock>
                                             <ControlLabel>Tag Pattern
                                                 {(() => {
                                                     if (this.state.app.material[index].ciSource.type != "SOURCE_TYPE_TAG_ANY") return (<span>*</span>)
@@ -383,22 +419,7 @@ export default class SourceConfigForm extends Component<SourceConfigFormProps, S
                                 </Row>
 
                                 <Row className="m-lr-0">
-                                    <Col xs={12} lg={12}>
-                                        <h3>CT Branch</h3>
-                                        <FormGroup controlId="name"
-                                            validationState={this.validationRules.branchName(this.state.app.material[index].ctSource.name).result}>
-                                            <HelpBlock className="float-right">{this.validationRules.branchName(this.state.app.material[index].ctSource.name).message}</HelpBlock>
-                                            <ControlLabel>Name</ControlLabel>
-                                            <FormControl
-                                                type="text"
-                                                value={this.state.app.material[index].ctSource.name}
-                                                placeholder="Enter Branch Name"
-                                                onChange={(event) => this.handleMaterialSourceChange(event, index, "ctSource", "name")} />
-                                        </FormGroup>
-                                    </Col>
-                                </Row>
-
-                                <Row className="m-lr-0">
+                                    <Col xs={12} lg={12}><h3>CT Source</h3></Col>
                                     <Col xs={6} lg={6}>
                                         <FormGroup controlId="tagOptions">
                                             <ControlLabel>Tag Pattern Type</ControlLabel>
@@ -419,7 +440,7 @@ export default class SourceConfigForm extends Component<SourceConfigFormProps, S
                                                     if (this.state.app.material[index].ctSource.type != "SOURCE_TYPE_TAG_ANY") return (<span>*</span>)
                                                 })()}
                                             </ControlLabel>
-                                            <HelpBlock className="float-right">{this.validationRules.branchName(this.state.app.material[index].ctSource.value).message}</HelpBlock>
+                                            <HelpBlock className="float-right">{this.validationRules.value(this.state.app.material[index].ctSource.value).message}</HelpBlock>
                                             <FormControl type="text"
                                                 value={this.state.app.material[index].ctSource.value}
                                                 placeholder="Enter Tag Pattern"
@@ -429,21 +450,7 @@ export default class SourceConfigForm extends Component<SourceConfigFormProps, S
                                 </Row>
 
                                 <Row className="m-lr-0">
-                                    <Col xs={12} lg={12}>
-                                        <h3>Production Branch</h3>
-                                        <FormGroup controlId="productionSource"
-                                            validationState={this.validationRules.branchName(this.state.app.material[index].productionSource.name).result}>
-                                            <HelpBlock className="float-right">{this.validationRules.branchName(this.state.app.material[index].productionSource.name).message}</HelpBlock>
-                                            <ControlLabel>Name</ControlLabel>
-                                            <FormControl type="text"
-                                                value={this.state.app.material[index].productionSource.name}
-                                                placeholder="Enter Branch Name"
-                                                onChange={(event) => this.handleMaterialSourceChange(event, index, "productionSource", "name")} />
-                                        </FormGroup>
-                                    </Col>
-                                </Row>
-
-                                <Row className="m-lr-0">
+                                    <Col xs={12} lg={12}><h3>Production Source</h3></Col>
                                     <Col xs={6} lg={6}>
                                         <FormGroup controlId="tagOptions">
                                             <ControlLabel>Tag Pattern Type</ControlLabel>
@@ -458,7 +465,7 @@ export default class SourceConfigForm extends Component<SourceConfigFormProps, S
 
                                     <Col xs={6} lg={6}>
                                         <FormGroup controlId="tagpattern"
-                                            validationState={this.validationRules.branchName(this.state.app.material[index].productionSource.value).result}>
+                                            validationState={this.validationRules.value(this.state.app.material[index].productionSource.value).result}>
                                             <HelpBlock className="float-right">{this.validationRules.value(this.state.app.material[index].productionSource.value).message}</HelpBlock>
                                             <ControlLabel>Tag Pattern
                                             {(() => {
@@ -514,6 +521,7 @@ export default class SourceConfigForm extends Component<SourceConfigFormProps, S
                                         onClick={this.testConnection}>
                                         {this.state.buttonLabel}
                                     </Button>
+                                    <p>{this.state.validationMessage}</p>
                                 </Col>
                             </Row>
                         </Form>
@@ -525,31 +533,30 @@ export default class SourceConfigForm extends Component<SourceConfigFormProps, S
 }
 
 class SourceConfigValidation {
-    defaultText = (value: string): { message: string | null, result: string | null } => {
+    defaultText = (value: string): { message: string | null, result: string | null, isValid: boolean } => {
         length = value.length;
         if (length > 8) {
-            return { message: null, result: 'success' }
+            return { message: null, result: 'success', isValid: true }
         }
         else if (length > 0) {
-            return { message: 'Enter 8 atleast Characters', result: 'error' }
+            return { message: 'Enter 8 atleast Characters', result: 'error', isValid: false }
         };
-        return { message: null, result: null }
+        return { message: null, result: null, isValid: false }
     }
-    branchName = (value: string): { message: string | null, result: string | null } => {
+    branchName = (value: string): { message: string | null, result: string | null, isValid: boolean } => {
         length = value.length;
         if (length > 6) {
-            return { message: null, result: 'success' }
+            return { message: null, result: 'success', isValid: true }
         }
         else if (length > 0) {
-            return { message: 'Enter 4 atleast Characters', result: 'error' }
+            return { message: 'Enter 4 atleast Characters', result: 'error', isValid: false }
         };
-        return { message: null, result: null }
+        return { message: null, result: null, isValid: false }
     }
-    appName = this.defaultText;
     url = this.defaultText;
     path = this.defaultText;
-    name = this.defaultText;
-    value = this.defaultText;
+    value = this.branchName;
+    appName = this.branchName;
 
 
 } 
