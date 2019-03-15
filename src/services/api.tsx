@@ -1,4 +1,11 @@
-import 'fetch';
+interface Options {
+    method: string;
+    headers: {
+        Accept: string;
+        'Content-Type': string;
+    };
+    body: any | undefined
+}
 
 export const post = (url, data, headers) => {
     return fetchAPI(url, 'POST', data, headers);
@@ -13,14 +20,14 @@ export const deleteReq = (url, headers) => {
 }
 
 const fetchAPI = (url, type, data, headers) => {
-    let options = {
+    let options: Options = {
         method: type,
         headers: {
             'Accept': (headers && headers.accept) ? headers.accept : 'application/json',
             'Content-Type': (headers && headers.contentType) ? headers.contentType : 'application/json'
-        }
-    };
-    options.headers.authorization = (headers && headers.authorization) ? headers.authorization : undefined;
+        },
+        body: undefined
+    };    
     options.body = data ? JSON.stringify(data) : undefined;
     return fetch(url, options).then(response => response.json())
 }

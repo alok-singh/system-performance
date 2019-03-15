@@ -2,9 +2,9 @@ import React, {Component} from 'react';
 
 import Node from './node';
 import Edge from './rectangularEdge';
-import Defs from './defs';
-import BackDrop from './backdrop';
-import Popup from './popup';
+import Defs from '../common/defs';
+import BackDrop from '../common/backdrop';
+import Popup from '../common/popup';
 
 import {DeploymentTemplateType, TriggerType} from '../../config/buildConfigurations';
 import {generateNode} from '../helpers/nodeGenerator';
@@ -490,7 +490,7 @@ export default class FlowChart extends Component <{}, AppState> {
         })
     }
 
-    renderAddButton() {
+    renderPageTitle() {
         return <Card>
             <CardTitle>
                 Create Flow Chart
@@ -539,7 +539,7 @@ export default class FlowChart extends Component <{}, AppState> {
     render() {
         return (
             <div className="flow-chart">
-                {this.renderAddButton()}
+                {this.renderPageTitle()}
                 {this.renderOptionsPopup()}
                 {this.renderModal()}
                 <div className="svg-wrapper">

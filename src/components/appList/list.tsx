@@ -4,7 +4,7 @@ import classNames from 'classnames';
 import * as resolve from 'table-resolver';
 import { Link } from 'react-router-dom';
 import {rows, columns, sortingColumns} from './tableSettings';
-
+import {get} from '../../services/api';
 
 import {
     customHeaderFormattersDefinition,
@@ -105,20 +105,14 @@ export default class AppList extends Component<{}, AppListData> {
 
         }
 
-        fetch(URL, {
+        get(URL, {
             method: 'GET',
             headers: { 'Content-type': 'application/json' },
-        })
-            .then(response => response.json())
-            .then(
-                (response) => {
-                    console.log(response);
+        }).then((response) => {
+            console.log(response);
+        }, (error) => {
 
-                },
-                (error) => {
-
-                }
-            )
+        });
 
 
     }
