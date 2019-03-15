@@ -8,18 +8,10 @@ import {
     Col
 } from 'patternfly-react'
 
-import { ArgsFieldSetState } from '../../modals/ciConfigTypes';
+export default class ArgsFieldSet extends Component<any, {}> {
 
-export default class ArgsFieldSet extends Component<any, ArgsFieldSetState> {
-
-    constructor(props: any) {
+    constructor(props) {
         super(props);
-        this.state = {
-            args: [{
-                key: "",
-                value: ""
-            }],
-        }
     }
 
     createUniqueId = (fieldType: string, index: number) => {
@@ -27,22 +19,16 @@ export default class ArgsFieldSet extends Component<any, ArgsFieldSetState> {
     }
 
     shouldAddMore = () => {
-        let len = this.state.args.length;
-        return !(this.state.args[len - 1].key && this.state.args[len - 1].value);
+        let len = this.props.args.length;
+        return !(this.props.args[len - 1].key && this.props.args[len - 1].value);
     }
 
     addMore = () => {
-        let state = {
-            args: [...this.state.args, { key: "", value: "" }],
-        };
-        this.setState(state);
+        this.props.addMoreArgs();
     }
 
     handleChange = (event: React.ChangeEvent<HTMLInputElement>, key: string, index: number) => {
-        let state = this.state;
-        state.args[index][key] = event.target.value;
-        this.props.callbackFromCIConfig(this.state.args);
-        this.setState(state);
+        this.props.callbackFromCIConfig(event, key, index);
     }
 
     handleChangeWrapper = (key: string, index: number): ((event: React.ChangeEvent<HTMLInputElement>) => void) => {
@@ -55,7 +41,7 @@ export default class ArgsFieldSet extends Component<any, ArgsFieldSetState> {
             <div className="args">
                 <h5 className="bold">Args</h5>
                 <hr></hr>
-                {this.state.args.map(function (arg, index) {
+                {this.props.args.map(function (arg, index) {
                     return (
                         <Row key={index}>
                             <Col xs={6} sm={6}>

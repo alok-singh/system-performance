@@ -20,25 +20,12 @@ import {
 } from '../../config/constants';
 
 import TemplateForm from './templateForm';
-import { Description, DeploymentConfigType } from '../../modals/deploymentTemplateTypes';
+import { DeploymentTemplateFormState } from '../../modals/deploymentTemplateTypes';
 import { isSubset } from '../helpers/isSubset';
 import DirectionalNavigation from '../common/directionalNavigation';
-import { deploymentTemplateDummyData } from '../helpers/deploymentFormData';
 
 export interface DeploymentTemplateProps {
     id: string;
-}
-
-export interface DeploymentTemplateFormState {
-    chartRepositoryOptions: Description[];
-    referenceTemplateOptions: Description[];
-    validationMessage: string;
-
-    deploymentTemplate: {
-        chartRepositoryId: string;
-        referenceTemplateId: string;
-        deploymentConfig: DeploymentConfigType;
-    }
 }
 
 export default class DeploymentTemplateForm extends Component<DeploymentTemplateProps, DeploymentTemplateFormState>{
@@ -47,13 +34,20 @@ export default class DeploymentTemplateForm extends Component<DeploymentTemplate
         super(props);
 
         this.state = {
+            code: 0,
+            errors: [],
+            successMessage: null,
+
             chartRepositoryOptions: [],
             referenceTemplateOptions: [],
             validationMessage: "",
+            buttonLabel: "SAVE",
 
             deploymentTemplate: {
-                chartRepositoryId: "",
-                referenceTemplateId: "",
+                pipelineGroupId: null,
+
+                chartRepositoryId: -1,
+                referenceTemplateId: -1,
 
                 deploymentConfig: {
                     json: {
@@ -64,7 +58,7 @@ export default class DeploymentTemplateForm extends Component<DeploymentTemplate
                         obj: {},
                         value: "",
                     },
-                    yamlSubset: ""
+                    yamlSubset: "",
 
                 },
 
@@ -73,16 +67,12 @@ export default class DeploymentTemplateForm extends Component<DeploymentTemplate
     }
 
     componentDidMount = () => {
+        this.getJSONdata();
         this.getChartRepositories();
         this.getReferenceTemplates();
         if (this.props.id)
             this.getDeploymentTemplate(this.props.id);
 
-        // //TODO: remove hard coding
-        let state = { ...this.state };
-        state.deploymentTemplate.deploymentConfig.json.obj = deploymentTemplateDummyData;
-        state.deploymentTemplate.deploymentConfig.json.value = JSON.stringify(state.deploymentTemplate.deploymentConfig.json.obj, undefined, 2);
-        this.setState(state);
 
     }
 
@@ -96,7 +86,6 @@ export default class DeploymentTemplateForm extends Component<DeploymentTemplate
             .then(response => response.json())
             .then(
                 (response) => {
-
                     let state = { ...this.state };
                     state.chartRepositoryOptions = response.result.chartRepos
                     this.setState(state);
@@ -132,7 +121,6 @@ export default class DeploymentTemplateForm extends Component<DeploymentTemplate
 
     getDeploymentTemplate = (id: string) => {
         const URL = `${Host}${Routes.DEPLOYMENT_TEMPLATE}/${id}`;
-
         fetch(URL, {
             method: 'GET',
             headers: { 'Content-type': 'application/json' },
@@ -140,7 +128,7 @@ export default class DeploymentTemplateForm extends Component<DeploymentTemplate
             .then(response => response.json())
             .then(
                 (response) => {
-                    console.log(response);
+                    this.saveResponse(response, "Found Saved Configuration")
 
 
                 },
@@ -149,8 +137,45 @@ export default class DeploymentTemplateForm extends Component<DeploymentTemplate
 
                 }
             );
+    }
 
+    getJSONdata = () => {
+        const URL = `${Host}${Routes.PROPS}`;
+        fetch(URL, {
+            method: 'GET',
+            headers: { 'Content-type': 'application/json' },
+        })
+            .then(response => response.json())
+            .then(
+                (response) => {
+                    let state = { ...this.state };
+                    state.deploymentTemplate.deploymentConfig.json.obj = response.result.json;
+                    state.deploymentTemplate.deploymentConfig.json.value = JSON.stringify(state.deploymentTemplate.deploymentConfig.json.obj, undefined, 2);
+                    this.setState(state);
+                },
+                (error) => {
+                    console.error(error);
 
+                }
+            );
+    }
+
+    saveResponse = (response, successMessage: string) => {
+        let state = { ...this.state };
+        state.code = response.code;
+        state.errors = response.errors || [];
+        if (response.result && response.result.deploymentTemplate) {
+            state.successMessage = successMessage;
+            state.deploymentTemplate.pipelineGroupId = response.result.deploymentTemplate.pipelineGroupId;
+            state.deploymentTemplate.chartRepositoryId = response.result.deploymentTemplate.chartRepositoryId;
+            state.deploymentTemplate.referenceTemplateId = response.result.deploymentTemplate.referenceTemplateId;
+            state.deploymentTemplate.deploymentConfig.jsonSubset.obj = response.result.deploymentTemplate.json;
+            state.deploymentTemplate.deploymentConfig.jsonSubset.value = JSON.stringify(state.deploymentTemplate.deploymentConfig.jsonSubset.obj, undefined, 2);
+        }
+        state.buttonLabel = "UPDATE";
+        this.setState(state);
+        console.log(response.result.deploymentTemplate.json)
+        console.log(this.state.deploymentTemplate);
     }
 
     handleOptions = (e: Array<any>, key: string) => {
@@ -159,7 +184,7 @@ export default class DeploymentTemplateForm extends Component<DeploymentTemplate
             state.deploymentTemplate[key] = e[0].id
         }
         else {
-            state.deploymentTemplate[key] = "";
+            state.deploymentTemplate[key] = -1;
         }
         this.setState(state);
 
@@ -213,20 +238,35 @@ export default class DeploymentTemplateForm extends Component<DeploymentTemplate
                 state.validationMessage = "YAML is not Valid";
             }
         }
-        
+
         this.setState(state);
     }
 
     isFormNotValid() {
         let isValid = true;
         let depTemplate = this.state.deploymentTemplate;
-        isValid = isValid && !!depTemplate.chartRepositoryId && !!depTemplate.referenceTemplateId;
-        isValid = isValid && !!depTemplate.deploymentConfig.jsonSubset.obj || !!depTemplate.deploymentConfig.jsonSubset.value;
+        isValid = isValid && (depTemplate.chartRepositoryId != -1 ) && (depTemplate.referenceTemplateId != -1);
+        isValid = isValid && !!depTemplate.deploymentConfig.jsonSubset.obj;
 
         return !isValid;
     }
 
+    getSelectedRepo = () => {
+        let repoId = this.state.deploymentTemplate.chartRepositoryId;
+        let index = this.state.chartRepositoryOptions.findIndex((element) => {
+            return element.id == repoId;
+        })
+        if (index >= 0) return this.state.chartRepositoryOptions.slice(index, index + 1);
+    }
 
+    getSelectedTemplate = () => {
+        let refTemplateId = this.state.deploymentTemplate.referenceTemplateId;
+        let index = this.state.referenceTemplateOptions.findIndex((element) => {
+            return element.id == refTemplateId;
+        })
+        if (index >= 0) return this.state.chartRepositoryOptions.slice(index, index + 1);
+
+    }
 
     handleJsonValue = (event: React.ChangeEvent<HTMLInputElement>, key: string) => {
         let state = { ...this.state };
@@ -240,28 +280,36 @@ export default class DeploymentTemplateForm extends Component<DeploymentTemplate
         this.setState(state);
     }
 
-    
 
-    saveDeploymentTemplate = () => {
 
-        const URL = `${Host}${Routes.DEPLOYMENT_TEMPLATE}`;
+    saveOrUpdateDeploymentTemplate = () => {
+        let url, method;
+
+        if(this.state.deploymentTemplate.pipelineGroupId) {
+            url = `${Host}${Routes.DEPLOYMENT_TEMPLATE}/${this.state.deploymentTemplate.pipelineGroupId}`;
+            method = "PUT";
+        }
+        else {
+            url = `${Host}${Routes.DEPLOYMENT_TEMPLATE}`;
+            method = "POST";
+        }
         let requestBody = {
-            pipelineGroupId: 0,
+            pipelineGroupId: this.state.deploymentTemplate.pipelineGroupId,
             chartRepositoryId: this.state.deploymentTemplate.chartRepositoryId,
-            RefChartTemplate: this.state.deploymentTemplate.referenceTemplateId,
+            referenceTemplateId: this.state.deploymentTemplate.referenceTemplateId,
             valuesOverride: JSON.stringify(this.state.deploymentTemplate.deploymentConfig.jsonSubset.obj)
         };
 
-        fetch(URL, {
-            method: 'POST',
+        console.log(url);
+        fetch(url, {
+            method: method,
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(requestBody)
         })
             .then(response => response.json())
             .then(
                 (response) => {
-                    console.log(response);
-
+                    this.saveResponse(response, "Updated Successfully");
                 },
                 (error) => {
                     console.error(error);
@@ -339,11 +387,12 @@ export default class DeploymentTemplateForm extends Component<DeploymentTemplate
                                             <TypeAheadSelect
                                                 id="id"
                                                 labelKey="name"
+                                                defaultSelected={this.getSelectedRepo()}
                                                 options={this.state.chartRepositoryOptions}
                                                 clearButton
                                                 multiple={false}
                                                 placeholder="Select Chart Repository..."
-                                                isValid={this.isDropDownValid('chartRepository')}
+                                                // isValid={this.isDropDownValid('chartRepository')}
                                                 onChange={(events) => this.handleOptions(events, 'chartRepositoryId')}
                                             />
                                         </Fragment>
@@ -355,6 +404,7 @@ export default class DeploymentTemplateForm extends Component<DeploymentTemplate
                                             <TypeAheadSelect
                                                 id="id"
                                                 labelKey="name"
+                                                defaultSelected={this.getSelectedTemplate()}
                                                 options={this.state.referenceTemplateOptions}
                                                 clearButton
                                                 // isValid={this.isDropDownValid('referenceTemplate')}
@@ -372,9 +422,9 @@ export default class DeploymentTemplateForm extends Component<DeploymentTemplate
 
                         <Button type="button"
                             bsStyle="primary"
-                            onClick={this.saveDeploymentTemplate}
+                            onClick={this.saveOrUpdateDeploymentTemplate}
                             disabled={this.isFormNotValid()}>
-                            Save
+                            {this.state.buttonLabel}
                         </Button>
                         <p className="float-right">{this.state.validationMessage}</p>
 

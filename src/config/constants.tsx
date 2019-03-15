@@ -13,15 +13,16 @@ export const Routes = {
 
     CI_CONFIG: "/pipeline-config/ci/save",
     SOURCE_CONFIG: "/pipeline-config/app/create",
-    DEPLOYMENT_TEMPLATE: "",
+    DEPLOYMENT_TEMPLATE: "/pipeline-config/deployment-template",
 
     APP_LIST: "",
     CHART_REPO: "/pipeline-config/chart-repo",
-    REFERENCE_TEMPLATE:"/pipeline-config/ref-temp",
+    REFERENCE_TEMPLATE: "/pipeline-config/ref-temp",
     DOCKER_REGISTRY_CONFIG: "/config/docker-registry-config",
     GIT_REPO_CONFIG: "/config/git-repo-config",
     INSTANCE_LIST: "/logs/instances",
     LOGS: "/logs",
+    PROPS: "/pipeline-config/props",
     PROPERTIES: "/config/properties",
     PROPERTY_OPTIONS: "properties-options",
     ENVIRONMENT: "/config/environment"

@@ -39,7 +39,12 @@ export default class CIConfigForm extends Component<CIConfigFormProps, CIConfigF
                 appId: null,
                 dockerFilePath: "",
                 tagPattern: "",
-                args: [],
+                args: [
+                    {
+                    key: "",
+                    value: ""
+                    },
+                ],
                 repository: "",
                 dockerfile: "",
             },
@@ -137,7 +142,11 @@ export default class CIConfigForm extends Component<CIConfigFormProps, CIConfigF
         state.errors = [];
         this.setState(state);
     }
-
+    addMoreArgs = () => {
+        let state = {...this.state}
+        state.form.args.push({key:"",value:""})
+        this.setState(state);
+    }
 
     isFormNotValid = () => {
         let keys = Object.keys(this.state);
@@ -208,10 +217,13 @@ export default class CIConfigForm extends Component<CIConfigFormProps, CIConfigF
             )
     }
 
-    saveArgs = (args: Array<{ key: string, value: string }>) => {
+    saveArgs = (event, key, index) => {
         let state = { ...this.state };
-        state.form.args = args;
+        state.form.args[index][key] = event.target.value;
+        // state.form.args = args;
         this.setState(state);
+        console.log(state)
+
     }
 
     validate = (key: string): { message: string | null, result: string | null, isValid: boolean } => {
@@ -433,7 +445,7 @@ export default class CIConfigForm extends Component<CIConfigFormProps, CIConfigF
                                         placeholder="Enter Tag Pattern"
                                         onChange={(event) => this.handleChange(event, 'tagPattern')} />
                                 </FormGroup>
-                                <ArgsFieldSet args={this.state.form.args} callbackFromCIConfig={this.saveArgs} />
+                                <ArgsFieldSet addMoreArgs={this.addMoreArgs} args={this.state.form.args} callbackFromCIConfig={this.saveArgs} />
 
                             </Col>
 
