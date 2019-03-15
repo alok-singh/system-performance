@@ -23,6 +23,10 @@ export const Routes = {
     INSTANCE_LIST: "/logs/instances",
     LOGS: "/logs",
     PROPS: "/pipeline-config/props",
+    GIT_REPO: "/config/git-repo",
+    MIGRATION_TOOLS: "/config/mig-tools",
+    DATABASE: "/config/databases",
+    DB_MIGRATION_CONFIGURATION: "/config/db-migration-config",
     PROPERTIES: "/config/properties",
     PROPERTY_OPTIONS: "properties-options",
     ENVIRONMENT: "/config/environment"

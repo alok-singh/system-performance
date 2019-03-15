@@ -343,7 +343,7 @@ export default class GitRepositoryConfigForm extends Component<GitRepositoryConf
         return <React.Fragment>
             {this.renderPageHeader()}
             {this.renderNotification()}
-            <div className="source-config-form">
+            <div className="w-80 margin-auto ">
                 <Form>
                     <Row>
                         <FormGroup controlId="name" validationState={this.validate('name').result}>

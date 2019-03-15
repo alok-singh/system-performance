@@ -96,17 +96,23 @@ export default class SourceConfigForm extends Component<SourceConfigFormProps, S
             method: 'GET',
             headers: { 'Content-type': 'application/json' },
         })
-            .then(response => response.json())
+            .then(response => { return response.json() })
             .then(
                 (response) => {
                     let state = { ...this.state };
                     state.repositoryOptions = response.result.GitRepos;
                     this.setState(state);
                 },
-                (error) => {
-
-                }
             )
+            .catch((error) => {
+                console.log(error.toString())
+                let state = { ...this.state };
+                state.errors.push({ code: 0, userMessage: error.toString(), moreInfo: "", internalMessage: "" })
+                this.setState(state);
+                setTimeout(() => { 
+                    this.closeNotification();
+                }, 2000)
+            });
     }
 
 
@@ -126,6 +132,10 @@ export default class SourceConfigForm extends Component<SourceConfigFormProps, S
                     }, 2000)
                 },
                 (error) => {
+                    console.log("Error");
+                    setTimeout(() => { 
+                        this.closeNotification();
+                    }, 2000)
 
                 }
             )
@@ -221,7 +231,7 @@ export default class SourceConfigForm extends Component<SourceConfigFormProps, S
         state.successMessage = successMessage;
         state.buttonLabel = "UPDATE";
 
-        if (response.result && response.result.source) {
+        if (!response.errors && response.result && response.result.source) {
             let source = response.result.source;
             state.app.id = source.id;
             state.app.appName = source.appName;
@@ -259,21 +269,25 @@ export default class SourceConfigForm extends Component<SourceConfigFormProps, S
             )
         }
         else {
-            errors.map((element) => {
-                return (
-                    <ToastNotification type="error">
-                        <span>Error!!!{element.userMessage}</span>
-                        <div className="pull-right toast-pf-action">
-                            <Button bsClass="transparent"
-                                onClick={this.closeNotification}>
-                                <span className="fa fa-close"></span>
-                            </Button>
-                        </div>
-                    </ToastNotification>
-                )
-            }
+            return (
+                <ToastNotificationList>
+                    {errors.map((element, index) => {
+                        return (
+                            <ToastNotification key={index} type="error">
+                                <span>Error!!!{element.userMessage}</span>
+                                <div className="pull-right toast-pf-action">
+                                    <Button bsClass="transparent"
+                                        onClick={this.closeNotification}>
+                                        <span className="fa fa-close"></span>
+                                    </Button>
+                                </div>
+                            </ToastNotification>
+                        )
+                    }
 
-            );
+                    )}
+                </ToastNotificationList>
+            )
         }
     }
 
@@ -493,7 +507,7 @@ export default class SourceConfigForm extends Component<SourceConfigFormProps, S
                 {this.renderNotification()}
                 <div className="nav-form-wrapper">
                     {this.renderDirectionalNavigation()}
-                    <div className="source-config-form">
+                    <div className="form">
                         <Form className="margin-auto">
                             <Row key={"app-name"} className="m-lr-0">
                                 <Col xs={12} lg={12}>

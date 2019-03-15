@@ -36,7 +36,7 @@ export default class ContentOverlayModal extends Component <any>{
                             <FormControl
                                 componentClass="select"
                                 value={this.props.currentInstanceIndex}
-                                onChange={(event) => { console.log(event.target.value); this.props.handleInstanceAndContainerChange(event, event.target.value, -1) }}
+                                onChange={(event) => { this.props.handleInstanceAndContainerChange(event, event.target.value, -1) }}
                                 placeholder="Select Current Instance" >
                                 {this.props.instances.map(
                                     (instance, index) => {
@@ -66,7 +66,7 @@ export default class ContentOverlayModal extends Component <any>{
                 <Tabs onSelect={(activeKey) => this.props.handleInstanceAndContainerChange(null, -1, activeKey)}
                     defaultActiveKey={0} animation={true} id="container">
                     {this.props.containers.map((container, index) => {
-                        let logs = container.logs;
+                        let logs = this.props.logs;
                         return <Tab className="fixed-height-logs-container" eventKey={index} title={container.name} key={index}>
                             {logs.map((log, logIndex) => {
                                 return <li key={logIndex}>{log}</li>

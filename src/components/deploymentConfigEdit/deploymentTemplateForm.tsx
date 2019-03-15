@@ -190,8 +190,12 @@ export default class DeploymentTemplateForm extends Component<DeploymentTemplate
 
     }
 
-    isDropDownValid = (key: string): boolean => {
-        return true;
+    closeNotification = () => {
+        let state = { ...this.state };
+        state.successMessage = null;
+        state.code = 0;
+        state.errors = [];
+        this.setState(state);
     }
 
     //Saves JSON/YAML, beautifies JSON ONLY, also checks for subset
@@ -373,7 +377,7 @@ export default class DeploymentTemplateForm extends Component<DeploymentTemplate
             {this.renderPageHeader()}
             <div className="nav-form-wrapper">
                 {this.renderDirectionalNavigation()}
-                <div className="source-config-form">
+                <div className="form">
                     <Form>
                         <ExpandCollapse
                             bordered={true}

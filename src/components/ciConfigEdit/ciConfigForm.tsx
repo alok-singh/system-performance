@@ -398,12 +398,12 @@ export default class CIConfigForm extends Component<CIConfigFormProps, CIConfigF
 
     render() {
         // console.log(this.state.repositoryOptions.slice(0, 1))
-        return <React.Fragment>
+        return <Fragment>
             {this.renderNotification()}
             {this.renderPageHeader()}
             <div className="nav-form-wrapper">
                 {this.renderDirectionalNavigation()}
-                <div className="source-config-form">
+                <div className="form">
                     <Form>
                         <Row>
                             <Col xs={12} lg={6}>
@@ -477,6 +477,6 @@ export default class CIConfigForm extends Component<CIConfigFormProps, CIConfigF
                     </Form>
                 </div>
             </div>
-        </React.Fragment>
+        </Fragment>
     }
 }

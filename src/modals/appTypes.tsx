@@ -67,15 +67,11 @@ export class Container {
     name: string;
     id: string;
     URL: string;
-    logs: any[];
-    //ref
-    eventSourceRef;
 
     constructor(container, instanceId) {
         this.name = container.name;
         this.id = container.id;
         this.URL = `${Host}${Routes.LOGS}/${container.id}/${instanceId}`;
-        this.logs = [];
     }
 }
 
@@ -108,7 +104,7 @@ export interface AppDetailsState {
     code: number;
     successMessage: string | null;
     errors: Error[],
-
+    logs: any[],
 
     deploymentDetails: {
         appId: number;
@@ -130,4 +126,5 @@ export interface AppDetailsState {
     maxLogs: number;
     showOverlay: boolean,
 
+    eventSourceRef: any;
 }
