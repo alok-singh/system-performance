@@ -493,7 +493,7 @@ export default class SourceConfigForm extends Component<SourceConfigFormProps, S
                 {this.renderNotification()}
                 <div className="nav-form-wrapper">
                     {this.renderDirectionalNavigation()}
-                    <div className="source-config-form">
+                    <div className="form">
                         <Form className="margin-auto">
                             <Row key={"app-name"} className="m-lr-0">
                                 <Col xs={12} lg={12}>

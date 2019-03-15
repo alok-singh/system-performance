@@ -80,13 +80,6 @@ textarea.form-control {
 .bg-gray {
     background-color: rgba(0, 0, 0, 0.02);
 }
-.source-config-form {
-    width: 70%;
-    margin: auto;
-}
-.ci-config-form {
-    width: 80%;
-}
 .align-right {
     display: block;
     margin-left: auto; 
@@ -185,6 +178,12 @@ button:focus {
 }
 
 .nav-form-wrapper .source-config-form {
+    width: 70%;
+    margin: 0px;
+    margin-left: 50px;
+}
+
+.form {
     width: 70%;
     margin: 0px;
     margin-left: 50px;

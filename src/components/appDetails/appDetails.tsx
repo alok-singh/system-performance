@@ -178,7 +178,7 @@ export default class AppDetails extends Component<AppDetailsProps, AppDetailsSta
         if (successCodes.has(code)) {
             return (
                 <ToastNotification type="success">
-                    <span>Git Repositories Found</span>
+                    <span>App Details Found</span>
                     <div className="pull-right toast-pf-action">
                         <Button bsClass="transparent"
                             onClick={this.closeNotification}>

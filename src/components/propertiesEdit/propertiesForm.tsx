@@ -12,11 +12,10 @@ export class PropertiesForm extends Component<{}, PropertiesFormState> {
 
         this.state = {
             successMessage: "",
-            validationMessage: "",
+            validationMessage: null,
             code: 0,
             errors: [],
-            formData: [
-            ],
+            formData: [ ],
             properties: [],
         }
     }
@@ -58,8 +57,10 @@ export class PropertiesForm extends Component<{}, PropertiesFormState> {
             .then(response => response.json())
             .then(
                 (response) => {
-                    this.saveResponse(response);
-
+                    this.saveResponse(response, "Found Saved Properties");
+                    setTimeout(() => {
+                        this.closeNotification();
+                    }, 2000)
                 },
                 (error) => {
 
@@ -67,7 +68,7 @@ export class PropertiesForm extends Component<{}, PropertiesFormState> {
             )
     }
 
-    saveResponse = (response): void => {
+    saveResponse = (response, successMessage: string): void => {
         let state = { ...this.state };
         state.code = response.code;
         state.errors = response.errors ? response.errors : [];
@@ -75,7 +76,7 @@ export class PropertiesForm extends Component<{}, PropertiesFormState> {
         if (!state.errors.length) {
             if (response.result && response.result.formData) {
                 state.formData = response.result.formData;
-                state.successMessage = "Properties Found";
+                state.successMessage = successMessage;
             }
             else {
                 state.formData = [{ id: null, appId: null, appProperty: "", value: "" }];
@@ -142,7 +143,7 @@ export class PropertiesForm extends Component<{}, PropertiesFormState> {
                 .then(response => response.json())
                 .then(
                     (response) => {
-                        this.saveResponse(response);
+                        this.saveResponse(response, "Saved Successfully");
                         console.log(response);
                         setTimeout(() => {
                             this.closeNotification();
@@ -168,6 +169,7 @@ export class PropertiesForm extends Component<{}, PropertiesFormState> {
     //No field should be empty
     isFormNotValid = (): boolean => {
         let len = this.state.formData.length;
+        if(len>0)
         return !(len > 0 && this.state.formData[len - 1].appProperty.length > 0 && this.state.formData[len - 1].value.length > 0);
     }
 
@@ -312,7 +314,7 @@ export class PropertiesForm extends Component<{}, PropertiesFormState> {
             {this.renderNotification()}
             <div className="nav-form-wrapper">
                 {this.renderDirectionalNavigation()}
-                <div className="source-config-form">
+                <div className="form">
                     <Form className="margin-auto">
                         {this.renderFieldSet()}
                         <Row className="m-lr-0">
