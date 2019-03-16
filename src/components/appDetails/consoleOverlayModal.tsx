@@ -25,14 +25,14 @@ export default class ContentOverlayModal extends Component <any>{
                 <Modal.Title>Console</Modal.Title>
             </Modal.Header>
             <Modal.Body style={{position: 'relative'}}>
-                <Tabs defaultActiveKey={0} animation={true} id="container">
-                     <Tab className="fixed-height-logs-container" eventKey={1} title="Tab1" key={1}>
+                <Tabs defaultActiveKey={1} animation={true} id="console-container">
+                     <Tab className="fixed-height-logs-container" eventKey={1} title="Console 1" key={1}>
                         comething in tab 1
                     </Tab>
-                    <Tab className="fixed-height-logs-container" eventKey={2} title="Tab2" key={2}>
+                    <Tab className="fixed-height-logs-container" eventKey={2} title="Console 2" key={2}>
                         comething in tab 2
                     </Tab>
-                    <Tab className="fixed-height-logs-container" eventKey={3} title="Tab3" key={3}>
+                    <Tab className="fixed-height-logs-container" eventKey={3} title="Console 3" key={3}>
                         comething in tab 3
                     </Tab>
                 </Tabs>

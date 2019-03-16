@@ -134,3 +134,9 @@
     border: 1px solid #eaeaea;
     padding: 20px;
 }
+
+.modal .modal-dialog .modal-body #console-container .tab-content {
+    background: #0c0c0c;
+    color: #fff;
+    font-family: Menlo, Monaco, Consolas, monospace;
+}
