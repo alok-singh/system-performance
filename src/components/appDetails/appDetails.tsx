@@ -1,29 +1,11 @@
 import React, { Component, ChangeEvent } from 'react';
 import { Host, Routes } from '../../config/constants';
-import * as resolve from 'table-resolver';
-import classNames from 'classnames';
-import ContentOverlayModal from './contentOverlayModal';
-
-import { getInstanceColumn } from './instanceColumn';
-import { getLinkOutColumns } from './linkoutColumns';
-
-import {
-    ToastNotificationList,
-    ToastNotification,
-    Grid,
-    Row,
-    Col,
-    Button,
-    customHeaderFormattersDefinition,
-    Table
-} from 'patternfly-react';
-
+import { ToastNotification, Grid, Button } from 'patternfly-react';
 import { AppDetailsProps, AppDetailsState, Instance } from '../../modals/appTypes';
 import { getInstances } from './service';
+import AppDetailsContent from './appDetailsContent';
 
 export default class AppDetails extends Component<AppDetailsProps, AppDetailsState> {
-
-    customHeaderFormatters: any;
 
     constructor(props: AppDetailsProps) {
         super(props);
@@ -47,13 +29,6 @@ export default class AppDetails extends Component<AppDetailsProps, AppDetailsSta
             maxLogs: 10,
             showOverlay: false
         }
-    }
-
-    onRow(row, { rowIndex }) {
-        return {
-            className: classNames({ selected: row.selected }),
-            role: 'row'
-        };
     }
 
     componentDidMount() {
@@ -146,8 +121,6 @@ export default class AppDetails extends Component<AppDetailsProps, AppDetailsSta
         this.setState(state);
     }
 
-
-
     //Clears error messages and response code
     closeNotification() {
         let state = { ...this.state };
@@ -195,89 +168,11 @@ export default class AppDetails extends Component<AppDetailsProps, AppDetailsSta
         }
     }
 
-    renderDeploymentDetails() {
-        var self = this;
-        let listItem = Object.keys(this.state.deploymentDetails);
-        return <Col xs={12} sm={12} md={4}>
-            <div className="card">
-                <h3 className="h3">Deployment Details</h3>
-                <ul className="w-100 list">
-                    {listItem.map(function (key, index) {
-                        return (
-                            <li key={index}>
-                                <strong>{key}</strong>
-                                <span>{self.state.deploymentDetails[key]}</span>
-                            </li>
-                        )
-                    })}
-                </ul>
-            </div>
-        </Col>
-    }
-
-    renderInstanceList() {
-        let rows = this.state.instances;
-        let columns = getInstanceColumn((name, obj) => {
-            return <Button className="table-button" type="button" onClick={(event) => { this.handleInstanceAndContainerChange(event, obj.rowIndex, -1) }} >
-                {name}
-            </Button>
-        });
-
-        return <Col xs={12} sm={12} md={4}>
-            <div className="card">
-                <h3 className="h3">Instances</h3>
-                <Table.PfProvider hover dataTable className="scrollable-pf-table" columns={columns} components={this.cellPropHandler(rows, columns)}>
-                    <Table.Header headerRows={resolve.headerRows({ columns })} />
-                    <Table.Body rows={rows} rowKey="id" onRow={this.onRow} />
-                </Table.PfProvider>
-            </div>
-        </Col>
-    }
-
-    cellPropHandler(rows, columns) {
-        return {
-            header: {
-                cell: cellProps => {
-                    return customHeaderFormattersDefinition({
-                        cellProps: cellProps,
-                        columns: columns,
-                        rows: rows,
-                    });
-                }
-            }
-        }
-    }
-
-    renderLinkouts() {
-        let rows = this.state.linkouts;
-        let columns = getLinkOutColumns((name, obj) => {
-            return <Button className="table-button" type="button"
-                onClick={() => { window.open("http://google.com") }}>
-                {name}
-            </Button>
-        });
-
-        if (rows) {
-            return <Col xs={12} sm={12} md={4}>
-                <div className="card">
-                    <h3 className="h3">Linkouts</h3>
-                    <Table.PfProvider hover dataTable className="scrollable-pf-table" columns={columns} components={this.cellPropHandler(rows, columns)}>
-                        <Table.Header headerRows={resolve.headerRows({ columns })} />
-                        <Table.Body rows={rows} rowKey="displayName" onRow={this.onRow} />
-                    </Table.PfProvider>
-                </div>
-            </Col>
-        }
-        else {
-            return null;
-        }
-    }
-
-    renderContainersOverlay() {
+    renderAppDetailsContent() {
         let { currentInstanceIndex, instances } = this.state
         let currentInstance = instances[currentInstanceIndex];
         if (currentInstance && currentInstance.containers && currentInstance.containers.length) {
-            return <ContentOverlayModal
+            return <AppDetailsContent
                 logs={this.state.logs}
                 showOverlay={this.state.showOverlay}
                 toggleOverlay={() => this.toggleOverlay()}
@@ -285,8 +180,10 @@ export default class AppDetails extends Component<AppDetailsProps, AppDetailsSta
                 handleInstanceAndContainerChange={(event, instanceIndex, containerIndex) => this.handleInstanceAndContainerChange(event, instanceIndex, containerIndex)}
                 instances={this.state.instances}
                 maxLogs={this.state.maxLogs}
-                containers={currentInstance.containers}
-            />
+                deploymentDetails={this.state.deploymentDetails}
+                linkouts={this.state.linkouts}
+                containers={currentInstance.containers}>
+            </AppDetailsContent>
         }
         else {
             return null;
@@ -296,12 +193,7 @@ export default class AppDetails extends Component<AppDetailsProps, AppDetailsSta
     render() {
         return (
             <Grid bsClass="w-100">
-                <Row style={{ marginLeft: '0px', marginRight: '0px', marginBottom: '20px', marginTop: '20px' }}>
-                    {this.renderDeploymentDetails()}
-                    {this.renderInstanceList()}
-                    {this.renderLinkouts()}
-                </Row>
-                {this.renderContainersOverlay()}
+                {this.renderAppDetailsContent()}
             </Grid >
         )
     }
