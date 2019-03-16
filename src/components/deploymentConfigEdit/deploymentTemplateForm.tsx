@@ -19,7 +19,7 @@ import {
     Routes
 } from '../../config/constants';
 
-import TemplateForm from './templateForm';
+import TemplateForm from '../common/templateForm';
 import { DeploymentTemplateFormState } from '../../modals/deploymentTemplateTypes';
 import { isSubset } from '../helpers/isSubset';
 import DirectionalNavigation from '../common/directionalNavigation';

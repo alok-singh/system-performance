@@ -12,7 +12,7 @@ import {deploymentTemplateDummyData} from '../helpers/deploymentFormData';
 
 import { DeploymentConfigType } from '../../modals/deploymentTemplateTypes';
 
-import TemplateForm from '../deploymentConfigEdit/templateForm';
+import TemplateForm from '../common/templateForm';
 import yamlJsParser from 'yamljs';
 
 import {isSubset} from '../helpers/isSubset';

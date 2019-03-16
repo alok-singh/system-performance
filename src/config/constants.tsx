@@ -29,7 +29,8 @@ export const Routes = {
     DB_MIGRATION_CONFIGURATION: "/config/db-migration-config",
     PROPERTIES: "/config/properties",
     PROPERTY_OPTIONS: "properties-options",
-    ENVIRONMENT: "/config/environment"
+    ENVIRONMENT: "/config/environment",
+    TRIGGER_NODE_LIST: "/trigger-nodes"
 }
 export const FormType = {
     SAVE: "SAVE",

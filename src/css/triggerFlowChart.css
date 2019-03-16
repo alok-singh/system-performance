@@ -1,8 +1,119 @@
-.trigger-flow {
-	border-top: 1px dashed rgb(234, 234, 234);
-    padding-top: 20px;
-    margin-left: -10px;
+.svg-wrapper-trigger {
     height: calc(100vh - 360px);
-    width: calc(100vw - 270px);
     overflow: scroll;
+}
+
+.svg-wrapper-trigger .trigger-node {
+	border: 1px solid #dadada;
+	height: 100%;
+	width: 100%;
+	box-shadow: 1px 0px 0px rgba(0,0,0,0.05);
+	position: relative;
+	background: linear-gradient(#fafafa, #ededed);
+}
+
+.svg-wrapper-trigger .trigger-node .title-wrapper {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.svg-wrapper-trigger .trigger-node .name-wrapper {
+    display: flex;
+}
+
+.svg-wrapper-trigger .trigger-node .environment-name {
+	margin-right: 2px;
+}
+
+.svg-wrapper-trigger .trigger-node .junction {
+    position: absolute;
+    height: 20px;
+    width: 10px;
+    background: #d8d8d8;
+    top: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.svg-wrapper-trigger .button-wrapper {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    width: 80%;
+    margin: auto;
+    margin-top: 10px;
+}
+
+.svg-wrapper-trigger .button-wrapper button {
+	width: 85px;
+}
+
+
+.svg-wrapper-trigger .color-code-icon {
+    position: relative;
+}
+
+.svg-wrapper-trigger .color-code-icon .hover-tooltip {
+    display: none;
+    position: absolute;
+    background: #393f44;
+    color: #fff;
+    font-weight: normal;
+    text-align: left;
+    padding: 10px;
+    box-shadow: 1px 2px 3px rgba(0,0,0,0.12);
+    border: 1px solid #393f43;
+    top: 0px;
+    left: 0px;
+    transform: translate(50%, -10%);
+    z-index: 1;
+}
+
+.svg-wrapper-trigger .color-code-icon:hover .hover-tooltip {
+    display: block;
+}
+
+.svg-wrapper-trigger .color-code-icon .hover-tooltip .tooltip-arrow {
+    left: -12px;
+    top: 8px;
+    border-top: 10px solid transparent;
+    border-right: 10px solid #393f44;
+    border-bottom: 10px solid transparent;
+}
+
+.svg-wrapper-trigger .color-code-icon .hover-tooltip .tooltip-row {
+    padding: 3px 0;
+    text-transform: capitalize;
+}
+
+.svg-wrapper-trigger .color-code-icon .hover-tooltip .tooltip-title {
+    margin-bottom: 6px;
+}
+
+.trigger-flyout .active > a {
+    background: #f3f2f2 !important;
+    font-weight: 700;
+}
+
+.trigger-flyout .tooltip-inner {
+    max-width: unset;
+    background: #fff;
+    padding: 0;
+    border: 1px solid #eaeaea;
+    color: #333;
+}
+
+.trigger-flyout .tooltip-inner .material-tooltip-row {
+    background: #f3f2f2;
+    border: 1px solid #eaeaea;
+    padding: 5px 15px;
+}
+
+.trigger-flyout .tooltip-inner .material-tooltip-row.active {
+    background: #38a5dc;
+    color: #fff;
+}
+
+.trigger-flyout .tooltip-inner .material-tooltip-row.active a {
+    color: #fff;
 }
