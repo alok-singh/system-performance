@@ -9,6 +9,7 @@ import Defs from '../common/defs';
 import BackDrop from '../common/backdrop';
 import Popup from '../common/popup';
 import Edge from '../common/straightEdge';
+import ConsoleOverlay from './consoleOverlayModal';
 
 import '../../css/triggerFlowChart.css';
 
@@ -16,6 +17,7 @@ import '../../css/triggerFlowChart.css';
 interface TriggerFlowChartState {
     nodes: TriggerNodeType[];
     topEdge: TriggerEdgeType | null;
+    isConsoleVisible: boolean;
 }
 
 interface TriggerFlowChartProps {
@@ -33,7 +35,8 @@ export default class TriggerFlowChart extends Component <TriggerFlowChartProps, 
         super(props);
         this.state = {
             nodes: [],
-            topEdge: null 
+            topEdge: null,
+            isConsoleVisible: false
         }
     }
 
@@ -101,6 +104,7 @@ export default class TriggerFlowChart extends Component <TriggerFlowChartProps, 
                 inputMaterialsSuccess={node.inputMaterialsSuccess}
                 inputMaterialsFailed={node.inputMaterialsFailed}
                 onChangeInputMaterial={(inputMaterial, listKey, index) => {this.onChangeInputMaterial(inputMaterial, listKey, index, node.id)}}
+                showOverlay={() => {this.setState({isConsoleVisible: true})}}
             />
         })
     }
@@ -146,6 +150,13 @@ export default class TriggerFlowChart extends Component <TriggerFlowChartProps, 
         })
     }
 
+    renderConsoleOverlay() {
+        return <ConsoleOverlay 
+            showOverlay={this.state.isConsoleVisible}
+            closeOverlay={() => {this.setState({isConsoleVisible: !this.state.isConsoleVisible})}}
+        />
+    }
+
     renderBackDrop() {
         return <BackDrop />
     }
@@ -162,6 +173,7 @@ export default class TriggerFlowChart extends Component <TriggerFlowChartProps, 
     		    {this.renderNodes()}
                 {this.renderEdgeList()}
     		</svg>
+            {this.renderConsoleOverlay()}
         </div>
 	} 
 }

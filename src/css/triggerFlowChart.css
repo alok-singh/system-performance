@@ -124,3 +124,13 @@
 .trigger-flyout .tooltip-inner .material-tooltip-row.active a {
     color: #fff;
 }
+
+.modal .modal-dialog .nav-tabs > li > a {
+    border: 1px solid #eaeaea;
+    color: #333;
+}
+
+.modal .modal-dialog .modal-body .tab-content {
+    border: 1px solid #eaeaea;
+    padding: 20px;
+}

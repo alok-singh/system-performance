@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import {nodeSizes} from '../../config/sizes';
 import {nodeColors} from '../../config/colors';
 
-import {Card, CardTitle, CardBody, Label, Button, DropdownButton, Tooltip, OverlayTrigger, Tabs, Tab} from 'patternfly-react';
+import {Card, CardTitle, CardBody, Label, Button, DropdownButton, Tooltip, OverlayTrigger, Tabs, Tab, AccessConsoles} from 'patternfly-react';
 
 interface InputMaterials {
     time: string;
@@ -24,6 +24,7 @@ export interface TriggerNodeType {
     inputMaterialsNew: InputMaterials[];
     inputMaterialsSuccess: InputMaterials[];
     inputMaterialsFailed: InputMaterials[];
+    showOverlay: () => void;
     onChangeInputMaterial: (inputMaterial: InputMaterials, eventKey: string, index: number) => void;
 }
 
@@ -55,7 +56,7 @@ export default class TriggerNode extends Component <TriggerNodeType>{
 	renderCardContent() {
         return <div className="trigger-node">
         	<div className="title-wrapper">
-                <Label bsStyle="warning" className="color-code-icon" style={{padding: '5px', color: this.props.colorCode, backgroundColor: this.props.colorCode, cursor: 'pointer'}}>
+                <Label bsStyle="warning" className="color-code-icon" onClick={() => this.props.showOverlay()} style={{padding: '5px', color: this.props.colorCode, backgroundColor: this.props.colorCode, cursor: 'pointer'}}>
                     Options
                     <div id={`tooltip-${this.props.id}`} className="hover-tooltip">
                         <div className="tooltip-title">Trigger Meta Data</div>
