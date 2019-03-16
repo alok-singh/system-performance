@@ -8,7 +8,7 @@ import {Host, Routes} from '../../config/constants';
 import Defs from '../common/defs';
 import BackDrop from '../common/backdrop';
 import Popup from '../common/popup';
-import Edge from '../flowChart/straightEdge';
+import Edge from '../common/straightEdge';
 
 import '../../css/triggerFlowChart.css';
 
@@ -38,6 +38,29 @@ export default class TriggerFlowChart extends Component <TriggerFlowChartProps, 
     }
 
     onScroll(event) {
+
+    }
+
+    onChangeInputMaterial(inputMaterial, listKey, index, nodeId) {
+        let {nodes} = this.state;
+        let materials = ['inputMaterialsNew', 'inputMaterialsSuccess', 'inputMaterialsFailed'];
+        
+        nodes = nodes.map(node => {
+            if(node.id == nodeId) {
+                materials.forEach(materialType => {
+                    node[materialType] = node[materialType].map(material => {
+                        material.isActive = false;
+                        return material;
+                    });
+                });
+                node[listKey][index].isActive = true;
+            }
+            return node;
+        });
+
+        this.setState({
+            nodes: nodes
+        });
 
     }
 
@@ -77,6 +100,7 @@ export default class TriggerFlowChart extends Component <TriggerFlowChartProps, 
                 inputMaterialsNew={node.inputMaterialsNew}
                 inputMaterialsSuccess={node.inputMaterialsSuccess}
                 inputMaterialsFailed={node.inputMaterialsFailed}
+                onChangeInputMaterial={(inputMaterial, listKey, index) => {this.onChangeInputMaterial(inputMaterial, listKey, index, node.id)}}
             />
         })
     }

@@ -24,6 +24,7 @@ export interface TriggerNodeType {
     inputMaterialsNew: InputMaterials[];
     inputMaterialsSuccess: InputMaterials[];
     inputMaterialsFailed: InputMaterials[];
+    onChangeInputMaterial: (inputMaterial: InputMaterials, eventKey: string, index: number) => void;
 }
 
 export default class TriggerNode extends Component <TriggerNodeType>{
@@ -35,6 +36,7 @@ export default class TriggerNode extends Component <TriggerNodeType>{
                     <div>Time: {inputMaterial.time}</div>
                     <div>User: {inputMaterial.user}</div>
                     <div>Commit: <a href={`${inputMaterial.commitLink}`}>Go to Commit</a></div>
+                    {inputMaterial.isActive ? null : <Button onClick={() => {this.props.onChangeInputMaterial(inputMaterial, eventKey, index)}}>Activate</Button>}
                 </div>
             })}
         </Tab>
@@ -43,9 +45,9 @@ export default class TriggerNode extends Component <TriggerNodeType>{
     renderFlyoutHistoryTabs() {
         return <Tooltip id={`flyout-${this.props.id}`} className="trigger-flyout">
             <Tabs> 
-                {this.renderTab(this.props.inputMaterialsNew, 1, "New")}
-                {this.renderTab(this.props.inputMaterialsFailed, 2, "Failed")}
-                {this.renderTab(this.props.inputMaterialsSuccess, 3, "Success")}
+                {this.renderTab(this.props.inputMaterialsNew, 'inputMaterialsNew', "New")}
+                {this.renderTab(this.props.inputMaterialsFailed, 'inputMaterialsFailed', "Failed")}
+                {this.renderTab(this.props.inputMaterialsSuccess, 'inputMaterialsSuccess', "Success")}
             </Tabs>
         </Tooltip>
     }

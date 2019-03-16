@@ -107,6 +107,13 @@
     background: #f3f2f2;
     border: 1px solid #eaeaea;
     padding: 5px 15px;
+    position: relative;
+}
+
+.trigger-flyout .tooltip-inner .material-tooltip-row button {
+    position: absolute;
+    top: 5px;
+    right: 5px;
 }
 
 .trigger-flyout .tooltip-inner .material-tooltip-row.active {
